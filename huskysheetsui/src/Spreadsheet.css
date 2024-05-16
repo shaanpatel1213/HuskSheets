@@ -1,0 +1,85 @@
+/* src/Spreadsheet.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.spreadsheet-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.controls {
+  flex: 0 0 auto;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.controls button {
+  margin-right: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background-color: #0056b3;
+}
+
+.table-outer-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.table-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 2000px; /* Ensure table is wide enough for horizontal scroll */
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  padding: 8px;
+  outline: none;
+}
+
+.horizontal-scrollbar {
+  height: 20px; /* Adjust height as needed */
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: sticky;
+  bottom: 0;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+}
+
+.horizontal-scrollbar-content {
+  width: 2000px; /* Ensure content width matches table width */
+  height: 1px;
+}
