@@ -126,9 +126,6 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
             </tbody>
           </table>
         </div>
-        <div className="horizontal-scrollbar" ref={horizontalScrollbarRef}>
-          <div className="horizontal-scrollbar-content"></div>
-        </div>
       </div>
     </div>
   );
