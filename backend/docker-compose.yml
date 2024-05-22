@@ -1,0 +1,11 @@
+## to begin Dockerized database, type 'docker compose up -d'
+
+version: "3"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgtres
+    ports:
+      - "5432:5432"

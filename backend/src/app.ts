@@ -1,4 +1,5 @@
-import express from 'express';
+const express = require('express');
+import "reflect-metadata"
 import spreadsheetsRouter from './routes/spreadsheets';
 
 const app = express();
