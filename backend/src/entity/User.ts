@@ -1,3 +1,5 @@
+//Basic entity to represent a User
+
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
@@ -13,6 +15,6 @@ export class User {
     lastName: string
 
     @Column()
-    age: number
+    email: string
 
 }
