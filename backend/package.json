@@ -6,7 +6,7 @@
       "test": "echo \"Error: no test specified\" && exit 1",
       "start": "ts-node src/index.ts",
       "build": "tsc",
-      "dev" : "nodemon -w *.ts src/index.ts",
+      "dev": "nodemon -w *.ts src/index.ts",
       "serve": "node dist/app.js",
       "typeorm": "typeorm-ts-node-commonjs"
    },
@@ -18,7 +18,7 @@
       "express": "^4.19.2",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
-      "typeorm": "0.3.20",
+      "typeorm": "^0.3.20",
       "uuid": "^9.0.1"
    },
    "devDependencies": {
