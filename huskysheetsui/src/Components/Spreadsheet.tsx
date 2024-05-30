@@ -357,6 +357,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
   const [data, setData] = useState<TableData>(initialData);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const horizontalScrollbarRef = useRef<HTMLDivElement>(null);
+  const updates = useRef<string>("");
 
 
 
@@ -381,12 +382,22 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     return data[rowIndex][colIndex];
   };
 
+  const addUpdates = (rowIndex: number, colIndex: number, value: string) => {
+    updates.current = updates.current + "$" + getColumnLetter(colIndex) + rowIndex + " " + value + "\n";
+    alert("updates are now: " + updates.current); // delete later
+  };
+
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
     // need to send string to
     const newData = data.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
     setData(newData);
+  };
+
+  const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
+    CalculateCell(rowIndex, colIndex, value);
+    addUpdates(rowIndex, colIndex, value);
   };
 
   const CalculateCell = (rowIndex: number, colIndex: number, value: string) => {
@@ -439,6 +450,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     return letter;
   };
 
+  const saveUpdates = () => {
+    let allUpdates = updates.current.substring(0, updates.current.length);
+    // send allUpdates to server using updatePublished or updateSubscription
+    updates.current = "";
+    alert("updates saved as:" + allUpdates + " <- end of update")
+  }
+
 
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
@@ -477,6 +495,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
         <button onClick={removeRow}>Remove Row</button>
         <button onClick={addColumn}>Add Column</button>
         <button onClick={removeColumn}>Remove Column</button>
+        <button onClick={saveUpdates}>Save</button>
       </div>
       <div className="table-outer-container">
         <div className="table-container" ref={tableContainerRef}>
@@ -502,7 +521,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
                           handleChange(rowIndex, colIndex, e.target.value)
                         }
                         onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
-                          CalculateCell(rowIndex, colIndex, e.target.value)
+                          handleBlur(rowIndex, colIndex, e.target.value)
                         }
                       />
                     </td>
