@@ -115,6 +115,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
   const [data, setData] = useState<TableData>(initialData);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const horizontalScrollbarRef = useRef<HTMLDivElement>(null);
+  const updates = useRef<string>("");
 
 
 
@@ -160,14 +161,25 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     setData(newData);
   };
 
+  const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
+    CalculateCell(rowIndex, colIndex, value);
+    addUpdate(rowIndex, colIndex, value);
+   };
+
   const CalculateCell = (rowIndex: number, colIndex: number, value: string) => {
     // need to send string to
     const newData = data.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? evaluateCell(value) : cell))
     );
     setData(newData);
-  };
+   };
 
+   // when you click off a cell into another cell it adds the empty cell to updates
+   // example: edit $C1 "hi", then click off into the F1 cell, adds $F1 "" to updates 
+   const addUpdate = (rowIndex: number, colIndex: number, value: string) => {
+    updates.current = updates.current + "$" + getColumnLetter(colIndex) + (rowIndex + 1) + " " + value + "\n";
+    alert('updates is now:' + updates.current) // delete
+  };
 
   const addRow = () => {
     const newRow: RowData = new Array(data[0].length).fill('');
@@ -201,6 +213,12 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     return letter;
   };
 
+  const saveUpdates = () => {
+    let allUpdates = updates.current;
+    updates.current = "";
+    // send allUpdates to updatePublished or updateSubscription
+    // need to add a way to check if publisher owns sheet
+  }
 
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
@@ -239,6 +257,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
         <button onClick={removeRow}>Remove Row</button>
         <button onClick={addColumn}>Add Column</button>
         <button onClick={removeColumn}>Remove Column</button>
+        <button onClick={saveUpdates}>Save</button>
       </div>
       <div className="table-outer-container">
         <div className="table-container" ref={tableContainerRef}>
@@ -264,7 +283,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
                           handleChange(rowIndex, colIndex, e.target.value)
                         }
                         onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
-                          CalculateCell(rowIndex, colIndex, e.target.value)
+                          handleBlur(rowIndex, colIndex, e.target.value)
                         }
                       />
                     </td>
