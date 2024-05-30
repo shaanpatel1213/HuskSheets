@@ -2,6 +2,103 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import './Spreadsheet.css';
 
+
+const evaluateFormula = (formula: string): string => {
+  try {
+    let result = Function('"use strict";return (' + formula + ')')();
+    return result.toString();
+  } catch {
+    try{
+      let parse = parseExpression(formula)
+      let result = evaluate(parse.x, parse.y, parse.operator);
+      return result.toString();
+    }catch{}
+  }
+  return 'ERROR';
+};
+type Ref = { row: number, col: number };
+
+function evaluate(x: number | string | Ref, y: number | string | Ref, operator: string) {
+  if (operator === '=') {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x === y ? 1 : 0;
+    }
+    if (typeof x === 'string' && typeof y === 'string') {
+      return x === y ? 1 : 0;
+    }
+    throw new Error('Invalid operands for "=" operation');
+  }
+
+  if (operator === '<>') {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x !== y ? 1 : 0;
+    }
+    if (typeof x === 'string' && typeof y === 'string') {
+      return x !== y ? 1 : 0;
+    }
+    throw new Error('Invalid operands for "<>" operation');
+  }
+
+  if (operator === '&') {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x !== 0 && y !== 0 ? 1 : 0;
+    }
+    throw new Error('Invalid operands for "&" operation');
+  }
+
+  if (operator === '|') {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return x === 1 || y === 1 ? 1 : 0;
+    }
+    throw new Error('Invalid operands for "|" operation');
+  }
+
+  if (operator === ':') {
+    if (isRef(x) && isRef(y) && lessThanOrEqual(x, y)) {
+      return getRange(x, y);
+    }
+    throw new Error('Invalid operands for ":" operation');
+  }
+
+  throw new Error('Unsupported operator');
+}
+
+function isRef(value: any): value is Ref {
+  return value && typeof value.row === 'number' && typeof value.col === 'number';
+}
+
+function lessThanOrEqual(ref1: Ref, ref2: Ref): boolean {
+  if (ref1.row < ref2.row) return true;
+  if (ref1.row === ref2.row && ref1.col <= ref2.col) return true;
+  return false;
+}
+
+function getRange(ref1: Ref, ref2: Ref): string {
+  return `Range from (${ref1.row}, ${ref1.col}) to (${ref2.row}, ${ref2.col})`;
+}
+function parseExpression(expression: string) {
+  const match = expression.match(/^\s*(\$?[A-Z]+\d*|\d+)\s*([=<>|&:])\s*(\$?[A-Z]+\d*|\d+)\s*$/);
+  if (!match) {
+    throw new Error('Invalid expression format');
+  }
+
+  const x = parseOperand(match[1]);
+  const operator = match[2];
+  const y = parseOperand(match[3]);
+
+  return { x, y, operator };
+}
+
+function parseOperand(operand: string): number | string | Ref {
+  if (!isNaN(Number(operand))) {
+    return Number(operand);
+  } else if (operand.match(/^\$?[A-Z]+\d*$/)) {
+    return operand;
+  } else {
+    throw new Error('Invalid operand format');
+  }
+}
+
 interface SpreadsheetProps {}
 
 type CellData = string;
@@ -19,15 +116,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const horizontalScrollbarRef = useRef<HTMLDivElement>(null);
 
-  const evaluateFormula = (formula: string): string => {
-    try {
-      const result = Function('"use strict";return (' + formula + ')')();
-      return result.toString();
-    } catch {
 
-    }
-    return 'ERROR';
-  };
 
   const parseCellReference = (ref: string): string => {
     ref = ref.substring(1)
@@ -112,6 +201,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     return letter;
   };
 
+
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
     const horizontalScrollbar = horizontalScrollbarRef.current;
@@ -139,6 +229,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
         horizontalScrollbar.removeEventListener('scroll', syncTableScroll);
       }
     };
+
   }, []);
 
   return (
@@ -186,6 +277,8 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
       </div>
     </div>
   );
+
 };
 
 export default Spreadsheet;
+export {evaluate}
