@@ -1,5 +1,5 @@
 import { AppDataSource } from '../data-source';
-import { User } from '../entity/User';
+import { User } from '../entity/Publisher';
 import { Spreadsheet } from '../entity/Spreadsheet';
 import { Update } from '../entity/Update';
 import { MoreThan } from 'typeorm';

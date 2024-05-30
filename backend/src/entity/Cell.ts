@@ -1,23 +1,20 @@
-//Basic entity to represent a cell
-
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Spreadsheet } from "./Spreadsheet";
 
 @Entity()
-export class User {
-
+export class Cell {
     @PrimaryGeneratedColumn()
-    id: String
+    id: number;
+
+    @ManyToOne(() => Spreadsheet, spreadsheet => spreadsheet.cells)
+    spreadsheet: Spreadsheet;
 
     @Column()
-    column: string
+    column: number;
 
     @Column()
-    row: number
+    row: number;
 
-    //this entity may not be neeccessary for MVP but 
-    // may be usd in to store styling on database for bonus
-    // example:
-    // @Column()
-    // cellColor: color
-
+    @Column("text")
+    content: string;
 }

@@ -3,10 +3,11 @@
    "version": "1.0.0",
    "main": "index.js",
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
       "start": "ts-node src/index.ts",
       "build": "tsc",
       "dev": "nodemon -w *.ts src/index.ts",
+      "test": "jest",
+      "test:watch": "jest --watch",
       "serve": "node dist/app.js",
       "typeorm": "typeorm-ts-node-commonjs"
    },

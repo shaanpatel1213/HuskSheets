@@ -1,32 +1,26 @@
-//Basic entity to represent a spreadsheet
-
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Publisher } from "./Publisher";
+import { Cell } from "./Cell";
+import { Update } from "./Update";
 
 @Entity()
 export class Spreadsheet {
-
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column()
-    primaryUserID: number
+    name: string;
 
-    @Column()
-    sheetData: string[][]
+    @ManyToOne(() => Publisher, publisher => publisher.spreadsheets)
+    publisher: Publisher;
 
-    @Column()
-    guest1UserID: number
+    @ManyToMany(() => Publisher)
+    @JoinTable()
+    subscribers: Publisher[];
 
-    @Column()
-    guest2UserID: number
+    @OneToMany(() => Cell, cell => cell.spreadsheet, { cascade: true })
+    cells: Cell[];
 
-    @Column()
-    guest3UserID: number
-
-    @Column()
-    guest4UserID: number
-
-    @Column()
-    guest5UserID: number
-
+    @OneToMany(() => Update, update => update.spreadsheet, { cascade: true })
+    updates: Update[];
 }

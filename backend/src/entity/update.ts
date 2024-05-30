@@ -3,12 +3,12 @@ import { Spreadsheet } from "./Spreadsheet";
 
 @Entity()
 export class Update {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @ManyToOne(() => Spreadsheet, (spreadsheet) => spreadsheet.id)
-  sheet: Spreadsheet;
+    @ManyToOne(() => Spreadsheet, spreadsheet => spreadsheet.updates)
+    spreadsheet: Spreadsheet;
 
-  @Column()
-  payload: string;
+    @Column("text")
+    payload: string;
 }
