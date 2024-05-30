@@ -1,7 +1,7 @@
 import { AppDataSource } from '../data-source';
 import { User } from '../entity/Publisher';
 import { Spreadsheet } from '../entity/Spreadsheet';
-import { Update } from '../entity/Update';
+import { Update } from '../entity/update';
 import { MoreThan } from 'typeorm';
 
 export class SpreadsheetService {
