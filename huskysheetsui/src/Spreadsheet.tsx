@@ -181,6 +181,19 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
     alert('updates is now:' + updates.current) // delete
   };
 
+  let ownsSheet = true;
+  const approveChanges = () => {
+    alert('changes updated!')
+    // 
+  }
+
+  // change so it accepts the current user as a string and current sheet and checks if that publisher owns sheet
+  const renderUpdateChanges = () => {
+    if(ownsSheet){
+      return <button onClick={approveChanges}>Update Changes</button>
+    }
+  }
+
   const addRow = () => {
     const newRow: RowData = new Array(data[0].length).fill('');
     setData([...data, newRow]);
@@ -216,6 +229,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
   const saveUpdates = () => {
     let allUpdates = updates.current;
     updates.current = "";
+    alert('saved')
     // send allUpdates to updatePublished or updateSubscription
     // need to add a way to check if publisher owns sheet
   }
