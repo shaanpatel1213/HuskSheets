@@ -5,7 +5,7 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 import { Publisher } from "./entity/Publisher"
 import { Spreadsheet } from "./entity/Spreadsheet";
-import { Update } from "./entity/Update";
+import { Update } from "./entity/update";
 import { Cell } from "./entity/Cell";
 
 export const AppDataSource = new DataSource({

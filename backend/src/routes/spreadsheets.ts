@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AppDataSource } from '../data-source';
 import { Spreadsheet } from '../entity/Spreadsheet';
-import { Update } from '../entity/Update';
+import { Update } from '../entity/update';
 import { Publisher } from '../entity/Publisher';
 import { Cell } from '../entity/Cell';
 import { MoreThan } from 'typeorm';
