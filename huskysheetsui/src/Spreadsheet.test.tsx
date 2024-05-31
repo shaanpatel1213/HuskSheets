@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import Spreadsheet from './Spreadsheet';
-import { evaluate } from "./Spreadsheet"
+import { evaluateOperands } from "./Spreadsheet"
 
 
 

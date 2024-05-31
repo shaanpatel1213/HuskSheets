@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { Publisher } from "./Publisher";
 import { Cell } from "./Cell";
-import { Update } from "./Update";
+import { Update } from "./update";
 
 @Entity()
 export class Spreadsheet {
