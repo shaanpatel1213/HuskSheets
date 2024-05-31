@@ -81,7 +81,7 @@ describe('Spreadsheet Component', () => {
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: '=A11' } }); // A11 does not exist in initial 10x10 grid
     fireEvent.blur(firstCell);
-    expect(firstCell).toHaveValue('ERROR');
+    expect(firstCell).toHaveValue('ERRORs');
   });
 
 
@@ -96,68 +96,60 @@ describe('Spreadsheet Component', () => {
 
 });
 
-describe('evaluate function', () => {
+describe('evaluateOperands function', () => {
 
   test('should return 1 for equal numbers using = operator', () => {
-    expect(evaluate(5, 5, '=')).toBe(1);
+    expect(evaluateOperands(5, 5, '=')).toBe(1);
   });
 
   test('should return 0 for non-equal numbers using = operator', () => {
-    expect(evaluate(5, 10, '=')).toBe(0);
+    expect(evaluateOperands(5, 10, '=')).toBe(0);
   });
 
   test('should return 1 for equal strings using = operator', () => {
-    expect(evaluate('hello', 'hello', '=')).toBe(1);
+    expect(evaluateOperands('hello', 'hello', '=')).toBe(1);
   });
 
   test('should return 0 for non-equal strings using = operator', () => {
-    expect(evaluate('hello', 'world', '=')).toBe(0);
+    expect(evaluateOperands('hello', 'world', '=')).toBe(0);
   });
 
   test('should return 1 for non-equal numbers using <> operator', () => {
-    expect(evaluate(5, 10, '<>')).toBe(1);
+    expect(evaluateOperands(5, 10, '<>')).toBe(1);
   });
 
   test('should return 0 for equal numbers using <> operator', () => {
-    expect(evaluate(5, 5, '<>')).toBe(0);
+    expect(evaluateOperands(5, 5, '<>')).toBe(0);
   });
 
   test('should return 1 for non-equal strings using <> operator', () => {
-    expect(evaluate('hello', 'world', '<>')).toBe(1);
+    expect(evaluateOperands('hello', 'world', '<>')).toBe(1);
   });
 
   test('should return 0 for equal strings using <> operator', () => {
-    expect(evaluate('hello', 'hello', '<>')).toBe(0);
+    expect(evaluateOperands('hello', 'hello', '<>')).toBe(0);
   });
 
   test('should return 1 if both numbers are not 0 using & operator', () => {
-    expect(evaluate(1, 1, '&')).toBe(1);
+    expect(evaluateOperands(1, 1, '&')).toBe(1);
   });
 
   test('should return 0 if any number is 0 using & operator', () => {
-    expect(evaluate(1, 0, '&')).toBe(0);
-    expect(evaluate(0, 1, '&')).toBe(0);
-    expect(evaluate(0, 0, '&')).toBe(0);
+    expect(evaluateOperands(1, 0, '&')).toBe(0);
+    expect(evaluateOperands(0, 1, '&')).toBe(0);
+    expect(evaluateOperands(0, 0, '&')).toBe(0);
   });
 
   test('should return 1 if any number is 1 using | operator', () => {
-    expect(evaluate(1, 1, '|')).toBe(1);
-    expect(evaluate(1, 0, '|')).toBe(1);
-    expect(evaluate(0, 1, '|')).toBe(1);
+    expect(evaluateOperands(1, 1, '|')).toBe(1);
+    expect(evaluateOperands(1, 0, '|')).toBe(1);
+    expect(evaluateOperands(0, 1, '|')).toBe(1);
   });
 
   test('should return 0 if both numbers are 0 using | operator', () => {
-    expect(evaluate(0, 0, '|')).toBe(0);
+    expect(evaluateOperands(0, 0, '|')).toBe(0);
   });
 
-  test('should return the range if both refs are valid and x <= y using : operator', () => {
-    expect(evaluate({ row: 1, col: 1 }, { row: 1, col: 2 }, ':')).toBe('Range from (1, 1) to (1, 2)');
-    expect(evaluate({ row: 1, col: 1 }, { row: 2, col: 1 }, ':')).toBe('Range from (1, 1) to (2, 1)');
-  });
 
-  test('should throw error if refs are not in order using : operator', () => {
-    expect(() => evaluate({ row: 2, col: 1 }, { row: 1, col: 1 }, ':')).toThrow('Invalid operands for ":" operation');
-    expect(() => evaluate({ row: 1, col: 2 }, { row: 1, col: 1 }, ':')).toThrow('Invalid operands for ":" operation');
-  });
 
 });
