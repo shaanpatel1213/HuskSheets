@@ -3,7 +3,7 @@ import app from '../app';
 import { AppDataSource } from '../data-source';
 import { Publisher } from '../entity/Publisher';
 import { Spreadsheet } from '../entity/Spreadsheet';
-import { Update } from '../entity/Update';
+import { Update } from '../entity/update';
 
 jest.setTimeout(15000)
 beforeAll(async () => {
