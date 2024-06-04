@@ -3,7 +3,7 @@ import app from '../app';
 import { AppDataSource } from '../data-source';
 import { Publisher } from '../entity/Publisher';
 import { Spreadsheet } from '../entity/Spreadsheet';
-import { Update } from '../entity/Update';
+import { Update } from '../entity/update';
 
 jest.setTimeout(15000)
 beforeAll(async () => {
@@ -51,6 +51,7 @@ describe('Spreadsheet API', () => {
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.value.length).toBeGreaterThan(0);
+    
   });
 
   it('should update a spreadsheet', async () => {
