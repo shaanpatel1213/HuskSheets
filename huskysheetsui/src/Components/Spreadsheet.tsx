@@ -119,7 +119,7 @@ const evaluateRange = (range: string, data: TableData): number => {
 
 
 const sumFunction = (args: any[], data: TableData): number => {
-  console.log("summing with args", args); // Debugging output
+  console.log("summing with args", args);
   let sum = 0;
   args.forEach((arg: any) => {
     if (typeof arg === 'string' && arg.includes(':')) {
@@ -132,7 +132,7 @@ const sumFunction = (args: any[], data: TableData): number => {
       sum += resolvedValue;
     }
   });
-  console.log("sum result:", sum); // Debugging output
+  console.log("sum result:", sum);
   return sum;
 };
 
@@ -201,7 +201,7 @@ const avgFunction = (args: string[], data: TableData): number => {
       }
     }
   });
-  return count > 0 ? sum / count : NaN;  // Return NaN in case of an error
+  return count > 0 ? sum / count : NaN;
 };
 
 const concatFunction = (args: string[], data: TableData): string => {
@@ -254,7 +254,7 @@ const getRangeFromReference = (ref: string, data: TableData): string[] => {
       values.push(data[row][col]);
     }
   }
-  console.log("values in range:", values); // Debugging output
+  console.log("values in range:", values);
   return values;
 };
 
@@ -538,4 +538,4 @@ const Spreadsheet: React.FC<SpreadsheetProps> = () => {
 };
 
 export default Spreadsheet;
-export {evaluateOperands}
+export {evaluateOperands, evaluateExpression, parseAndEvaluateExpression, type TableData}

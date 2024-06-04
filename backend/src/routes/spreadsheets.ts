@@ -4,8 +4,6 @@ import { Spreadsheet } from '../entity/Spreadsheet';
 import { Update } from '../entity/update';
 import { Publisher } from '../entity/Publisher';
 import { Cell } from '../entity/Cell';
-import { MoreThan } from 'typeorm';
-import { STATUS_CODES } from 'http';
 
 const router = Router();
 
@@ -32,15 +30,15 @@ const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) =>
     cell.content = term;
 
     await AppDataSource.manager.save(cell);
-
   }
 };
 
-router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+router.get('/register', async (req, res) => {
+  const username = req.query.username as string;
+  const password = req.query.password as string;
 
   if (!username || !password) {
-    return res.status(400).json({ success: false, message: 'Missing required fields' });
+    return res.status(400).json({ success: false, message: 'Missing required fields', value: [] });
   }
 
   const publisher = new Publisher();
@@ -48,58 +46,65 @@ router.post('/register', async (req, res) => {
   publisher.password = password;
 
   await AppDataSource.manager.save(publisher);
-  res.status(200).json({ success: true, message: 'Publisher registered' });
+  res.status(200).json({ success: true, message: null, value: [] });
 });
 
 router.get('/getPublishers', async (req, res) => {
   const publishers = await AppDataSource.manager.find(Publisher);
-  const result = publishers.map(publisher => ({ publisher: publisher.username }));
-  res.status(200).json({ success: true, value: result });
+  const result = publishers.map(publisher => ({
+    publisher: publisher.username,
+    sheet: null,
+    id: null,
+    payload: null
+  }));
+  res.status(200).json({ success: true, message: null, value: result });
+});
+
+router.post('/getSheets', async (req, res) => {
+  const { publisher } = req.body;
+  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
+  if (!user) {
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
+  }
+  const sheets = await AppDataSource.manager.find(Spreadsheet, { where: { publisher: user } });
+  const result = sheets.map(sheet => ({
+    publisher: user.username,
+    sheet: sheet.name,
+    id: null,
+    payload: null
+  }));
+  res.status(200).json({ success: true, message: null, value: result });
 });
 
 router.post('/createSheet', async (req, res) => {
-  const { publisher, name } = req.body;
+  const { publisher, sheet } = req.body;
   const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
   const spreadsheet = new Spreadsheet();
   spreadsheet.publisher = user;
-  spreadsheet.name = name;
-  spreadsheet.cells = [];
+  spreadsheet.name = sheet;
   await AppDataSource.manager.save(spreadsheet);
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true, message: null, value: [] });
 });
 
-router.get('/getSheets', async (req, res) => {
-  const { publisher } = req.query;
-  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher as string });
-  if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
-  }
-  const sheets = await AppDataSource.manager.find(Spreadsheet, { where: { publisher: user } });
-  const result = sheets.map(sheet => ({ publisher: user.username, sheetName: sheet.name }));
-  res.status(200).json({ success: true, value: result });
-});
-
-router.delete('/deleteSheet', async (req, res) => {
-  const { publisher, sheetName } = req.body;
+router.post('/deleteSheet', async (req, res) => {
+  const { publisher, sheet } = req.body;
   const user = await AppDataSource.manager.findOne(Publisher, {
-    where: { username: publisher },
-    relations: ['spreadsheets']
+    where: { username: publisher }
   });
 
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
 
   const spreadsheet = await AppDataSource.manager.findOne(Spreadsheet, {
-    where: { name: sheetName, publisher: user },
-    relations: ['cells', 'updates']
+    where: { name: sheet, publisher: user }
   });
 
   if (!spreadsheet) {
-    return res.status(400).json({ success: false, message: 'Sheet not found' });
+    return res.status(400).json({ success: false, message: 'Sheet not found', value: [] });
   }
 
   console.log("Deleting Spreadsheet: ", spreadsheet);
@@ -133,71 +138,74 @@ router.delete('/deleteSheet', async (req, res) => {
   console.log("Spreadsheet after removal", checkSpreadsheet);
 
   if (!checkSpreadsheet) {
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, message: null, value: [] });
   } else {
-    res.status(500).json({ success: false, message: 'Failed to delete spreadsheet' });
+    res.status(500).json({ success: false, message: 'Failed to delete spreadsheet', value: [] });
   }
 });
 
-
-
-
-router.get('/getUpdatesForSubscription', async (req, res) => {
-  const { publisher, sheetName, id } = req.query;
-  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher as string });
+router.post('/getUpdatesForSubscription', async (req, res) => {
+  const { publisher, sheet, id } = req.body;
+  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
 
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheetName as string, publisher: user });
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheet, publisher: user });
   if (!spreadsheet) {
-    return res.status(400).json({ success: false, message: 'Sheet not found' });
+    return res.status(400).json({ success: false, message: 'Sheet not found', value: [] });
   }
-  
-  const updates = await AppDataSource.manager.createQueryBuilder(Update, 'Update')
-  .innerJoinAndSelect('Update.spreadsheet', 'spreadsheet')
-  .where('spreadsheet.name = :name', { name: sheetName })  // Assuming `sheetId` is the sheet name
-  .andWhere('spreadsheet.publisher = :publisherId', { publisherId: user.id })
-  .andWhere('update.id > :id', { id })
-  .getMany();
 
+  const updates = await AppDataSource.manager.createQueryBuilder(Update, 'update')
+    .where('update.spreadsheet = :spreadsheet', { spreadsheet: spreadsheet.id })
+    .andWhere('update.id > :id', { id })
+    .getMany();
 
-  const result = updates.map(update => update.payload);
-  res.status(200).json({ success: true, value: result });
+  const result = updates.map(update => ({
+    publisher: user.username,
+    sheet: spreadsheet.name,
+    id: update.id.toString(),
+    payload: update.payload
+  }));
+
+  res.status(200).json({ success: true, message: null, value: result.length > 0 ? result : [{ publisher, sheet, id, payload: "" }] });
 });
 
-router.get('/getUpdatesForPublished', async (req, res) => {
-  const { publisher, sheetName, id } = req.query;
-  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher as string });
+router.post('/getUpdatesForPublished', async (req, res) => {
+  const { publisher, sheet, id } = req.body;
+  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheetName as string, publisher: user });
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheet, publisher: user });
   if (!spreadsheet) {
-    return res.status(400).json({ success: false, message: 'Sheet not found' });
+    return res.status(400).json({ success: false, message: 'Sheet not found', value: [] });
   }
 
-  const updates = await AppDataSource.manager.createQueryBuilder(Update, 'Update')
-  .innerJoinAndSelect('Update.spreadsheet', 'spreadsheet')
-  .where('spreadsheet.name = :name', { name: sheetName })  // Assuming `sheetId` is the sheet name
-  .andWhere('spreadsheet.publisher = :publisherId', { publisherId: user.id })
-  .andWhere('update.id > :id', { id })
-  .getMany();
+  const updates = await AppDataSource.manager.createQueryBuilder(Update, 'update')
+    .where('update.spreadsheet = :spreadsheet', { spreadsheet: spreadsheet.id })
+    .andWhere('update.id > :id', { id })
+    .getMany();
 
+  const result = updates.map(update => ({
+    publisher: user.username,
+    sheet: spreadsheet.name,
+    id: update.id.toString(),
+    payload: update.payload
+  }));
 
-  const result = updates.map(update => update.payload);
-  res.status(200).json({ success: true, value: result });
+  res.status(200).json({ success: true, message: null, value: result.length > 0 ? result : [{ publisher, sheet, id, payload: "" }] });
 });
 
 router.post('/updatePublished', async (req, res) => {
-  const { publisher, sheetName, payload } = req.body;
+  const { publisher, sheet, payload } = req.body;
   const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheetName, publisher: user });
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheet, publisher: user });
   if (!spreadsheet) {
-    return res.status(400).json({ success: false, message: 'Sheet not found' });
+    return res.status(400).json({ success: false, message: 'Sheet not found', value: [] });
   }
 
   await parseAndUpdateCells(spreadsheet, payload);
@@ -207,20 +215,20 @@ router.post('/updatePublished', async (req, res) => {
   updateRecord.payload = payload;
   await AppDataSource.manager.save(updateRecord);
 
-  res.status(200).json({ success: true});
+  res.status(200).json({ success: true, message: null, value: [] });
 });
 
 router.post('/updateSubscription', async (req, res) => {
-  const { publisher, sheetName, payload } = req.body;
+  const { publisher, sheet, payload } = req.body;
   const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
 
   if (!user) {
-    return res.status(400).json({ success: false, message: 'Publisher not found' });
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
   }
 
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheetName, publisher: user });
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, { name: sheet, publisher: user });
   if (!spreadsheet) {
-    return res.status(400).json({ success: false, message: 'Sheet not found' });
+    return res.status(400).json({ success: false, message: 'Sheet not found', value: [] });
   }
 
   await parseAndUpdateCells(spreadsheet, payload);
@@ -230,7 +238,7 @@ router.post('/updateSubscription', async (req, res) => {
   updateRecord.payload = payload;
   await AppDataSource.manager.save(updateRecord);
 
-  res.status(200).json({ success: true});
+  res.status(200).json({ success: true, message: null, value: [] });
 });
 
 export default router;
