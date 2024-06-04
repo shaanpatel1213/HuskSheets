@@ -24,9 +24,11 @@ const Login = () => {
 
     // Register with the server
     const result = await register();
+    console.log('Register result:', result); // Log the result of the register function
     if (result && result.success) {
       // Fetch publishers to validate user
       const publishersResult = await getPublishers();
+      console.log('Get publishers result:', publishersResult); // Log the result of the getPublishers function
       if (publishersResult && publishersResult.success) {
         const userNames = publishersResult.value.map((publisher: { publisher: string }) => publisher.publisher);
         if (userNames.includes(userName)) {

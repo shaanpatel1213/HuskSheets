@@ -2,6 +2,7 @@
   "name": "huskysheetsui",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://husksheets.fly.dev",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/user-event": "^13.5.0",
