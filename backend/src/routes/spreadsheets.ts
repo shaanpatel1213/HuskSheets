@@ -60,6 +60,22 @@ router.get('/getPublishers', async (req, res) => {
   res.status(200).json({ success: true, message: null, value: result });
 });
 
+router.post('/getSheets', async (req, res) => {
+  const { publisher } = req.body;
+  const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
+  if (!user) {
+    return res.status(400).json({ success: false, message: 'Publisher not found', value: [] });
+  }
+  const sheets = await AppDataSource.manager.find(Spreadsheet, { where: { publisher: user } });
+  const result = sheets.map(sheet => ({
+    publisher: user.username,
+    sheet: sheet.name,
+    id: null,
+    payload: null
+  }));
+  res.status(200).json({ success: true, message: null, value: result });
+});
+
 router.post('/createSheet', async (req, res) => {
   const { publisher, sheet } = req.body;
   const user = await AppDataSource.manager.findOneBy(Publisher, { username: publisher });
