@@ -1,6 +1,7 @@
+// src/Components/Login.tsx
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { register, getPublishers } from '../Utilities/utils';
+import { getPublishers } from '../Utilities/utils';
 import './login.css';
 
 const Login = () => {
@@ -20,27 +21,11 @@ const Login = () => {
 
     // Encode credentials and set it to localStorage
     const auth = btoa(`${userName}:${password}`);
-    localStorage.setItem('auth', auth);
-
-    // Register with the server
-    const result = await register();
-    console.log('Register result:', result); // Log the result of the register function
-    if (result && result.success) {
-      // Fetch publishers to validate user
-      const publishersResult = await getPublishers();
-      console.log('Get publishers result:', publishersResult); // Log the result of the getPublishers function
-      if (publishersResult && publishersResult.success) {
-        const userNames = publishersResult.value.map((publisher: { publisher: string }) => publisher.publisher);
-        if (userNames.includes(userName)) {
-          history.push('/home');
-        } else {
-          setError('Incorrect username or password');
-        }
-      } else {
-        setError('Failed to fetch publishers.');
-      }
+    if (auth === btoa('team18:qdKoHqmiP@6x`_1Q')) {
+      localStorage.setItem('auth', auth);
+      history.push('/home');
     } else {
-      setError('Failed to register.');
+      setError('Incorrect username or password');
     }
   };
 
