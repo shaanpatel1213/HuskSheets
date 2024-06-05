@@ -159,10 +159,11 @@ const HomePage: React.FC = () => {
           <CreateButton onClick={handleCreateSheet}>Create Sheet</CreateButton>
         </InputContainer>
         <SheetList>
-          {sheets.map((sheet) => (
+          {sheets.map((sheet, index) => (
             <SheetItem key={sheet.id}>
-              <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
-              <DeleteButton onClick={() => handleDeleteSheet(sheet.name)}>X</DeleteButton>
+              <Link to={`/spreadsheet/${sheet.id}`}><div>{sheet.name}</div></Link>
+              <DeleteButton data-testid={`${index}-X`}
+                onClick={() => handleDeleteSheet(sheet.name)}>X</DeleteButton>
             </SheetItem>
           ))}
           <SheetItem>
