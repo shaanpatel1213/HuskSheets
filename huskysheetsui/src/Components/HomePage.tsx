@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { createSheet, getSheets, deleteSheet } from '../Utilities/utils';
+import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
 
 const HomePageContainer = styled.div`
   display: flex;
@@ -88,16 +88,42 @@ const CreateButton = styled.button`
   margin-left: 10px;
 `;
 
+const RegisterButton = styled.button`
+  background: green;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+`;
+
 const HomePage: React.FC = () => {
   const userName = 'team18';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);
+  const [otherSheets, setOtherSheets] = useState<{ publisher: string; sheets: { id: string; name: string }[] }[]>([]);
   const [newSheetName, setNewSheetName] = useState('');
   const [sheetCounter, setSheetCounter] = useState(1);
   const [error, setError] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
-    fetchSheets();
+    checkPublisher();
   }, []);
+
+  const checkPublisher = async () => {
+    const result = await getPublishers();
+    if (result && result.success) {
+      const userNames = result.value.map((publisher: { publisher: string }) => publisher.publisher);
+      if (userNames.includes(userName)) {
+        setIsRegistered(true);
+        fetchSheets();
+        fetchOtherSheets(userNames.filter((name: string) => name !== userName));
+      }
+    } else {
+      setError('Failed to fetch publishers');
+    }
+  };
 
   const fetchSheets = async () => {
     const result = await getSheets(userName);
@@ -106,6 +132,18 @@ const HomePage: React.FC = () => {
     } else {
       setError('Failed to fetch sheets');
     }
+  };
+
+  const fetchOtherSheets = async (otherPublishers: string[]) => {
+    const allSheets = await Promise.all(otherPublishers.map(async (publisher) => {
+      const result = await getSheets(publisher);
+      if (result && result.success) {
+        return { publisher, sheets: result.value.map(sheet => ({ id: sheet.id, name: sheet.sheet })) };
+      } else {
+        return { publisher, sheets: [] };
+      }
+    }));
+    setOtherSheets(allSheets);
   };
 
   const handleCreateSheet = async () => {
@@ -137,6 +175,17 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const handleRegister = async () => {
+    const result = await register();
+    if (result && result.success) {
+      setIsRegistered(true);
+      fetchSheets();
+      fetchOtherSheets([]);
+    } else {
+      setError('Failed to register');
+    }
+  };
+
   const handleSheetClick = (id: string) => {
     // Update this to navigate to the correct sheet
     // history.push(`/spreadsheet/${id}`);
@@ -149,26 +198,47 @@ const HomePage: React.FC = () => {
       </NavBar>
       <MainContent>
         {error && <p className="error">{error}</p>}
-        <InputContainer>
-          <SheetInput
-            type="text"
-            value={newSheetName}
-            onChange={(e) => setNewSheetName(e.target.value)}
-            placeholder="Enter new sheet name"
-          />
-          <CreateButton onClick={handleCreateSheet}>Create Sheet</CreateButton>
-        </InputContainer>
-        <SheetList>
-          {sheets.map((sheet) => (
-            <SheetItem key={sheet.id}>
-              <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
-              <DeleteButton onClick={() => handleDeleteSheet(sheet.name)}>X</DeleteButton>
-            </SheetItem>
-          ))}
-          <SheetItem>
-            <AddSheetButton onClick={handleCreateSheet}>+</AddSheetButton>
-          </SheetItem>
-        </SheetList>
+        {isRegistered ? (
+          <>
+            <h2>My Sheets</h2>
+            <InputContainer>
+              <SheetInput
+                type="text"
+                value={newSheetName}
+                onChange={(e) => setNewSheetName(e.target.value)}
+                placeholder="Enter new sheet name"
+              />
+              <CreateButton onClick={handleCreateSheet}>Create Sheet</CreateButton>
+            </InputContainer>
+            <SheetList>
+              {sheets.map((sheet) => (
+                <SheetItem key={sheet.id}>
+                  <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
+                  <DeleteButton onClick={() => handleDeleteSheet(sheet.name)}>X</DeleteButton>
+                </SheetItem>
+              ))}
+              <SheetItem>
+                <AddSheetButton onClick={handleCreateSheet}>+</AddSheetButton>
+              </SheetItem>
+            </SheetList>
+
+            <h2>Other Publishers' Sheets</h2>
+            {otherSheets.map((publisherSheets) => (
+              <div key={publisherSheets.publisher}>
+                <h3>{publisherSheets.publisher}</h3>
+                <SheetList>
+                  {publisherSheets.sheets.map((sheet) => (
+                    <SheetItem key={sheet.id}>
+                      <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
+                    </SheetItem>
+                  ))}
+                </SheetList>
+              </div>
+            ))}
+          </>
+        ) : (
+          <RegisterButton onClick={handleRegister}>Register as Publisher</RegisterButton>
+        )}
       </MainContent>
     </HomePageContainer>
   );
