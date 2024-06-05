@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
 
 const HomePageContainer = styled.div`
@@ -186,11 +185,6 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleSheetClick = (id: string) => {
-    // Update this to navigate to the correct sheet
-    // history.push(`/spreadsheet/${id}`);
-  };
-
   return (
     <HomePageContainer>
       <NavBar>
@@ -213,7 +207,7 @@ const HomePage: React.FC = () => {
             <SheetList>
               {sheets.map((sheet) => (
                 <SheetItem key={sheet.id}>
-                  <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
+                  <Link to={`/spreadsheet/${userName}/${sheet.name}/${sheet.id}/false`}>{sheet.name}</Link>
                   <DeleteButton onClick={() => handleDeleteSheet(sheet.name)}>X</DeleteButton>
                 </SheetItem>
               ))}
@@ -228,8 +222,8 @@ const HomePage: React.FC = () => {
                 <h3>{publisherSheets.publisher}</h3>
                 <SheetList>
                   {publisherSheets.sheets.map((sheet) => (
-                    <SheetItem key={sheet.id}>
-                      <Link to={`/spreadsheet/${sheet.id}`}>{sheet.name}</Link>
+                    <SheetItem key={sheet.name}>
+                     <Link to={`/spreadsheet/${publisherSheets.publisher}/${sheet.name}/${sheet.id}/true`}>{sheet.name}</Link>
                     </SheetItem>
                   ))}
                 </SheetList>
@@ -244,4 +238,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export { HomePage };
+export { HomePage}

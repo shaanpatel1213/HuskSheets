@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import Spreadsheet from './Spreadsheet';
+import {Spreadsheet} from './Spreadsheet';
 import { evaluateOperands, evaluateExpression, parseAndEvaluateExpression, TableData } from "./Spreadsheet";
 
 
@@ -10,7 +10,11 @@ import { evaluateOperands, evaluateExpression, parseAndEvaluateExpression, Table
 
 describe('Spreadsheet Component', () => {
   test('renders initial 10 rows and 10 columns', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     // Check that there are 10 rows
     const rows = screen.getAllByRole('row');
@@ -22,7 +26,11 @@ describe('Spreadsheet Component', () => {
   });
 
   test('allows user to type into a cell', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: 'test' } });
@@ -30,7 +38,11 @@ describe('Spreadsheet Component', () => {
   });
 
   test('adds a row when "Add Row" button is clicked', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const addButton = screen.getByText('Add Row');
     fireEvent.click(addButton);
@@ -40,7 +52,11 @@ describe('Spreadsheet Component', () => {
   });
 
   test('removes a row when "Remove Row" button is clicked', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const removeButton = screen.getByText('Remove Row');
     fireEvent.click(removeButton);
@@ -50,7 +66,11 @@ describe('Spreadsheet Component', () => {
   });
 
   test('adds a column when "Add Column" button is clicked', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const addButton = screen.getByText('Add Column');
     fireEvent.click(addButton);
@@ -60,7 +80,11 @@ describe('Spreadsheet Component', () => {
   });
 
   test('removes a column when "Remove Column" button is clicked', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const removeButton = screen.getByText('Remove Column');
     fireEvent.click(removeButton);
@@ -70,14 +94,22 @@ describe('Spreadsheet Component', () => {
   });
 
   test('can edit cell values', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
 
     const firstCell = screen.getAllByRole('textbox', { name: '' })[0];
     fireEvent.change(firstCell, { target: { value: 'test' } });
     expect(firstCell).toHaveValue('test');
   });
   test('returns ERROR for invalid cell reference in formula', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: '=A11' } }); // A11 does not exist in initial 10x10 grid
     fireEvent.blur(firstCell);
@@ -86,7 +118,11 @@ describe('Spreadsheet Component', () => {
 
 
   test('calculates the cell value correctly when a formula is entered', () => {
-    render(<Spreadsheet />);
+    render(<Spreadsheet sheet={{
+      id: null,
+      name: "",
+      publisher: "",
+    }} isSubscriber={false} />);
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: '=2+2' } });
     fireEvent.blur(firstCell);
