@@ -4,6 +4,8 @@ import { Spreadsheet } from '../entity/Spreadsheet';
 import { Update } from '../entity/update';
 import { Publisher } from '../entity/Publisher';
 import { Cell } from '../entity/Cell';
+import auth from '../services/auth';
+import { User } from '../entity/User';
 
 const router = Router();
 
@@ -33,21 +35,22 @@ const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) =>
   }
 };
 
-router.get('/register', async (req, res) => {
-  const username = req.query.username as string;
-  const password = req.query.password as string;
+router.use(auth);
 
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: 'Missing required fields', value: [] });
+router.get('/register', async (req, res) => {
+  const { user_name, password } = req.user!;
+
+  let publisher = await AppDataSource.manager.findOneBy(Publisher, { username: user_name });
+  if (!publisher) {
+    publisher = new Publisher();
+    publisher.username = user_name;
+    publisher.password = password;
+    await AppDataSource.manager.save(publisher);
   }
 
-  const publisher = new Publisher();
-  publisher.username = username;
-  publisher.password = password;
-
-  await AppDataSource.manager.save(publisher);
-  res.status(200).json({ success: true, message: null, value: [] });
+  res.status(200).json({ success: true, message: user_name, value: [] });
 });
+
 
 router.get('/getPublishers', async (req, res) => {
   const publishers = await AppDataSource.manager.find(Publisher);

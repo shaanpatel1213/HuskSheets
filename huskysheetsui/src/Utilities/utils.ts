@@ -5,6 +5,10 @@ const API_URL = '/api/v1';
 
 const username = 'team18';
 const password = 'qdKoHqmiP@6x`_1Q';
+
+// const username = 'user1';
+// const password = 'password1';
+
 const auth = btoa(`${username}:${password}`);
 
 const getAuthHeader = () => {
