@@ -1,10 +1,12 @@
 import express from 'express';
 import "reflect-metadata";
+import cors from 'cors';
 import spreadsheetsRouter from './routes/spreadsheets';
 
 const app = express();
-const port = 3001;
+const port = 3002;
 
+app.use(cors());
 app.use(express.json());
 app.use('/api/shubTest', spreadsheetsRouter);
 
