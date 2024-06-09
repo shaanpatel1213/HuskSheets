@@ -9,18 +9,31 @@ type TableData = RowData[];
 // Utility functions for spreadsheet calculations
 
 export const parseAndEvaluateExpression = (expression: string, data: TableData): string => {
-    try {
-      let parsedExpression = parseExpression(expression);
-      let result = evaluateExpression(parsedExpression, data);
+  try {
+    console.log("we are parsing", expression)
+    let parsedExpression = parseExpression(expression);
+    console.log("evaluateing", parsedExpression);
+    let result = evaluateExpression(parsedExpression, data);
+    // Check if the result is a number or a basic value and return directly
+    if (!isNaN(Number(result))) {
+      console.log("result is ", result);
       return result.toString();
-    } catch (error) {
-      console.error(error);
-      return 'ERROR';
     }
-  };
+    return result.toString();
+  } catch (error) {
+    console.error(error);
+    return 'ERROR';
+  }
+};
   
   const parseExpression = (expression: string) => {
     console.log("parsing expression", expression);
+
+
+    if (!isNaN(Number(expression.trim()))) {
+      return { value: Number(expression.trim()) };
+    }
+
     //match nested function call
     const nestedFuncMatch = expression.match(/^\s*([\w\$]+)\s*\((.*)\)\s*$/);
     if (nestedFuncMatch) {
@@ -30,6 +43,29 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
       return { func, args };
     }
   
+    if (expression.startsWith('(') && expression.endsWith(')')) {
+      const innerExpression = expression.slice(1, -1);
+      // Check if the parentheses match
+      let depth = 0;
+      let isMatching = true;
+      for (let i = 0; i < innerExpression.length; i++) {
+        if (innerExpression[i] === '(') depth++;
+        if (innerExpression[i] === ')') depth--;
+        if (depth < 0) {
+          isMatching = false;
+          break;
+        }
+      }
+      if (isMatching && depth === 0) {
+        expression = innerExpression;
+        console.log(innerExpression);
+      }
+    }
+
+    if (!isNaN(Number(expression.trim()))) {
+      return { value: Number(expression.trim()) };
+    }
+
     //match range with nested function
     const rangeWithFuncMatch = expression.match(/^\s*([\w\$]+)\s*:\s*([\w\$\(][^\)]*\)\s*)$/);
     if (rangeWithFuncMatch) {
@@ -49,16 +85,19 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
     }
   
     //match operators and operands
-    const opMatch = expression.match(/^\s*(\$?[A-Z]+\d*|\d+)\s*([=<>|&:/*+-])\s*(\$?[A-Z]+\d*|\d+)\s*$/);
+    const opMatch = expression.match(/^\s*(\$?[A-Z]+\d*|\d*\.?\d+)\s*([=<>|&:/*+-])\s*(\$?[A-Z]+\d*|\d*\.?\d+)\s*$/);
     if (opMatch) {
       const x = parseOperand(opMatch[1]);
       const operator = opMatch[2];
       const y = parseOperand(opMatch[3]);
       return { x, y, operator };
     }
+
+    
   
     throw new Error('invalid expression format');
   };
+  
   
   const parseOperand = (operand: string): number | string | Ref => {
     if (!isNaN(Number(operand))) {
@@ -71,6 +110,10 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
   };
   
   const evaluateExpression = (parsedExpression: any, data: TableData): number | string => {
+    if (parsedExpression.value !== undefined) {
+      return parsedExpression.value;
+    }
+    
     if (parsedExpression.func) {
       const { func, args } = parsedExpression;
       const resolvedArgs = args.map((arg: string) => {
@@ -95,6 +138,8 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
           return ifFunction(resolvedArgs, data);
         case 'DEBUG':
           return debugFunction(resolvedArgs, data);
+        case 'COPY':
+          return copyFunction(resolvedArgs, data);
         default:
           throw new Error('function not supported');
       }
@@ -123,20 +168,29 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
   const sumFunction = (args: any[], data: TableData): number => {
     console.log("summing with args", args);
     let sum = 0;
+  
     args.forEach((arg: any) => {
       if (typeof arg === 'string' && arg.includes(':')) {
+        // Handle range
         const range = getRangeFromReference(arg, data);
         range.forEach(value => {
           sum += parseFloat(value) || 0;
         });
+      } else if (typeof arg === 'string' && arg.match(/^\$?[A-Z]+\d*$/)) {
+        // Handle individual cell reference
+        const cellValue = resolveCellReference(arg, data);
+        sum += parseFloat(cellValue) || 0;
       } else {
+        // Handle direct numeric value
         const resolvedValue = parseFloat(arg) || 0;
         sum += resolvedValue;
       }
     });
+  
     console.log("sum result:", sum);
     return sum;
   };
+  
   
   const minFunction = (args: string[], data: TableData): number => {
     let min = Infinity;
@@ -223,6 +277,7 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
   const evaluateCondition = (condition: string, data: TableData): boolean => {
     // Evaluate the condition expression
     const parsedExpression = parseExpression(condition);
+    console.log("reparsing", parsedExpression);
     const result = evaluateExpression(parsedExpression, data);
     return parseFloat(result.toString()) !== 0;
   };
@@ -233,6 +288,40 @@ export const parseAndEvaluateExpression = (expression: string, data: TableData):
     }
     return resolveOperand(args[0], data).toString();
   };
+
+  const copyFunction = (args: string[], data: TableData): string => {
+    if (args.length !== 2) {
+      throw new Error('COPY function requires 2 arguments');
+    }
+  
+    const sourceRef = args[0];
+    const targetRef = args[1].replace(/"/g, ''); // Remove the double quotes
+  
+    const sourceValue = resolveCellReference(sourceRef, data);
+    const targetCoords = parseCellReference(targetRef);
+    data[targetCoords.row][targetCoords.col] = sourceValue;
+  
+    return sourceValue;
+  };
+  
+  const parseCellReference = (ref: string): Ref => {
+    ref = ref.startsWith('$') ? ref.substring(1) : ref;
+    const match = ref.match(/^([A-Z]+)(\d+)$/);
+    console.log(ref);
+    if (!match) throw new Error('Invalid cell reference');
+  
+    const colLetters = match[1];
+    const rowIndex = parseInt(match[2], 10) - 1;
+  
+    let colIndex = 0;
+    for (let i = 0; i < colLetters.length; i++) {
+      colIndex = colIndex * 26 + (colLetters.charCodeAt(i) - 65 + 1);
+    }
+    colIndex -= 1;
+  
+    return { row: rowIndex, col: colIndex };
+  };
+  
   
   const getRangeFromReference = (ref: string, data: TableData): string[] => {
     console.log("getting range from reference:", ref); // Debugging output
