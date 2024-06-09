@@ -6,7 +6,7 @@ import { Buffer } from 'buffer';
 export const seedUsers = async () => {
   const users = [
     { user_name: 'user1', password: 'password1' },
-    { user_name: 'user2', password: 'password2' },
+    { user_name: 'user222', password: 'password222' },
     { user_name: 'team18', password: 'qdKoHqmiP@6x`_1Q' },
   ];
 
