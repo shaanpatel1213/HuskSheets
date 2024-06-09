@@ -5,7 +5,7 @@ import {
   evaluateOperands,
   evaluateExpression,
   type TableData
-} from '../Utilities/SpreadsheetUtils';
+} from '../Utilities/CellFunctionalities';
 import {
   getUpdatesForSubscription,
   getUpdatesForPublished,
