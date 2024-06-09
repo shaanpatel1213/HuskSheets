@@ -1,4 +1,3 @@
-// src/Utilities/SpreadsheetUtils.ts
 import '../Components/Spreadsheet.css';
 type Ref = { row: number, col: number };
 
