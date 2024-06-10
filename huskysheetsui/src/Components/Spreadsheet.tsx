@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
+import React, {useState, useEffect, useRef, ChangeEvent, MouseEventHandler} from 'react';
 import './Spreadsheet.css';
 import {
   parseAndEvaluateExpression,
@@ -60,8 +60,16 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     } else {
       console.error('Failed to fetch updates');
     }
+    upDateAllCells();
   };
+  const upDateAllCells = ()  =>{
+    for(let i = 0; i < visualData.length; i++){
+      for (let j = 0; j < visualData[0].length; j++){
+        CalculateCell(i, j, literalString[i][j]);
+      }
+    }
 
+  }
   const parseUpdate = (update: string) => {
     const match = update.match(/\$([A-Z]+)(\d+)\s(.+)/);
     if (!match) throw new Error('Invalid update format');
@@ -88,10 +96,12 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   // Ownership : Shaanpatel1213
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
-    const newData = visualData.map((row, rIdx) =>
+    const newData = literalString.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
+    setliteralString(newData)
     setVisualData(newData);
+
   };
 
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
@@ -107,10 +117,9 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   };
   // Ownership : Shaanpatel1213
   const evaluateCell = (cell: string) => {
-    if (cell.startsWith('=')) {
+    while (cell.startsWith('=')) {
       const formula = cell.slice(1);
-      let value = parseAndEvaluateExpression(formula, visualData);
-      return value;
+      cell = parseAndEvaluateExpression(formula, visualData);
     }
     return cell;
   };
@@ -146,6 +155,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
     return letter;
   };
+  const handleFocus = (rows : number, col : number) =>{
+    const newData = visualData.map((row, rIdx) =>
+        row.map((cell, cIdx) => (rIdx === rows && cIdx === col ? literalString[rows][col] : cell))
+    );
+    setVisualData(newData);
+  }
+
 
   const saveUpdates = async () => {
     let allUpdates = updates.current.substring(0, updates.current.length);
@@ -228,6 +244,9 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
                         }
                         onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
                           handleBlur(rowIndex, colIndex, e.target.value)
+                        }
+                        onClick={ (e ) =>
+                           handleFocus(rowIndex, colIndex)
                         }
                       />
                     </td>
