@@ -13,6 +13,12 @@ const password = 'qdKoHqmiP@6x`_1Q';
 
 const auth = btoa(`${username}:${password}`);
 
+/**
+ * Generates the authentication header for API requests.
+ * @returns {Object} The authentication header.
+ *
+ * Ownership: BrandonPetersen
+ */
 const getAuthHeader = () => {
   console.log('Encoded auth string:', auth); // Log the encoded auth string
   return {
@@ -36,11 +42,24 @@ interface Result {
   time: number;
 }
 
+
+/**
+ * Checks if the given error is an AxiosError.
+ * @param {any} error - The error to check.
+ * @returns {boolean} True if the error is an AxiosError, false otherwise.
+ *
+ * Ownership: BrandonPetersen
+ */
 const isAxiosError = (error: any): error is AxiosError => {
   return (error as AxiosError).isAxiosError !== undefined;
 };
 
-// Register with the server
+/**
+ * Registers a new publisher with the server.
+ * @returns {Promise<Result | null>} The result of the registration.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const register = async (): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -58,6 +77,13 @@ export const register = async (): Promise<Result | null> => {
   }
 };
 
+
+/**
+ * Retrieves the list of registered publishers.
+ * @returns {Promise<Result | null>} The list of publishers.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const getPublishers = async (): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -74,7 +100,14 @@ export const getPublishers = async (): Promise<Result | null> => {
   }
 };
 
-// Create a new sheet
+/**
+ * Creates a new sheet for the given publisher.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet to create.
+ * @returns {Promise<Result | null>} The result of the sheet creation.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const createSheet = async (publisher: string, sheet: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -94,7 +127,13 @@ export const createSheet = async (publisher: string, sheet: string): Promise<Res
   }
 };
 
-// Get sheets for a publisher
+/**
+ * Retrieves the list of sheets for the given publisher.
+ * @param {string} publisher - The name of the publisher.
+ * @returns {Promise<Result | null>} The list of sheets.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const getSheets = async (publisher: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -111,7 +150,14 @@ export const getSheets = async (publisher: string): Promise<Result | null> => {
   }
 };
 
-// Delete a sheet
+/**
+ * Deletes a sheet for the given publisher.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet to delete.
+ * @returns {Promise<Result | null>} The result of the sheet deletion.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const deleteSheet = async (publisher: string, sheet: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -130,7 +176,15 @@ export const deleteSheet = async (publisher: string, sheet: string): Promise<Res
   }
 };
 
-// Get updates for a subscription
+/**
+ * Retrieves updates for a subscription.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} id - The ID of the last known update.
+ * @returns {Promise<Result | null>} The updates for the subscription.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -147,7 +201,15 @@ export const getUpdatesForSubscription = async (publisher: string, sheet: string
   }
 };
 
-// Get updates for published sheets
+/**
+ * Retrieves updates for published sheets.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} id - The ID of the last known update.
+ * @returns {Promise<Result | null>} The updates for the published sheets.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const getUpdatesForPublished = async (publisher: string, sheet: string, id: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -164,7 +226,15 @@ export const getUpdatesForPublished = async (publisher: string, sheet: string, i
   }
 };
 
-// Update a published sheet
+/**
+ * Updates a published sheet.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} payload - The update payload.
+ * @returns {Promise<Result | null>} The result of the update.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const updatePublished = async (publisher: string, sheet: string, payload: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();
@@ -181,7 +251,15 @@ export const updatePublished = async (publisher: string, sheet: string, payload:
   }
 };
 
-// Update a subscription
+/**
+ * Updates a subscription.
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} payload - The update payload.
+ * @returns {Promise<Result | null>} The result of the update.
+ *
+ * Ownership: BrandonPetersen
+ */
 export const updateSubscription = async (publisher: string, sheet: string, payload: string): Promise<Result | null> => {
   try {
     const headers = getAuthHeader();

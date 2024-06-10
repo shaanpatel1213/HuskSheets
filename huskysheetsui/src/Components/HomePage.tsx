@@ -52,6 +52,7 @@ const AddSheetButton = styled.button`
   font-size: 50px;
 `;
 
+//Ownership : BrandonPetersen
 const DeleteButton = styled.button`
   position: absolute;
   top: 5px;
@@ -64,12 +65,14 @@ const DeleteButton = styled.button`
   padding: 5px;
 `;
 
+//Ownership : BrandonPetersen
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 `;
 
+//Ownership : BrandonPetersen
 const SheetInput = styled.input`
   padding: 10px;
   font-size: 16px;
@@ -77,6 +80,7 @@ const SheetInput = styled.input`
   border-radius: 4px;
 `;
 
+//Ownership : BrandonPetersen
 const CreateButton = styled.button`
   background: #007bff;
   color: white;
@@ -87,6 +91,7 @@ const CreateButton = styled.button`
   margin-left: 10px;
 `;
 
+//Ownership : BrandonPetersen
 const RegisterButton = styled.button`
   background: green;
   color: white;
@@ -96,9 +101,10 @@ const RegisterButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
 `;
-// Ownership : Shaanpatel1213 and BrandonPeterson
+// HomePage component definition
+// Ownership: Shaanpatel1213 and BrandonPetersen
 const HomePage: React.FC = () => {
-  const userName = 'team18';
+  const userName = localStorage.getItem('userName') || '';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);
   const [otherSheets, setOtherSheets] = useState<{ publisher: string; sheets: { id: string; name: string }[] }[]>([]);
   const [newSheetName, setNewSheetName] = useState('');
@@ -110,6 +116,11 @@ const HomePage: React.FC = () => {
     checkPublisher();
   }, []);
 
+
+    /**
+   * Checks if the current user is a registered publisher and fetches sheets.
+   * Ownership: BrandonPetersen
+   */
   const checkPublisher = async () => {
     const result = await getPublishers();
     if (result && result.success) {
@@ -124,6 +135,12 @@ const HomePage: React.FC = () => {
     }
   };
 
+     /**
+   * Fetches sheets for the current user.
+   * @returns {sheets[]} - List of sheets beloning to each publisher with the user's name
+   *
+   * Ownership: BrandonPetersen
+   */
   const fetchSheets = async () => {
     const result = await getSheets(userName);
     if (result && result.success) {
@@ -133,6 +150,13 @@ const HomePage: React.FC = () => {
     }
   };
 
+    /**
+   * Fetches sheets for other publishers.
+   * @param {string[]} otherPublishers - List of other publishers.
+   * @returns {sheets[]} - List of sheets beloning to each publisher
+   *
+   * Ownership: BrandonPetersen
+   */
   const fetchOtherSheets = async (otherPublishers: string[]) => {
     const allSheets = await Promise.all(otherPublishers.map(async (publisher) => {
       const result = await getSheets(publisher);
@@ -145,6 +169,10 @@ const HomePage: React.FC = () => {
     setOtherSheets(allSheets);
   };
 
+  /**
+   * Handles the creation of a new sheet using the sheet name in the input bar
+   * Ownership: BrandonPetersen
+   */
   const handleCreateSheet = async () => {
     let sheetName = newSheetName.trim();
     if (!sheetName) {
@@ -162,6 +190,14 @@ const HomePage: React.FC = () => {
     }
   };
 
+
+  /**
+   * Handles the deletion of a sheet.
+   * @param {string} sheet - The name of the sheet to delete.
+   * @returns {Promise<void>}
+   *
+   * Ownership: BrandonPetersen
+   */
   const handleDeleteSheet = async (sheet: string) => {
     const sheetName = sheet;
     console.log('Attempting to delete sheet with name:', sheetName); // Log the sheet ID
@@ -174,6 +210,11 @@ const HomePage: React.FC = () => {
     }
   };
 
+    /**
+   * Handles the registration of a new publisher.
+   *
+   * Ownership: BrandonPetersen
+   */
   const handleRegister = async () => {
     const result = await register();
     if (result && result.success) {
@@ -194,7 +235,7 @@ const HomePage: React.FC = () => {
         {error && <p className="error">{error}</p>}
         {isRegistered ? (
           <>
-            <h2>My Sheets</h2>
+            <h2>{userName}'s sheets</h2>
             <InputContainer>
               <SheetInput
                 type="text"
