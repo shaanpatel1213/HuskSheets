@@ -34,7 +34,8 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   // Initialize the data with 10 rows and 10 columns
   const initialData: TableData = Array.from({ length: initialRows }, () => Array(initialCols).fill(''));
 
-  const [data, setData] = useState<TableData>(initialData);
+  const [visualData, setVisualData] = useState<TableData>(initialData);
+  const [literalString, setliteralString ]= useState<TableData>(initialData);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const horizontalScrollbarRef = useRef<HTMLDivElement>(null);
   const updates = useRef<string>("");
@@ -54,7 +55,8 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
           }
         });
       });
-      setData(newData);
+      setliteralString(newData);
+      setVisualData(newData);
     } else {
       console.error('Failed to fetch updates');
     }
@@ -86,10 +88,10 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   // Ownership : Shaanpatel1213
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
-    const newData = data.map((row, rIdx) =>
+    const newData = visualData.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
-    setData(newData);
+    setVisualData(newData);
   };
 
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
@@ -98,41 +100,41 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   };
   // Ownership : Shaanpatel1213
   const CalculateCell = (rowIndex: number, colIndex: number, value: string) => {
-    const newData = data.map((row, rIdx) =>
+    const newData = visualData.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? evaluateCell(value) : cell))
     );
-    setData(newData);
+    setVisualData(newData);
   };
   // Ownership : Shaanpatel1213
   const evaluateCell = (cell: string) => {
     if (cell.startsWith('=')) {
       const formula = cell.slice(1);
-      let value = parseAndEvaluateExpression(formula, data);
+      let value = parseAndEvaluateExpression(formula, visualData);
       return value;
     }
     return cell;
   };
   // Ownership : Shaanpatel1213
   const addRow = () => {
-    const newRow: RowData = new Array(data[0].length).fill('');
-    setData([...data, newRow]);
+    const newRow: RowData = new Array(visualData[0].length).fill('');
+    setVisualData([...visualData, newRow]);
   };
   // Ownership : Shaanpatel1213
   const addColumn = () => {
-    const newData = data.map(row => [...row, '']);
-    setData(newData);
+    const newData = visualData.map(row => [...row, '']);
+    setVisualData(newData);
   };
   // Ownership : Shaanpatel1213
   const removeRow = () => {
-    if (data.length > 1) {
-      setData(data.slice(0, -1));
+    if (visualData.length > 1) {
+      setVisualData(visualData.slice(0, -1));
     }
   };
   // Ownership : Shaanpatel1213
   const removeColumn = () => {
-    if (data[0].length > 1) {
-      const newData = data.map(row => row.slice(0, -1));
-      setData(newData);
+    if (visualData[0].length > 1) {
+      const newData = visualData.map(row => row.slice(0, -1));
+      setVisualData(newData);
     }
   };
   // Ownership : Shaanpatel1213
@@ -207,13 +209,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
             <thead>
               <tr>
                 <th></th>
-                {data[0].map((_, colIndex) => (
+                {visualData[0].map((_, colIndex) => (
                   <th key={colIndex}>{getColumnLetter(colIndex)}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {data.map((row, rowIndex) => (
+              {visualData.map((row, rowIndex) => (
                 <tr key={rowIndex}>
                   <td>{rowIndex + 1}</td>
                   {row.map((cell, colIndex) => (
