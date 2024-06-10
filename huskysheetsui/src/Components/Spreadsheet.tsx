@@ -60,15 +60,18 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     } else {
       console.error('Failed to fetch updates');
     }
-    upDateAllCells();
+
   };
   const upDateAllCells = ()  =>{
+    let newData = visualData
     for(let i = 0; i < visualData.length; i++){
       for (let j = 0; j < visualData[0].length; j++){
-        CalculateCell(i, j, literalString[i][j]);
+        newData = visualData.map((row, rIdx) =>
+        row.map((cell, cIdx) => (rIdx === i && cIdx === j ? evaluateCell(literalString[i][j]) : cell))
+    );
       }
     }
-
+    setVisualData(newData);
   }
   const parseUpdate = (update: string) => {
     const match = update.match(/\$([A-Z]+)(\d+)\s(.+)/);
@@ -178,6 +181,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   useEffect(() => {
     fetchUpdates();
+    upDateAllCells();
   }, []);
   // Ownership : Shaanpatel1213
   useEffect(() => {
