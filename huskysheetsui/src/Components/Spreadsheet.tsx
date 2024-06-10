@@ -84,6 +84,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
   };
 
+  // Ownership : Shaanpatel1213
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
     const newData = data.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
@@ -95,14 +96,14 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     CalculateCell(rowIndex, colIndex, value);
     addUpdates(rowIndex, colIndex, value);
   };
-
+  // Ownership : Shaanpatel1213
   const CalculateCell = (rowIndex: number, colIndex: number, value: string) => {
     const newData = data.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? evaluateCell(value) : cell))
     );
     setData(newData);
   };
-
+  // Ownership : Shaanpatel1213
   const evaluateCell = (cell: string) => {
     if (cell.startsWith('=')) {
       const formula = cell.slice(1);
@@ -111,30 +112,30 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
     return cell;
   };
-
+  // Ownership : Shaanpatel1213
   const addRow = () => {
     const newRow: RowData = new Array(data[0].length).fill('');
     setData([...data, newRow]);
   };
-
+  // Ownership : Shaanpatel1213
   const addColumn = () => {
     const newData = data.map(row => [...row, '']);
     setData(newData);
   };
-
+  // Ownership : Shaanpatel1213
   const removeRow = () => {
     if (data.length > 1) {
       setData(data.slice(0, -1));
     }
   };
-
+  // Ownership : Shaanpatel1213
   const removeColumn = () => {
     if (data[0].length > 1) {
       const newData = data.map(row => row.slice(0, -1));
       setData(newData);
     }
   };
-
+  // Ownership : Shaanpatel1213
   const getColumnLetter = (colIndex: number): string => {
     let letter = '';
     while (colIndex >= 0) {
@@ -160,7 +161,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   useEffect(() => {
     fetchUpdates();
   }, []);
-
+  // Ownership : Shaanpatel1213
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
     const horizontalScrollbar = horizontalScrollbarRef.current;
@@ -170,18 +171,18 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
         horizontalScrollbar.scrollLeft = tableContainer.scrollLeft;
       }
     };
-
+   // Ownership : Shaanpatel1213
     const syncTableScroll = () => {
       if (horizontalScrollbar && tableContainer) {
         tableContainer.scrollLeft = horizontalScrollbar.scrollLeft;
       }
     };
-
+    // Ownership : Shaanpatel1213
     if (tableContainer && horizontalScrollbar) {
       tableContainer.addEventListener('scroll', syncScroll);
       horizontalScrollbar.addEventListener('scroll', syncTableScroll);
     }
-
+    // Ownership : Shaanpatel1213
     return () => {
       if (tableContainer && horizontalScrollbar) {
         tableContainer.removeEventListener('scroll', syncScroll);
@@ -190,7 +191,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     };
 
   }, []);
-
+// Ownership : Shaanpatel1213
   return (
     <div className="spreadsheet-container">
       <div className="controls">

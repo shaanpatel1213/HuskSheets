@@ -3,14 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
-
+// Ownership : Shaanpatel1213
 const HomePageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 `;
-
+// Ownership : Shaanpatel1213
 const NavBar = styled.nav`
   width: 100%;
   background: #007bff;
@@ -18,18 +18,18 @@ const NavBar = styled.nav`
   padding: 10px;
   text-align: center;
 `;
-
+// Ownership : Shaanpatel1213
 const MainContent = styled.div`
   margin-top: 20px;
   width: 80%;
 `;
-
+// Ownership : Shaanpatel1213
 const SheetList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 `;
-
+// Ownership : Shaanpatel1213
 const SheetItem = styled.div`
   background: #f0f0ff;
   border: 1px solid #ccc;
@@ -42,7 +42,7 @@ const SheetItem = styled.div`
   cursor: pointer;
   position: relative;
 `;
-
+// Ownership : Shaanpatel1213
 const AddSheetButton = styled.button`
   background: #007bff;
   color: white;
@@ -96,7 +96,7 @@ const RegisterButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
 `;
-
+// Ownership : Shaanpatel1213 and BrandonPeterson
 const HomePage: React.FC = () => {
   const userName = 'team18';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);
@@ -184,7 +184,7 @@ const HomePage: React.FC = () => {
       setError('Failed to register');
     }
   };
-
+// Ownership : Shaanpatel1213
   return (
     <HomePageContainer>
       <NavBar>
