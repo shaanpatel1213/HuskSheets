@@ -41,6 +41,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   const updates = useRef<string>("");
   const [sheetId, setSheetId] = useState<number | null>(sheet.id);
 
+
+  /**
+   * Fetches updates from the server for the current sheet.
+   * @returns {Promise<void>}
+   *
+   * Ownership: BrandonPetersen
+   */
   const fetchUpdates = async () => {
     const result = isSubscriber
       ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0')
@@ -73,6 +80,14 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
     setVisualData(newData);
   }
+  /**
+   * Parses an update string and returns the row, column, and value.
+   * @param {string} update - The update string.
+   * @returns {Object} The parsed update with row, column, and value.
+   *
+   * Ownership: BrandonPetersen
+   */
+
   const parseUpdate = (update: string) => {
     const match = update.match(/\$([A-Z]+)(\d+)\s(.+)/);
     if (!match) throw new Error('Invalid update format');
@@ -82,6 +97,14 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     return { row, col, value };
   };
 
+
+  /**
+   * Converts a column letter to an index.
+   * @param {string} col - The column letter.
+   * @returns {number} The column index.
+   *
+   * Ownership: BrandonPetersen
+   */
   const colToIndex = (col: string): number => {
     col = col.replace('$', '');
     let index = 0;
@@ -91,11 +114,39 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     return index - 1;
   };
 
+    /**
+   * Adds updates to the updates reference.
+   * @param {number} rowIndex - The row index.
+   * @param {number} colIndex - The column index.
+   * @param {string} value - The cell value.
+   *
+   * Ownership: BrandonPetersen
+   */
   const addUpdates = (rowIndex: number, colIndex: number, value: string) => {
     if (value !== '') {
       updates.current = updates.current + "$" + getColumnLetter(colIndex) + (rowIndex + 1) + " " + value + "\n";
     }
   };
+
+
+    /**
+   * Saves updates to the server.
+   * @returns {Promise<void>}
+   *
+   * Ownership: BrandonPetersen
+   */
+  const saveUpdates = async () => {
+    let allUpdates = updates.current.substring(0, updates.current.length);
+    const result = isSubscriber
+      ? await updateSubscription(sheet.publisher, sheet.name, allUpdates)
+      : await updatePublished(sheet.publisher, sheet.name, allUpdates);
+    if (result && result.success) {
+      setSheetId(sheetId === null ? 1 : sheetId + 1);
+      updates.current = "";
+    } else {
+      console.error('Failed to save updates');
+    }
+  }
 
   // Ownership : Shaanpatel1213
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
@@ -107,6 +158,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   };
 
+  // Ownership : Shaanpatel1213
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
     CalculateCell(rowIndex, colIndex, value);
     addUpdates(rowIndex, colIndex, value);
@@ -166,18 +218,6 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   }
 
 
-  const saveUpdates = async () => {
-    let allUpdates = updates.current.substring(0, updates.current.length);
-    const result = isSubscriber
-      ? await updateSubscription(sheet.publisher, sheet.name, allUpdates)
-      : await updatePublished(sheet.publisher, sheet.name, allUpdates);
-    if (result && result.success) {
-      setSheetId(sheetId === null ? 1 : sheetId + 1);
-      updates.current = "";
-    } else {
-      console.error('Failed to save updates');
-    }
-  }
 
   useEffect(() => {
     fetchUpdates();
