@@ -2,8 +2,7 @@ import "../Components/Spreadsheet.css";
 type Ref = { row: number; col: number };
 
 type CellData = string;
-type RowData = CellData[];
-type TableData = RowData[];
+type TableData = CellData[][];
 
 // Utility functions for spreadsheet calculations
 
