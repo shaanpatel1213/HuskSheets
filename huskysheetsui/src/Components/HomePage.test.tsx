@@ -17,9 +17,9 @@ const mockRegister = register as jest.Mock;
 
 const mockSheets = [ { id: 'sheet1', name: 'Sheet 1' },  { id: 'sheet2', name: 'Sheet 2' }, ];
 const mockUserName = 'team18';
-const newSheetName = 'Sheet1';
 const mockPublisher = [{"publisher": "team3"}, {"publisher": "team18"}]
 
+// written by: Emily Fink
 describe('HomePage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -31,11 +31,14 @@ describe('HomePage', () => {
         mockGetSheet.mockResolvedValue({ success: true, value: mockSheets });
         mockCreateSheet.mockResolvedValue({ success: true });
         mockDeleteSheet.mockResolvedValue({ success: true });
-        const {container} = render(<MemoryRouter><HomePage /></MemoryRouter>);
+
+        // renders the home page
+        render(<MemoryRouter><HomePage /></MemoryRouter>);
 
         expect(screen.queryByText('HomePage')).toBeInTheDocument();
         expect(screen.queryByText('Register as Publisher')).toBeInTheDocument();
 
+        // click the register button
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
@@ -49,6 +52,7 @@ describe('HomePage', () => {
         expect(screen.queryByText('team3'));
         expect(screen.queryByText('team18'));
 
+        // click the 'Create Sheet' button to create a new sheet
         expect(screen.queryByText('Create Sheet')).toBeInTheDocument();
         const createButton = screen.getByRole('button', {name: 'Create Sheet'});
         fireEvent.click(createButton);
@@ -57,176 +61,36 @@ describe('HomePage', () => {
             expect(mockGetSheet).toBeCalledTimes(4);
         })
 
+        // write a name to be assigned to a new sheet
         const newSheetName = screen.getByPlaceholderText("Enter new sheet name") as HTMLInputElement;
         await act(() => {
             fireEvent.change(newSheetName, { target: { value: 'New Sheet' }});
         });
         expect(newSheetName.value).toEqual('New Sheet');
-        fireEvent.click(createButton);
+
+        // click the '+' button to create a new sheet with the assiged name
+        expect(screen.queryByText('+')).toBeInTheDocument();
+        const createButtonPlus = screen.getByRole('button', {name: '+'});
+        fireEvent.click(createButtonPlus);
         await waitFor(() => {
             expect(mockCreateSheet).toBeCalledTimes(2);
         });
+        expect(screen.queryByText('New Sheet'));
 
+        // click the delete button
         const deleteButton = screen.queryAllByRole('button', {name: 'X'});
         expect(deleteButton).toBeDefined();
-
         fireEvent.click(deleteButton[0]);
         await waitFor(() => {
             expect(mockDeleteSheet).toBeCalledTimes(1);
         })
     })
-
-
-
-    // test('check if the register renders correctly', async () => {
-    //     const {asFragment, container} = render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     expect(screen.queryByText('HomePage')).toBeInTheDocument();
-    //     expect(screen.queryByText('Register as Publisher')).toBeInTheDocument();
-    //     expect(screen.queryByText('Create Sheet')).not.toBeInTheDocument();
-    //     expect(getSheets).toBeCalledTimes(0);
-    //     expect(container.firstChild).toMatchSnapshot();
-    //     const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
-    //     fireEvent.click(registerButton);
-    //     await waitFor(() => {
-    //         expect(register).toBeCalledTimes(1);
-    //         //expect(getSheets).toBeCalledTimes(2);
-    //         expect(container.firstChild).toMatchSnapshot();
-    //     });
-    //     //expect(screen.queryByText('Create Sheet')).toBeInTheDocument();
-    // })
-
-    // test('check if the create sheet renders correctly', async () => {
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     expect(screen.queryByText('HomePage')).toBeInTheDocument();
-    //     expect(screen.queryByText('Create Sheet')).toBeInTheDocument();
-    //     expect(getSheets).toBeCalledTimes(1);
-    //     const createButton = screen.getByRole("button", {name: "Create Sheet"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(getSheets).toBeCalledTimes(2);
-    //         //expect(container.firstChild).toMatchSnapshot();
-    //     });
-    //     const links = screen.getAllByRole('link');
-    //     expect(links).toHaveLength(2);
-    //     expect(links[0]).toHaveAttribute('href', '/spreadsheet/sheet1');
-    //     expect(links[1]).toHaveAttribute('href', '/spreadsheet/sheet2');
-    // })
-
-    // test('check if the + renders correctly', async () => {
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     expect(screen.queryByText('HomePage')).toBeInTheDocument();
-    //     expect(screen.queryByText('+')).toBeInTheDocument();
-    //     expect(getSheets).toBeCalledTimes(1);
-    //     const createButton = screen.getByRole("button", {name: "+"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(getSheets).toBeCalledTimes(2);
-    //         //expect(container.firstChild).toMatchSnapshot();
-    //     });
-    //     const links = screen.getAllByRole('link');
-    //     expect(links).toHaveLength(2);
-    //     expect(links[0]).toHaveAttribute('href', '/spreadsheet/sheet1');
-    //     expect(links[1]).toHaveAttribute('href', '/spreadsheet/sheet2');
-    // })
-
-    // test('check if the create sheet renders the errors correctly', async () => {
-    //     (createSheet as jest.Mock).mockResolvedValue({ success: false });
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     const createButton = screen.getByRole("button", {name: "Create Sheet"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(screen.getByText('Failed to create sheet')).toBeDefined();
-    //     });
-    // })
-
-    // test('check if the + renders the errors correctly', async () => {
-    //     (createSheet as jest.Mock).mockResolvedValue({ success: false });
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     const createButton = screen.getByRole("button", {name: "+"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(screen.getByText('Failed to create sheet')).toBeDefined();
-    //     });
-    // })
-
-    // test('check if get sheet renders the error correctly', async () => {
-    //     (getSheets as jest.Mock).mockResolvedValue({ success: false });
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     await waitFor(() => {
-    //         expect(screen.getByText('Failed to fetch sheets')).toBeDefined();
-    //     });
-    // })
-
-    // test('check if we can create a new sheet with the input name', async () => {
-    //     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     const newSheetName = screen.getByPlaceholderText("Enter new sheet name") as HTMLInputElement;
-    //     await act(() => {
-    //         fireEvent.change(newSheetName, { target: { value: 'New Sheet' }});
-    //     });
-    //     expect(newSheetName.value).toEqual('New Sheet');
-    // })
-
-    // // to be fixed: clicking a delete button deletes both created sheets :(, need to figure out how to click singular X button
-    // test('check if delete sheet renders correctly', async () => {
-    //     const {asFragment, container} = render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     expect(screen.queryByText('HomePage')).toBeInTheDocument();
-    //     const createButton = screen.getByRole("button", {name: "Create Sheet"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(getSheets).toBeCalledTimes(2);
-    //         //expect(container.firstChild).toMatchSnapshot();
-    //     });
-    //     const links = screen.getAllByRole('link');
-    //     expect(links).toHaveLength(2);
-    //     expect(links[0]).toHaveAttribute('href', '/spreadsheet/sheet1');
-    //     expect(links[1]).toHaveAttribute('href', '/spreadsheet/sheet2');
-
-    //     const deleteButtons = screen.queryAllByText('X');
-    //     expect(deleteButtons).toHaveLength(2);
-    //     const firstDeleteButton = deleteButtons[0];
-    //     const secondDeleteButton = deleteButtons[1];
-    //     fireEvent.click(firstDeleteButton);
-    //     await waitFor(() => {
-    //         expect(deleteSheet).toBeCalledTimes(1);
-    //         expect(firstDeleteButton).not.toBeInTheDocument();
-    //         //expect(container.firstChild).toMatchSnapshot();
-    //         //expect(secondDeleteButton).toBeInTheDocument();
-    //     });
-    // })
-
-    // test('check if the delete sheet renders the errors correctly', async () => {
-    //     (deleteSheet as jest.Mock).mockResolvedValue({ success: false });
-    //     const {asFragment, container} = render(<MemoryRouter><HomePage /></MemoryRouter>);
-    //     const createButton = screen.getByRole("button", {name: "Create Sheet"});
-    //     fireEvent.click(createButton);
-    //     await waitFor(() => {
-    //         expect(createSheet).toBeCalledTimes(1);
-    //         expect(getSheets).toBeCalledTimes(2);
-    //     });
-    //     const deleteButtons = screen.queryAllByText('X');
-    //     expect(deleteButtons).toHaveLength(2);
-    //     const firstDeleteButton = deleteButtons[0];
-    //     fireEvent.click(firstDeleteButton);
-    //     await waitFor(() => {
-    //         expect(deleteSheet).toBeCalledTimes(1);
-    //         expect(screen.getByText('Failed to delete sheet')).toBeDefined();
-    //     });
-    // })
 })
 
+// written by: Emily Fink
 describe('Errors', () => {
     beforeEach(() => {
         jest.resetAllMocks();
-        // mockCreateSheet.mockClear();
-        // mockDeleteSheet.mockClear();
-        // mockGetSheet.mockClear();
-        // mockGetPublishers.mockReset();
-        // mockRegister.mockReset();
     })
 
     test('checks register error', async () => {
@@ -234,6 +98,7 @@ describe('Errors', () => {
 
         expect(screen.queryByText('Register as Publisher')).toBeInTheDocument();
 
+        // clicks register button and expect it to fail and should put up correct error message
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
@@ -247,6 +112,7 @@ describe('Errors', () => {
 
         render(<MemoryRouter><HomePage /></MemoryRouter>);
 
+        // clicks register button and expect it to pass but getSheets should fail and should put up correct error message
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
@@ -262,6 +128,7 @@ describe('Errors', () => {
 
         render(<MemoryRouter><HomePage /></MemoryRouter>);
 
+                // clicks register button and expect it to pass but getPublishers should fail and should put up correct error message
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
@@ -277,6 +144,7 @@ describe('Errors', () => {
 
         render(<MemoryRouter><HomePage /></MemoryRouter>);
 
+        // click register button
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
@@ -286,6 +154,7 @@ describe('Errors', () => {
             expect(mockGetPublishers).toBeCalledTimes(1);
         })
 
+        // click 'Create Sheet' and expect it to fail and put up correct error message
         const createButton = screen.getByRole('button', {name: 'Create Sheet'});
         fireEvent.click(createButton);
         await waitFor(() => {
@@ -293,6 +162,15 @@ describe('Errors', () => {
             expect(screen.getByText('Failed to create sheet')).toBeDefined();
         })
 
+        // click '+' and expect it to fail and put up correct error message
+        const createButtonPlus = screen.getByRole('button', {name: '+'});
+        fireEvent.click(createButtonPlus);
+        await waitFor(() => {
+            expect(mockCreateSheet).toBeCalledTimes(2);
+            expect(screen.getByText('Failed to create sheet')).toBeDefined();
+        })
+
+        // click the delete button and expect it to fail and put up correct error message
         const deleteButton = screen.getAllByRole('button', {name: 'X'});
         fireEvent.click(deleteButton[0]);
         await waitFor(() => {

@@ -145,7 +145,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   };
 
   const saveUpdates = async () => {
-    let allUpdates = updates.current.substring(0, updates.current.length);
+    let allUpdates = updates.current.substring(0, updates.current.length - 1);
     const result = isSubscriber
       ? await updateSubscription(sheet.publisher, sheet.name, allUpdates)
       : await updatePublished(sheet.publisher, sheet.name, allUpdates);
@@ -240,4 +240,4 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
 };
 
-export { Spreadsheet, evaluateOperands, evaluateExpression, parseAndEvaluateExpression, type TableData, type SpreadsheetProps, type Sheet}
+export { Spreadsheet, evaluateOperands, evaluateExpression, parseAndEvaluateExpression, type TableData, type SpreadsheetProps, type Sheet }
