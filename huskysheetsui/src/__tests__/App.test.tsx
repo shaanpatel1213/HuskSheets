@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import App from './App';
+import App from '../App';
 
 describe('App Component', () => {
   test('renders the App component with initial sheet', () => {

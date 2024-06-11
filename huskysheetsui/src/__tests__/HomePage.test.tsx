@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, getByRole, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
-import { HomePage } from './HomePage';
+import { HomePage } from '../Components/HomePage';
 import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
 import '@testing-library/jest-dom';
 
