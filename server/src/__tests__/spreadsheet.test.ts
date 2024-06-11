@@ -4,7 +4,7 @@ import { AppDataSource } from '../data-source';
 import { Publisher } from '../entity/Publisher';
 import { Spreadsheet } from '../entity/Spreadsheet';
 import { Update } from '../entity/Update';
-
+// Ownership : Shaanpatel1213
 jest.setTimeout(15000)
 beforeAll(async () => {
   await AppDataSource.initialize();

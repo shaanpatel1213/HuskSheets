@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { MemoryRouter } from 'react-router-dom';
-import { Login } from './Login'; // Adjust the path as needed
+import { Login } from '../Components/Login'; // Adjust the path as needed
 import { getPublishers } from '../Utilities/utils';
 
 jest.mock('../Utilities/utils');

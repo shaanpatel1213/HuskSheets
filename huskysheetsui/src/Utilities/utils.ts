@@ -1,4 +1,4 @@
-// src/Utils/utils.tsx
+// src/Utils/utils.ts
 import axios, { AxiosError } from 'axios';
 
 // const API_URL = 'http://localhost:3002/api/shubTest';
