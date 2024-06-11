@@ -1,0 +1,105 @@
+/* HomePage.css */
+ /* Ownership : Shaanpatel1213 */
+.homepage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+   /* Ownership : Shaanpatel1213 */
+  .navbar {
+    width: 100%;
+    background: #007bff;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+  }
+  
+   /* Ownership : Shaanpatel1213 */
+  .main-content {
+    margin-top: 20px;
+    width: 80%;
+  }
+  
+   /* Ownership : Shaanpatel1213 */
+  .sheet-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+   /* Ownership : Shaanpatel1213 */
+  .sheet-item {
+    background: #f0f0ff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 75px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  /* Ownership : Shaanpatel1213 */
+  .add-sheet-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 30px;
+    cursor: pointer;
+    font-size: 50px;
+  }
+  
+  /* Ownership : BrandonPetersen */
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px;
+  }
+  
+  /* Ownership : BrandonPetersen */
+  .input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Ownership : BrandonPetersen */
+  .sheet-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Ownership : BrandonPetersen */
+  .create-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  
+   /* Ownership : BrandonPetersen */
+  .register-button {
+    background: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  

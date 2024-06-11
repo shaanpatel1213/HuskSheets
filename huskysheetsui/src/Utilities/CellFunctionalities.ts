@@ -1,4 +1,4 @@
-import "../Components/Spreadsheet.css";
+import "../css/Spreadsheet.css";
 type Ref = { row: number; col: number };
 
 type CellData = string;
