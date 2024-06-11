@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getPublishers } from '../../controllers/publisherController';
 import * as publisherService from '../../services/publisherService';
 
-// Mock the service
+// Ownership : Shaanpatel1213
 jest.mock('../../services/publisherService');
 
 describe('publisherController', () => {

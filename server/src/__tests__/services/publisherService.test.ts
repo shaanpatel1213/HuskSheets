@@ -2,7 +2,7 @@ import { AppDataSource } from '../../data-source';
 import { Publisher } from '../../entity/Publisher';
 import { findPublisherByUsername, createPublisher, getAllPublishers } from '../../services/publisherService';
 
-// Mock the AppDataSource.manager methods
+// Ownership : Shaanpatel1213
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {

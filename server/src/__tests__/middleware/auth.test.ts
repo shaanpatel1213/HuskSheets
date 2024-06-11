@@ -4,7 +4,7 @@ import { AppDataSource } from '../../data-source';
 import auth from '../../middleware/auth';
 import { Buffer } from 'buffer';
 
-// Mock the AppDataSource.manager.findOne method
+// Ownership : Shaanpatel1213
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {

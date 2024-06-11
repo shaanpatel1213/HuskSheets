@@ -8,7 +8,7 @@ import {
     updateSubscription
 } from '../../services/updateService';
 
-// Mock the AppDataSource.manager methods
+// Ownership : Shaanpatel1213
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {

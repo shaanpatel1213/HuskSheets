@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { registerPublisher, getAllPublishers } from '../../controllers/authController';
 import { findPublisherByUsername, createPublisher, getAllPublishers as getAllPublishersService } from '../../services/publisherService';
 
-// Mock the services
+// Ownership : Shaanpatel1213
 jest.mock('../../services/publisherService');
 
 describe('authController', () => {

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { getUpdatesForSubscription, getUpdatesForPublished, updatePublished, updateSubscription } from '../../controllers/updateController';
 import * as updateService from '../../services/updateService';
 
-// Mock the services
+// Ownership : Shaanpatel1213
 jest.mock('../../services/updateService');
 
 describe('updateController', () => {
