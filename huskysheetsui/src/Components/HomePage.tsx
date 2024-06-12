@@ -11,7 +11,7 @@ import {
 import '../css/HomePage.css';
 
 
-// Ownership: Shaanpatel1213 
+// Ownership: @author : Shaanpatel1213 
 const HomePage: React.FC = () => {
   const userName = localStorage.getItem('userName') || '';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);

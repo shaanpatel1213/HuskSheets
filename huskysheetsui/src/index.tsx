@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 /**
  * Create a root element and render the main App component inside it.
- * Ownership: Shaanpatel1213
+ * Ownership: @author : Shaanpatel1213
  */
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

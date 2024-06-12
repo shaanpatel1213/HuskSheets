@@ -1,5 +1,5 @@
 /* HomePage.css */
- /* Ownership : Shaanpatel1213 */
+ /*@author : Shaanpatel1213*/
 .homepage-container {
     display: flex;
     flex-direction: column;
@@ -7,7 +7,7 @@
     padding: 20px;
   }
   
-   /* Ownership : Shaanpatel1213 */
+   /*@author : Shaanpatel1213*/
   .navbar {
     width: 100%;
     background: #007bff;
@@ -16,20 +16,20 @@
     text-align: center;
   }
   
-   /* Ownership : Shaanpatel1213 */
+   /*@author : Shaanpatel1213*/
   .main-content {
     margin-top: 20px;
     width: 80%;
   }
   
-   /* Ownership : Shaanpatel1213 */
+   /*@author : Shaanpatel1213*/
   .sheet-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
   
-   /* Ownership : Shaanpatel1213 */
+   /*@author : Shaanpatel1213*/
   .sheet-item {
     background: #f0f0ff;
     border: 1px solid #ccc;
@@ -43,7 +43,7 @@
     position: relative;
   }
   
-  /* Ownership : Shaanpatel1213 */
+  /*@author : Shaanpatel1213*/
   .add-sheet-button {
     background: #007bff;
     color: white;

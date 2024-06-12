@@ -5,7 +5,7 @@ import { Cell } from '../../entity/Cell';
 import { Update } from '../../entity/Update';
 import { findPublisherByUsername, getSheetsByPublisher, createSheet, findSheetByNameAndPublisher, deleteSheet } from '../../services/sheetService';
 
-// Ownership : Shaanpatel1213
+// Ownership : @author : Shaanpatel1213
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {

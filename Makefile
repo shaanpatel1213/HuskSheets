@@ -1,36 +1,41 @@
-# Makefile with targets: test, build, docker, and start
+# Makefile for the HuskySheets project
 
-# Variables
-FRONTEND_DIR := frontend
-BACKEND_DIR := backend
-DOCKER_IMAGE := my_project_image
+# Define variables
+CLIENT_DIR = huskysheetsui
+SERVER_DIR = server
+DOCKER_COMPOSE_FILE = $(SERVER_DIR)/docker-compose.yml
 
-# Targets
-.PHONY: all test build docker start start-frontend start-backend
 
-all: test build docker
 
-# Test target
-test: test-frontend test-backend
+.PHONY: all
+# Default target: build the project
+all: start-client start-server test-client test-server
+start-client:
+	@echo "Starting client..."
+	cd $(client_DIR) && npm install && npm start
 
-test-frontend:
-	@echo "Running frontend tests..."
-	cd $(FRONTEND_DIR) && npm install && npm test
+start-server:
+	@echo "Starting server..."
+	cd $(server_DIR) && npm install && npm start
+test-client:
+	@echo "Running client tests..."
+	cd $(client_DIR) && npm install && npm test
 
-test-backend:
-	@echo "Running backend tests..."
-	cd $(BACKEND_DIR) && npm install && npm test
+test-server:
+	@echo "Running server tests..."
+	cd $(server_DIR) && npm install && npm test
 
 # Build target
-build: build-frontend build-backend
+build: build-client build-server
 
-build-frontend:
-	@echo "Building frontend..."
-	cd $(FRONTEND_DIR) && npm install && npm run build
+build-client:
+	@echo "Building client..."
+	cd $(client_DIR) && npm install && npm run build
 
-build-backend:
-	@echo "Building backend..."
-	cd $(BACKEND_DIR) && npm install && npm run build
+build-server:
+	@echo "Building server..."
+	cd $(SERVER_DIR) && npm install && npm run build
+	@echo "server build steps are executed here"
 
 # Docker target
 docker: docker-build docker-test
@@ -42,14 +47,3 @@ docker-build:
 docker-test:
 	@echo "Running tests in Docker container..."
 	docker run --rm $(DOCKER_IMAGE) make test
-
-# Start target
-start: start-frontend start-backend
-
-start-frontend:
-	@echo "Starting frontend..."
-	cd $(FRONTEND_DIR) && npm start
-
-start-backend:
-	@echo "Starting backend..."
-	cd $(BACKEND_DIR) && npm start
