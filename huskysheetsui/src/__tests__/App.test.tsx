@@ -1,11 +1,10 @@
 // src/App.test.tsx
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
-import { MemoryRouter, Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
-jest.mock('./Components/Login', () => ({
+jest.mock('../Components/Login', () => ({
   Login: () => {
     const history = require('react-router-dom').useHistory();
     return (
@@ -14,7 +13,7 @@ jest.mock('./Components/Login', () => ({
       </div>);
   },
 }));
-jest.mock('./Components/HomePage', () => ({
+jest.mock('../Components/HomePage', () => ({
   HomePage: () => {
     const history = require('react-router-dom').useHistory();
     return (
@@ -23,7 +22,7 @@ jest.mock('./Components/HomePage', () => ({
     </div>);
   },
 }));
-jest.mock('./Components/Spreadsheet', () => ({
+jest.mock('../Components/Spreadsheet', () => ({
   Spreadsheet: () => {
     const history = require('react-router-dom').useHistory();
     return (<div> Spreadsheet Component</div>);
