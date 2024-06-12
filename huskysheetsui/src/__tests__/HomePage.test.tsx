@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor, getByRole, act } from '@testing-lib
 import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { HomePage } from '../Components/HomePage';
+import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
 import {
     checkPublisher,
     fetchSheets,
@@ -11,7 +12,6 @@ import {
     handleDeleteSheet,
     handleRegister
   } from '../componentHelpers/homePageHelpers';
-import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
 import '@testing-library/jest-dom';
 
 jest.setTimeout(10000);
@@ -136,12 +136,50 @@ describe('Errors', () => {
 
         render(<MemoryRouter><HomePage /></MemoryRouter>);
 
-                // clicks register button and expect it to pass but getPublishers should fail and should put up correct error message
+        // clicks register button and expect it to pass but getPublishers should fail and should put up correct error message
         const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
         fireEvent.click(registerButton);
         await waitFor(() => {
             expect(mockGetPublishers).toBeCalledTimes(1);
             expect(screen.getByText('Failed to fetch publishers')).toBeDefined();
+        });
+    })
+
+    test('checks create sheet and delete sheet error', async () => {
+        mockRegister.mockResolvedValue({ success: true });
+        mockGetSheet.mockResolvedValue({ success: true, value: mockSheets });
+        mockGetPublishers.mockResolvedValue({ success: true, value: mockPublisher });
+
+        render(<MemoryRouter><HomePage /></MemoryRouter>);
+
+        // clicks register button and expect it to pass but getPublishers should fail and should put up correct error message
+        const registerButton = screen.getByRole('button', {name: 'Register as Publisher'});
+        fireEvent.click(registerButton);
+        await waitFor(() => {
+            expect(mockRegister).toBeCalledTimes(1);
+            expect(mockGetSheet).toBeCalledTimes(1);
+            expect(mockGetPublishers).toBeCalledTimes(1);
+        });
+
+        const createButton = screen.getByRole('button', {name: 'Create Sheet'});
+        fireEvent.click(createButton);
+        await waitFor(() => {
+            expect(mockCreateSheet).toBeCalledTimes(1);
+            expect(screen.getByText('Failed to create sheet')).toBeDefined();
+        });
+
+        const plusButton = screen.getByRole('button', {name: '+'});
+        fireEvent.click(plusButton);
+        await waitFor(() => {
+            expect(mockCreateSheet).toBeCalledTimes(2);
+            expect(screen.getByText('Failed to create sheet')).toBeDefined();
+        });
+
+        const deleteButton = screen.queryAllByRole('button', {name: 'X'});
+        fireEvent.click(deleteButton[0]);
+        await waitFor(() => {
+            expect(mockDeleteSheet).toBeCalledTimes(1);
+            expect(screen.getByText('Failed to delete sheet')).toBeDefined();
         });
     })
 })

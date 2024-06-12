@@ -45,6 +45,5 @@ describe('App Component', () => {
     const spreadsheetButton = screen.queryByRole('button', {name: 'Go to Spreadsheet'}) as HTMLElement;
     fireEvent.click(spreadsheetButton);
     expect(screen.getByText('Spreadsheet Component')).toBeDefined();
-    expect(2+2).toBe(4);
   })
 })
