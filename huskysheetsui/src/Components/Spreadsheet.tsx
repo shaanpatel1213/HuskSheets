@@ -26,10 +26,10 @@ type CellData = string;
 type RowData = CellData[];
 
 const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
-  const initialRows = 10;
-  const initialCols = 10;
+  const initialRows = 100;
+  const initialCols = 25;
 
-  // Initialize the data with 10 rows and 10 columns
+  // Initialize the data with 100 rows and 25 columns
   const initialData: TableData = Array.from({ length: initialRows }, () => Array(initialCols).fill(''));
 
   const [visualData, setVisualData] = useState<TableData>(initialData);
@@ -192,6 +192,9 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
             </tbody>
           </table>
         </div>
+      </div>
+      <div className="horizontal-scrollbar" ref={horizontalScrollbarRef}>
+        <div className="horizontal-scrollbar-content"></div>
       </div>
     </div>
   );
