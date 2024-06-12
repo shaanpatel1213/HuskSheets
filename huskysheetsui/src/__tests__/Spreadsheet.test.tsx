@@ -76,6 +76,7 @@ describe('Spreadsheet Component', () => {
     expect(firstCell).toHaveValue('test');
   });
 
+
   test('returns ERROR for invalid cell reference in formula', () => {
     render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
     const firstCell = screen.getAllByRole('textbox')[0];
