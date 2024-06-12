@@ -27,7 +27,7 @@ type CellData = string;
 type RowData = CellData[];
 
 const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
-  const initialRows = 100;
+  const initialRows = 25;
   const initialCols = 25;
 
   // Initialize the data with 100 rows and 25 columns

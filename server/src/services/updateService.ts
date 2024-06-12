@@ -4,6 +4,14 @@ import { Spreadsheet } from "../entity/Spreadsheet";
 import { Update } from "../entity/Update";
 import { Cell } from "../entity/Cell";
 
+/**
+ * Parses and updates cells in a given spreadsheet with the provided payload.
+ * @param {Spreadsheet} spreadsheet - The spreadsheet to update.
+ * @param {string} payload - The payload containing cell updates.
+ * @returns {Promise<void>}
+ *
+ * Ownership: @author BrandonPetersen
+ */
 const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) => {
   const updates = payload.split("\n");
   for (const update of updates) {
@@ -40,6 +48,15 @@ const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) =>
   }
 };
 
+/**
+ * Retrieves updates for a subscription to a spreadsheet.
+ * @param {string} publisher - The publisher's username.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} id - The last known update ID.
+ * @returns {Promise<Object[]>} - The list of updates.
+ *
+ * Ownership: @author BrandonPetersen
+ */
 export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,
@@ -70,6 +87,15 @@ export const getUpdatesForSubscription = async (publisher: string, sheet: string
   }));
 };
 
+/**
+ * Retrieves updates for a published spreadsheet.
+ * @param {string} publisher - The publisher's username.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} id - The last known update ID.
+ * @returns {Promise<Object[]>} - The list of updates.
+ *
+ * Ownership: @author BrandonPetersen
+ */
 export const getUpdatesForPublished = async (publisher: string, sheet: string, id: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,
@@ -100,6 +126,15 @@ export const getUpdatesForPublished = async (publisher: string, sheet: string, i
   }));
 };
 
+/**
+ * Updates a published spreadsheet with new cell data.
+ * @param {string} publisher - The publisher's username.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} payload - The payload containing cell updates.
+ * @returns {Promise<void>}
+ *
+ * Ownership: @author BrandonPetersen
+ */
 export const updatePublished = async (publisher: string, sheet: string, payload: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,
@@ -124,6 +159,15 @@ export const updatePublished = async (publisher: string, sheet: string, payload:
   await AppDataSource.manager.save(updateRecord);
 };
 
+/**
+ * Updates a subscription to a spreadsheet with new cell data.
+ * @param {string} publisher - The publisher's username.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} payload - The payload containing cell updates.
+ * @returns {Promise<void>}
+ *
+ * Ownership: @author BrandonPetersen
+ */
 export const updateSubscription = async (publisher: string, sheet: string, payload: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,

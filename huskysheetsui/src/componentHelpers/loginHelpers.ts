@@ -7,6 +7,8 @@ import { getPublishers } from '../Utilities/utils';
  * @param {string} password - The password entered by the user.
  * @param {Function} setError - Function to set error messages.
  * @param {Function} history - React Router's useHistory hook.
+ * 
+ * Ownership: @author BrandonPetersen
  */
 export const handleSubmit = async (
   userName: string,

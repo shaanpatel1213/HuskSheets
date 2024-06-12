@@ -5,6 +5,13 @@ import { parseAndEvaluateExpression, TableData } from '../Utilities/CellFunction
 jest.mock('../Utilities/utils');
 jest.mock('../Utilities/CellFunctionalities');
 
+
+
+/**
+ * Tests the spreadsheet helpers file
+ * 
+ * Ownership: @author BrandonPetersen
+ */
 describe('spreadsheetHelpers', () => {
   let consoleErrorMock: jest.SpyInstance;
 

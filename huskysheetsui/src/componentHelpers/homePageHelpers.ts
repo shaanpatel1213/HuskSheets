@@ -8,7 +8,7 @@ import { getPublishers, getSheets, createSheet, deleteSheet, register } from '..
  * @param {Function} fetchOtherSheets - Function to fetch sheets from other publishers.
  * @param {Function} setError - Function to set error messages.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const checkPublisher = async (
   userName: string,
@@ -36,7 +36,7 @@ export const checkPublisher = async (
  * @param {Function} setSheets - Function to update the sheets state.
  * @param {Function} setError - Function to set error messages.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const fetchSheets = async (
   userName: string,
@@ -56,7 +56,7 @@ export const fetchSheets = async (
  * @param {string[]} otherPublishers - List of other publishers.
  * @param {Function} setOtherSheets - Function to update the other sheets state.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const fetchOtherSheets = async (
   otherPublishers: string[],
@@ -82,7 +82,7 @@ export const fetchOtherSheets = async (
  * @param {Function} setError - Function to set error messages.
  * @param {Function} fetchSheets - Function to fetch sheets.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const handleCreateSheet = async (
   userName: string,
@@ -116,7 +116,7 @@ export const handleCreateSheet = async (
  * @param {Function} setSheets - Function to update the sheets state.
  * @param {Function} setError - Function to set error messages.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const handleDeleteSheet = async (
   userName: string,
@@ -143,7 +143,7 @@ export const handleDeleteSheet = async (
  * @param {Function} fetchSheets - Function to fetch sheets.
  * @param {Function} fetchOtherSheets - Function to fetch sheets from other publishers.
  * 
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const handleRegister = async (
   setIsRegistered: (isRegistered: boolean) => void,

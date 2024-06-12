@@ -17,7 +17,7 @@ const auth = btoa(`${username}:${password}`);
  * Generates the authentication header for API requests.
  * @returns {Object} The authentication header.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 const getAuthHeader = () => {
   console.log('Encoded auth string:', auth); // Log the encoded auth string
@@ -48,7 +48,7 @@ interface Result {
  * @param {any} error - The error to check.
  * @returns {boolean} True if the error is an AxiosError, false otherwise.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 const isAxiosError = (error: any): error is AxiosError => {
   return (error as AxiosError).isAxiosError !== undefined;
@@ -58,7 +58,7 @@ const isAxiosError = (error: any): error is AxiosError => {
  * Registers a new publisher with the server.
  * @returns {Promise<Result | null>} The result of the registration.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const register = async (): Promise<Result | null> => {
   try {
@@ -82,7 +82,7 @@ export const register = async (): Promise<Result | null> => {
  * Retrieves the list of registered publishers.
  * @returns {Promise<Result | null>} The list of publishers.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const getPublishers = async (): Promise<Result | null> => {
   try {
@@ -106,7 +106,7 @@ export const getPublishers = async (): Promise<Result | null> => {
  * @param {string} sheet - The name of the sheet to create.
  * @returns {Promise<Result | null>} The result of the sheet creation.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const createSheet = async (publisher: string, sheet: string): Promise<Result | null> => {
   try {
@@ -132,7 +132,7 @@ export const createSheet = async (publisher: string, sheet: string): Promise<Res
  * @param {string} publisher - The name of the publisher.
  * @returns {Promise<Result | null>} The list of sheets.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const getSheets = async (publisher: string): Promise<Result | null> => {
   try {
@@ -156,7 +156,7 @@ export const getSheets = async (publisher: string): Promise<Result | null> => {
  * @param {string} sheet - The name of the sheet to delete.
  * @returns {Promise<Result | null>} The result of the sheet deletion.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const deleteSheet = async (publisher: string, sheet: string): Promise<Result | null> => {
   try {
@@ -183,7 +183,7 @@ export const deleteSheet = async (publisher: string, sheet: string): Promise<Res
  * @param {string} id - The ID of the last known update.
  * @returns {Promise<Result | null>} The updates for the subscription.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string): Promise<Result | null> => {
   try {
@@ -208,7 +208,7 @@ export const getUpdatesForSubscription = async (publisher: string, sheet: string
  * @param {string} id - The ID of the last known update.
  * @returns {Promise<Result | null>} The updates for the published sheets.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const getUpdatesForPublished = async (publisher: string, sheet: string, id: string): Promise<Result | null> => {
   try {
@@ -233,7 +233,7 @@ export const getUpdatesForPublished = async (publisher: string, sheet: string, i
  * @param {string} payload - The update payload.
  * @returns {Promise<Result | null>} The result of the update.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const updatePublished = async (publisher: string, sheet: string, payload: string): Promise<Result | null> => {
   try {
@@ -258,7 +258,7 @@ export const updatePublished = async (publisher: string, sheet: string, payload:
  * @param {string} payload - The update payload.
  * @returns {Promise<Result | null>} The result of the update.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const updateSubscription = async (publisher: string, sheet: string, payload: string): Promise<Result | null> => {
   try {

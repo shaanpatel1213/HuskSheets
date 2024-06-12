@@ -1,6 +1,12 @@
 import { handleSubmit } from '../componentHelpers/loginHelpers';
 import { createMemoryHistory } from 'history';
 
+
+/**
+ * Tests the login helpers file
+ * 
+ * Ownership: @author BrandonPetersen
+ */
 describe('handleSubmit', () => {
   let setError: jest.Mock;
   let history: ReturnType<typeof createMemoryHistory>;

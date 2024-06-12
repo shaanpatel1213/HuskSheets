@@ -7,6 +7,12 @@ const mock = new MockAdapter(axios);
 const API_URL = 'https://husksheets.fly.dev/api/v1';
 const headers = { Authorization: `Basic : ${btoa('team18:qdKoHqmiP@6x`_1Q')}` };
 
+
+/**
+ * Tests the server utils file
+ * 
+ * Ownership: @author BrandonPetersen
+ */
 describe('utils', () => {
   afterEach(() => {
     mock.reset();

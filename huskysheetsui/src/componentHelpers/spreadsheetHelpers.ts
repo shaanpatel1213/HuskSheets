@@ -18,7 +18,7 @@ import { TableData } from '../Utilities/CellFunctionalities';
  * @param {Function} parseUpdate - Function to parse update strings.
  * @returns {Promise<void>}
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const fetchUpdates = async (
   sheet: { publisher: string, name: string },
@@ -66,7 +66,7 @@ export const fetchUpdates = async (
  * @param {TableData} data - The table data to evaluate.
  * @returns {TableData} The evaluated table data.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const evaluateAllCells = (data: TableData): TableData => {
   return data.map((row, rowIndex) =>
@@ -82,7 +82,7 @@ export const evaluateAllCells = (data: TableData): TableData => {
  * @param {React.MutableRefObject<string>} updates - The updates reference.
  * @param {Function} getColumnLetter - Function to get the column letter.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const addUpdates = (
   rowIndex: number,
@@ -105,7 +105,7 @@ export const addUpdates = (
  * @param {Function} setSheetId - Function to set the sheet ID.
  * @returns {Promise<void>}
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const saveUpdates = async (
   isSubscriber: boolean,
@@ -133,7 +133,7 @@ export const saveUpdates = async (
  * @param {TableData} data - The table data.
  * @returns {string} The evaluated cell value.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const evaluateCell = (cell: string, data: TableData): string => {
   while (cell && cell.startsWith('=')) {
@@ -149,7 +149,7 @@ export const evaluateCell = (cell: string, data: TableData): string => {
  * @param {string} col - The column letter.
  * @returns {number} The column index.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const colToIndex = (col: string): number => {
   col = col.replace('$', '');
@@ -165,7 +165,7 @@ export const colToIndex = (col: string): number => {
  * @param {string} update - The update string.
  * @returns {Object} The parsed update with row, column, and value.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const parseUpdate = (update: string) => {
   const match = update.match(/\$([A-Z]+)(\d+)\s(.+)/);
@@ -181,7 +181,7 @@ export const parseUpdate = (update: string) => {
  * @param {number} colIndex - The column index.
  * @returns {string} The column letter.
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 export const getColumnLetter = (colIndex: number): string => {
   let letter = '';
