@@ -104,6 +104,7 @@ describe('Spreadsheet Component', () => {
     fireEvent.change(firstCell, { target: { value: 'test' } });
     expect(firstCell).toHaveValue('test');
   });
+
   test('returns ERROR for invalid cell reference in formula', () => {
     render(<Spreadsheet sheet={{
       id: null,
@@ -116,7 +117,6 @@ describe('Spreadsheet Component', () => {
     expect(firstCell).toHaveValue('ERROR');
   });
 
-
   test('calculates the cell value correctly when a formula is entered', () => {
     render(<Spreadsheet sheet={{
       id: null,
@@ -128,12 +128,9 @@ describe('Spreadsheet Component', () => {
     fireEvent.blur(firstCell);
     expect(firstCell).toHaveValue('4');
   });
-
-
 });
 
 describe('evaluateOperands function', () => {
-
   test('should return 1 for equal numbers using = operator', () => {
     expect(evaluateOperands(5, 5, '=')).toBe(1);
   });
