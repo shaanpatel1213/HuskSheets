@@ -1,254 +1,177 @@
 import { Request, Response, NextFunction } from 'express';
-import { createNewSheet, getSheets, deleteSheet } from '../../controllers/sheetController';
+import * as sheetController from '../../controllers/sheetController';
 import * as sheetService from '../../services/sheetService';
+import { Publisher } from '../../entity/Publisher';
+import { Spreadsheet } from '../../entity/Spreadsheet';
 
-// Ownership : Shaanpatel1213
 jest.mock('../../services/sheetService');
 
 describe('sheetController', () => {
-    describe('createNewSheet', () => {
-        it('should return 401 if publisher is not the user', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'otheruser', sheet: 'sheet1' }
-            } as unknown as Request;
+  let req: Partial<Request>;
+  let res: Partial<Response>;
+  let next: NextFunction;
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+  beforeEach(() => {
+    req = {
+      body: {},
+      user: { user_name: 'test_user', password: 'test_password' },
+    };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    next = jest.fn();
+  });
 
-            await createNewSheet(req, res, next);
+  describe('createNewSheet', () => {
+    it('should create a new sheet for the authenticated user', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
 
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Unauthorized: sender is not owner of sheet',
-                value: []
-            });
-        });
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue({ username: 'test_user' });
+      (sheetService.createSheet as jest.Mock).mockResolvedValue({ name: 'test_sheet' });
 
-        it('should return 400 if publisher not found', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1' }
-            } as unknown as Request;
+      await sheetController.createNewSheet(req as Request, res as Response, next);
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
-
-            await createNewSheet(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Publisher not found',
-                value: []
-            });
-        });
-
-        it('should create a new sheet for the publisher', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1' }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const user = { user_name: 'testuser' };
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(user);
-            (sheetService.createSheet as jest.Mock).mockResolvedValue(true);
-
-            await createNewSheet(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(sheetService.createSheet).toHaveBeenCalledWith(user, 'sheet1');
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
-        });
-
-        it('should handle errors', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1' }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (sheetService.findPublisherByUsername as jest.Mock).mockRejectedValue(error);
-
-            await createNewSheet(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('test_user');
+      expect(sheetService.createSheet).toHaveBeenCalledWith({ username: 'test_user' }, 'test_sheet');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
     });
 
-    describe('getSheets', () => {
-        it('should return 400 if publisher not found', async () => {
-            const req = { body: { publisher: 'testuser' } } as Request;
+    it('should return 401 if the publisher is not the authenticated user', async () => {
+      req.body = { publisher: 'wrong_user', sheet: 'test_sheet' };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      await sheetController.createNewSheet(req as Request, res as Response, next);
 
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
-
-            await getSheets(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Publisher not found',
-                value: []
-            });
-        });
-
-        it('should return sheets for the publisher', async () => {
-            const req = { body: { publisher: 'testuser' } } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const user = { user_name: 'testuser' };
-            const sheets = [{ name: 'sheet1' }, { name: 'sheet2' }];
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(user);
-            (sheetService.getSheetsByPublisher as jest.Mock).mockResolvedValue(sheets);
-
-            await getSheets(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(sheetService.getSheetsByPublisher).toHaveBeenCalledWith(user);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: sheets });
-        });
-
-        it('should handle errors', async () => {
-            const req = { body: { publisher: 'testuser' } } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (sheetService.findPublisherByUsername as jest.Mock).mockRejectedValue(error);
-
-            await getSheets(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Unauthorized: sender is not owner of sheet",
+        value: [],
+      });
     });
 
-    describe('deleteSheet', () => {
-        it('should return 400 if publisher not found', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1' } } as Request;
+    it('should return 400 if the publisher is not found', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
 
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
+      await sheetController.createNewSheet(req as Request, res as Response, next);
 
-            await deleteSheet(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Publisher not found',
-                value: []
-            });
-        });
-
-        it('should return 400 if sheet not found', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1' } } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const user = { user_name: 'testuser' };
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(user);
-            (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(null);
-
-            await deleteSheet(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(sheetService.findSheetByNameAndPublisher).toHaveBeenCalledWith('sheet1', user);
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Sheet not found',
-                value: []
-            });
-        });
-
-        it('should delete the sheet', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1' } } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const user = { user_name: 'testuser' };
-            const sheet = { name: 'sheet1' };
-            (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(user);
-            (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(sheet);
-            (sheetService.deleteSheet as jest.Mock).mockResolvedValue(true);
-
-            await deleteSheet(req, res, next);
-
-            expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(sheetService.findSheetByNameAndPublisher).toHaveBeenCalledWith('sheet1', user);
-            expect(sheetService.deleteSheet).toHaveBeenCalledWith(sheet);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
-        });
-
-        it('should handle errors', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1' } } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (sheetService.findPublisherByUsername as jest.Mock).mockRejectedValue(error);
-
-            await deleteSheet(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ success: false, message: "Publisher not found", value: [] });
     });
+
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
+
+      const error = new Error('service error');
+      (sheetService.findPublisherByUsername as jest.Mock).mockRejectedValue(error);
+
+      await sheetController.createNewSheet(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('getSheets', () => {
+    it('should get sheets for a publisher', async () => {
+      req.body = { publisher: 'test_user' };
+
+      const sheets = [{ name: 'test_sheet' }];
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue({ username: 'test_user' });
+      (sheetService.getSheetsByPublisher as jest.Mock).mockResolvedValue(sheets);
+
+      await sheetController.getSheets(req as Request, res as Response, next);
+
+      expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('test_user');
+      expect(sheetService.getSheetsByPublisher).toHaveBeenCalledWith({ username: 'test_user' });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: sheets });
+    });
+
+    it('should return 400 if the publisher is not found', async () => {
+      req.body = { publisher: 'test_user' };
+
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
+
+      await sheetController.getSheets(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ success: false, message: "Publisher not found", value: [] });
+    });
+
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_user' };
+
+      const error = new Error('service error');
+      (sheetService.findPublisherByUsername as jest.Mock).mockRejectedValue(error);
+
+      await sheetController.getSheets(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('deleteSheet', () => {
+    it('should delete a sheet for the authenticated user', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
+
+      const publisher = { username: 'test_user' } as Publisher;
+      const spreadsheet = { name: 'test_sheet' } as Spreadsheet;
+
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(publisher);
+      (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(spreadsheet);
+      (sheetService.deleteSheet as jest.Mock).mockResolvedValue(true);
+
+      await sheetController.deleteSheet(req as Request, res as Response, next);
+
+      expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('test_user');
+      expect(sheetService.findSheetByNameAndPublisher).toHaveBeenCalledWith('test_sheet', publisher);
+      expect(sheetService.deleteSheet).toHaveBeenCalledWith(spreadsheet);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
+    });
+
+    it('should return 400 if the publisher is not found', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
+
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(null);
+
+      await sheetController.deleteSheet(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ success: false, message: "Publisher not found", value: [] });
+    });
+
+    it('should return 400 if the sheet is not found', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
+
+      const publisher = { username: 'test_user' } as Publisher;
+
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(publisher);
+      (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(null);
+
+      await sheetController.deleteSheet(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ success: false, message: "Sheet not found", value: [] });
+    });
+
+    it('should return 500 if deletion fails', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet' };
+
+      const publisher = { username: 'test_user' } as Publisher;
+      const spreadsheet = { name: 'test_sheet' } as Spreadsheet;
+
+      (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(publisher);
+      (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(spreadsheet);
+      (sheetService.deleteSheet as jest.Mock).mockResolvedValue(false);
+
+      await sheetController.deleteSheet(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ success: false, message: "Failed to delete spreadsheet", value: [] });
+    });
+  });
 });

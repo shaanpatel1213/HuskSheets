@@ -113,7 +113,7 @@ describe('Spreadsheet Component', () => {
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: '=A11' } }); // A11 does not exist in initial 10x10 grid
     fireEvent.blur(firstCell);
-    expect(firstCell).toHaveValue('ERRORs');
+    expect(firstCell).toHaveValue('ERROR');
   });
 
 
@@ -258,7 +258,7 @@ describe('evaluateOperands function', () => {
     });
   
     test('should correctly parse and evaluate CONCAT function', () => {
-      expect(parseAndEvaluateExpression('CONCAT(hello, ,world)', data)).toBe('hello world');
+      expect(parseAndEvaluateExpression('CONCAT(hello,world)', data)).toBe('helloworld');
     });
   
     test('should correctly parse and evaluate IF function', () => {

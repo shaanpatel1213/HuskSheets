@@ -1,216 +1,147 @@
 import { Request, Response, NextFunction } from 'express';
-import { getUpdatesForSubscription, getUpdatesForPublished, updatePublished, updateSubscription } from '../../controllers/updateController';
+import * as updateController from '../../controllers/updateController';
 import * as updateService from '../../services/updateService';
 
-// Ownership : Shaanpatel1213
 jest.mock('../../services/updateService');
 
 describe('updateController', () => {
-    describe('getUpdatesForSubscription', () => {
-        it('should return updates for subscription', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1', id: '123' } } as Request;
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+  let req: Partial<Request>;
+  let res: Partial<Response>;
+  let next: NextFunction;
 
-            const updates = [{ update: 'update1' }];
-            (updateService.getUpdatesForSubscription as jest.Mock).mockResolvedValue(updates);
+  beforeEach(() => {
+    req = {
+      body: {},
+      user: { user_name: 'test_user', password: 'test_password' },
+    };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    next = jest.fn();
+  });
 
-            await getUpdatesForSubscription(req, res, next);
+  describe('getUpdatesForSubscription', () => {
+    it('should get updates for a subscription', async () => {
+      req.body = { publisher: 'test_publisher', sheet: 'test_sheet', id: 1 };
 
-            expect(updateService.getUpdatesForSubscription).toHaveBeenCalledWith('testuser', 'sheet1', '123');
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: updates });
-        });
+      const updates = [{ id: 1, update: 'test_update' }];
+      (updateService.getUpdatesForSubscription as jest.Mock).mockResolvedValue(updates);
 
-        it('should handle errors', async () => {
-            const req = { body: { publisher: 'testuser', sheet: 'sheet1', id: '123' } } as Request;
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      await updateController.getUpdatesForSubscription(req as Request, res as Response, next);
 
-            const error = new Error('Test error');
-            (updateService.getUpdatesForSubscription as jest.Mock).mockRejectedValue(error);
-
-            await getUpdatesForSubscription(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(updateService.getUpdatesForSubscription).toHaveBeenCalledWith('test_publisher', 'test_sheet', 1);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: updates });
     });
 
-    describe('getUpdatesForPublished', () => {
-        it('should return 401 if publisher is not the user', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'otheruser', sheet: 'sheet1', id: '123' }
-            } as unknown as Request;
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_publisher', sheet: 'test_sheet', id: 1 };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      const error = new Error('service error');
+      (updateService.getUpdatesForSubscription as jest.Mock).mockRejectedValue(error);
 
-            await getUpdatesForPublished(req, res, next);
+      await updateController.getUpdatesForSubscription(req as Request, res as Response, next);
 
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Unauthorized: sender is not owner of sheet',
-                value: []
-            });
-        });
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 
-        it('should return updates for published sheet', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1', id: '123' }
-            } as unknown as Request;
+  describe('getUpdatesForPublished', () => {
+    it('should get updates for published sheets if publisher matches user_name', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet', id: 1 };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      const updates = [{ id: 1, update: 'test_update' }];
+      (updateService.getUpdatesForPublished as jest.Mock).mockResolvedValue(updates);
 
-            const updates = [{ update: 'update1' }];
-            (updateService.getUpdatesForPublished as jest.Mock).mockResolvedValue(updates);
+      await updateController.getUpdatesForPublished(req as Request, res as Response, next);
 
-            await getUpdatesForPublished(req, res, next);
-
-            expect(updateService.getUpdatesForPublished).toHaveBeenCalledWith('testuser', 'sheet1', '123');
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: updates });
-        });
-
-        it('should handle errors', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1', id: '123' }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (updateService.getUpdatesForPublished as jest.Mock).mockRejectedValue(error);
-
-            await getUpdatesForPublished(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(updateService.getUpdatesForPublished).toHaveBeenCalledWith('test_user', 'test_sheet', 1);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: updates });
     });
 
-    describe('updatePublished', () => {
-        it('should return 401 if publisher is not the user', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'otheruser', sheet: 'sheet1', payload: {} }
-            } as unknown as Request;
+    it('should return 401 if publisher does not match user_name', async () => {
+      req.body = { publisher: 'wrong_user', sheet: 'test_sheet', id: 1 };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      await updateController.getUpdatesForPublished(req as Request, res as Response, next);
 
-            await updatePublished(req, res, next);
-
-            expect(res.status).toHaveBeenCalledWith(401);
-            expect(res.json).toHaveBeenCalledWith({
-                success: false,
-                message: 'Unauthorized: sender is not owner of sheet',
-                value: []
-            });
-        });
-
-        it('should update published sheet', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1', payload: {} }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            (updateService.updatePublished as jest.Mock).mockResolvedValue(true);
-
-            await updatePublished(req, res, next);
-
-            expect(updateService.updatePublished).toHaveBeenCalledWith('testuser', 'sheet1', {});
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
-        });
-
-        it('should handle errors', async () => {
-            const req = {
-                user: { user_name: 'testuser' },
-                body: { publisher: 'testuser', sheet: 'sheet1', payload: {} }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (updateService.updatePublished as jest.Mock).mockRejectedValue(error);
-
-            await updatePublished(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Unauthorized: sender is not owner of sheet",
+        value: [],
+      });
     });
 
-    describe('updateSubscription', () => {
-        it('should update subscription', async () => {
-            const req = {
-                body: { publisher: 'testuser', sheet: 'sheet1', payload: {} }
-            } as Request;
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet', id: 1 };
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
+      const error = new Error('service error');
+      (updateService.getUpdatesForPublished as jest.Mock).mockRejectedValue(error);
 
-            (updateService.updateSubscription as jest.Mock).mockResolvedValue(true);
+      await updateController.getUpdatesForPublished(req as Request, res as Response, next);
 
-            await updateSubscription(req, res, next);
-
-            expect(updateService.updateSubscription).toHaveBeenCalledWith('testuser', 'sheet1', {});
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
-        });
-
-        it('should handle errors', async () => {
-            const req = {
-                body: { publisher: 'testuser', sheet: 'sheet1', payload: {} }
-            } as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-            const next = jest.fn() as NextFunction;
-
-            const error = new Error('Test error');
-            (updateService.updateSubscription as jest.Mock).mockRejectedValue(error);
-
-            await updateSubscription(req, res, next);
-
-            expect(next).toHaveBeenCalledWith(error);
-        });
+      expect(next).toHaveBeenCalledWith(error);
     });
+  });
+
+  describe('updatePublished', () => {
+    it('should update published sheet if publisher matches user_name', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet', payload: 'test_payload' };
+
+      await updateController.updatePublished(req as Request, res as Response, next);
+
+      expect(updateService.updatePublished).toHaveBeenCalledWith('test_user', 'test_sheet', 'test_payload');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
+    });
+
+    it('should return 401 if publisher does not match user_name', async () => {
+      req.body = { publisher: 'wrong_user', sheet: 'test_sheet', payload: 'test_payload' };
+
+      await updateController.updatePublished(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        success: false,
+        message: "Unauthorized: sender is not owner of sheet",
+        value: [],
+      });
+    });
+
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_user', sheet: 'test_sheet', payload: 'test_payload' };
+
+      const error = new Error('service error');
+      (updateService.updatePublished as jest.Mock).mockRejectedValue(error);
+
+      await updateController.updatePublished(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('updateSubscription', () => {
+    it('should update subscription', async () => {
+      req.body = { publisher: 'test_publisher', sheet: 'test_sheet', payload: 'test_payload' };
+
+      await updateController.updateSubscription(req as Request, res as Response, next);
+
+      expect(updateService.updateSubscription).toHaveBeenCalledWith('test_publisher', 'test_sheet', 'test_payload');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
+    });
+
+    it('should call next with error if service throws', async () => {
+      req.body = { publisher: 'test_publisher', sheet: 'test_sheet', payload: 'test_payload' };
+
+      const error = new Error('service error');
+      (updateService.updateSubscription as jest.Mock).mockRejectedValue(error);
+
+      await updateController.updateSubscription(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });

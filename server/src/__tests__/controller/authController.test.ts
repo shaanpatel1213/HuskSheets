@@ -1,78 +1,77 @@
-import { Request, Response } from 'express';
 import { registerPublisher, getAllPublishers } from '../../controllers/authController';
-import { findPublisherByUsername, createPublisher, getAllPublishers as getAllPublishersService } from '../../services/publisherService';
+import * as publisherService from '../../services/publisherService';
+import { Request, Response } from 'express';
+import { Publisher } from '../../entity/Publisher';
 
-// Ownership : Shaanpatel1213
-jest.mock('../../services/publisherService');
+describe('Auth Controller', () => {
+  describe('registerPublisher', () => {
+    it('should register a new publisher', async () => {
+      const req = {
+        user: {
+          user_name: 'test_user',
+          password: 'test_password',
+        },
+      } as Request;
 
-describe('authController', () => {
-    describe('registerPublisher', () => {
-        it('should register a new publisher if not found', async () => {
-            const req = {
-                user: { user_name: 'testuser', password: 'password123' }
-            } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
+      const findPublisherByUsernameMock = jest.spyOn(publisherService, 'findPublisherByUsername').mockResolvedValue(null);
+      const createPublisherMock = jest.spyOn(publisherService, 'createPublisher').mockResolvedValue({
+        id: 1,
+        username: 'test_user',
+        password: 'test_password',
+        spreadsheets: [],
+      } as Publisher);
 
-            (findPublisherByUsername as jest.Mock).mockResolvedValue(null);
-            (createPublisher as jest.Mock).mockResolvedValue({ user_name: 'testuser' });
+      await registerPublisher(req, res);
 
-            await registerPublisher(req, res);
-
-            expect(findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(createPublisher).toHaveBeenCalledWith('testuser', 'password123');
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: 'testuser', value: [] });
-        });
-
-        it('should return existing publisher if found', async () => {
-            const req = {
-                user: { user_name: 'testuser', password: 'password123' }
-            } as unknown as Request;
-
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
-
-            const existingPublisher = { user_name: 'testuser' };
-            (findPublisherByUsername as jest.Mock).mockResolvedValue(existingPublisher);
-
-            await registerPublisher(req, res);
-
-            expect(findPublisherByUsername).toHaveBeenCalledWith('testuser');
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: 'testuser', value: [] });
-        });
+      expect(findPublisherByUsernameMock).toHaveBeenCalledWith('test_user');
+      expect(createPublisherMock).toHaveBeenCalledWith('test_user', 'test_password');
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: 'test_user', value: [] });
     });
+  });
 
-    describe('getAllPublishers', () => {
-        it('should return all publishers', async () => {
-            const req = {} as Request;
-            const res = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn()
-            } as unknown as Response;
+  describe('getAllPublishers', () => {
+    it('should get all publishers', async () => {
+      const req = {} as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
 
-            const publishers = [
-                { username: 'publisher1' },
-                { username: 'publisher2' }
-            ];
-            (getAllPublishersService as jest.Mock).mockResolvedValue(publishers);
+      const publishers = [
+        {
+          id: 1,
+          username: 'test_user1',
+          password: 'test_password1',
+          spreadsheets: [],
+        },
+        {
+          id: 2,
+          username: 'test_user2',
+          password: 'test_password2',
+          spreadsheets: [],
+        },
+      ] as Publisher[];
 
-            await getAllPublishers(req, res);
+      const getAllPublishersMock = jest.spyOn(publisherService, 'getAllPublishers').mockResolvedValue(publishers);
 
-            const expectedResponse = [
-                { publisher: 'publisher1', sheet: null, id: null, payload: null },
-                { publisher: 'publisher2', sheet: null, id: null, payload: null }
-            ];
+      await getAllPublishers(req, res);
 
-            expect(getAllPublishersService).toHaveBeenCalled();
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: expectedResponse });
-        });
+      expect(getAllPublishersMock).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        success: true,
+        message: null,
+        value: [
+          { publisher: 'test_user1', sheet: null, id: null, payload: null },
+          { publisher: 'test_user2', sheet: null, id: null, payload: null },
+        ],
+      });
     });
+  });
 });
