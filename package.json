@@ -11,6 +11,7 @@
     "@types/jest": "^29.5.12",
     "@types/react-router-dom": "^5.3.3",
     "@types/supertest": "^6.0.2",
+    "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "supertest": "^7.0.0",

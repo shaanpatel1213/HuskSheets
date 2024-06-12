@@ -7,7 +7,8 @@ import {
   evaluateCell,
   parseUpdate,
   getColumnLetter,
-  colToIndex
+  colToIndex,
+  evaluateAllCells
 } from '../componentHelpers/spreadsheetHelpers';
 import { type TableData } from '../Utilities/CellFunctionalities';
 
@@ -39,15 +40,8 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   const updates = useRef<string>("");
   const [sheetId, setSheetId] = useState<number | null>(sheet.id);
 
-  const upDateAllCells = () => {
-    let newData = visualData;
-    for (let i = 0; i < visualData.length; i++) {
-      for (let j = 0; j < visualData[0].length; j++) {
-        newData = visualData.map((row, rIdx) =>
-          row.map((cell, cIdx) => (rIdx === i && cIdx === j ? evaluateCell(literalString[i][j], visualData) : cell))
-        );
-      }
-    }
+  const upDateAllCells = (data: TableData) => {
+    const newData = evaluateAllCells(data);
     setVisualData(newData);
   };
 
@@ -57,7 +51,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
     setLiteralString(newData);
-    setVisualData(newData);
+    upDateAllCells(newData);
   };
 
   // Ownership : Shaanpatel1213
@@ -84,19 +78,24 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   // Ownership : Shaanpatel1213
   const addRow = () => {
     const newRow: RowData = new Array(visualData[0].length).fill('');
-    setVisualData([...visualData, newRow]);
+    const newData = [...visualData, newRow];
+    setVisualData(newData);
+    setLiteralString(newData);
   };
 
   // Ownership : Shaanpatel1213
   const addColumn = () => {
     const newData = visualData.map(row => [...row, '']);
     setVisualData(newData);
+    setLiteralString(newData);
   };
 
   // Ownership : Shaanpatel1213
   const removeRow = () => {
     if (visualData.length > 1) {
-      setVisualData(visualData.slice(0, -1));
+      const newData = visualData.slice(0, -1);
+      setVisualData(newData);
+      setLiteralString(newData);
     }
   };
 
@@ -105,12 +104,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     if (visualData[0].length > 1) {
       const newData = visualData.map(row => row.slice(0, -1));
       setVisualData(newData);
+      setLiteralString(newData);
     }
   };
 
   useEffect(() => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);
-    upDateAllCells();
+    upDateAllCells(initialData);
   }, []);
 
   // Ownership : Shaanpatel1213

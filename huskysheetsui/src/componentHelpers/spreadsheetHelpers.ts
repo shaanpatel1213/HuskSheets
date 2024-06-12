@@ -135,13 +135,14 @@ export const saveUpdates = async (
  *
  * Ownership: BrandonPetersen
  */
-export const evaluateCell = (cell: string, data: TableData) => {
-  while (cell.startsWith('=')) {
+export const evaluateCell = (cell: string, data: TableData): string => {
+  while (cell && cell.startsWith('=')) {
     const formula = cell.slice(1);
     cell = parseAndEvaluateExpression(formula, data);
   }
-  return cell;
+  return cell || '';
 };
+
 
 /**
  * Converts a column letter to an index.
