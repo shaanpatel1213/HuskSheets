@@ -3,52 +3,48 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
+import { MemoryRouter, Router } from 'react-router-dom';
 
+jest.mock('./Components/Login', () => ({
+  Login: () => {
+    const history = require('react-router-dom').useHistory();
+    return (
+      <div> Login Component
+        <button onClick={() => history.push('/home')}>Go to Home</button>
+      </div>);
+  },
+}));
+jest.mock('./Components/HomePage', () => ({
+  HomePage: () => {
+    const history = require('react-router-dom').useHistory();
+    return (
+    <div> HomePage Component
+      <button onClick={() => history.push("/spreadsheet/mockPublisher/mockName/mockId/false")}>Go to Spreadsheet</button>
+    </div>);
+  },
+}));
+jest.mock('./Components/Spreadsheet', () => ({
+  Spreadsheet: () => {
+    const history = require('react-router-dom').useHistory();
+    return (<div> Spreadsheet Component</div>);
+  },
+}));
+
+// Ownership: Emily Fink
 describe('App Component', () => {
-  test('renders the App component with initial sheet', () => {
-    render(<App />);
-    const headerElement = screen.getByText(/React Spreadsheet/i);
-    expect(headerElement).toBeInTheDocument();
+  test('renders all the paths correctly', () => {
+    // renders at the Login path
+    render(<MemoryRouter><App /></MemoryRouter>);
+    expect(screen.getByText('Login Component')).toBeDefined();
 
-    const initialSheet = screen.getByText(/Sheet 1/i);
-    expect(initialSheet).toBeInTheDocument();
-  });
+    // goes to the HomePage path
+    const homePageButton = screen.queryByRole('button', {name: 'Go to Home'}) as HTMLElement;
+    fireEvent.click(homePageButton);
+    expect(screen.getByText('HomePage Component')).toBeDefined();
 
-  test('adds a new sheet when "+" button is clicked', () => {
-    render(<App />);
-    const addButton = screen.getByText('+');
-    fireEvent.click(addButton);
-
-    const newSheet = screen.getByText(/Sheet 2/i);
-    expect(newSheet).toBeInTheDocument();
-  });
-
-  test('removes a sheet when "x" button is clicked', () => {
-    render(<App />);
-    const addButton = screen.getByText('+');
-    fireEvent.click(addButton);
-
-    const removeButton = screen.getAllByText('x')[0];
-    fireEvent.click(removeButton);
-
-    const removedSheet = screen.queryByText(/Sheet 1/i);
-    expect(removedSheet).not.toBeInTheDocument();
-  });
-
-  test('switches between sheets when tabs are clicked', () => {
-    render(<App />);
-    const addButton = screen.getByText('+');
-    fireEvent.click(addButton);
-
-    const sheet1Tab = screen.getByText(/Sheet 1/i);
-    const sheet2Tab = screen.getByText(/Sheet 2/i);
-
-    fireEvent.click(sheet2Tab);
-    expect(sheet2Tab).toHaveClass('active');
-    expect(sheet1Tab).not.toHaveClass('active');
-
-    fireEvent.click(sheet1Tab);
-    expect(sheet1Tab).toHaveClass('active');
-    expect(sheet2Tab).not.toHaveClass('active');
-  });
-});
+    // goes to Spreadsheet path
+    const spreadsheetButton = screen.queryByRole('button', {name: 'Go to Spreadsheet'}) as HTMLElement;
+    fireEvent.click(spreadsheetButton);
+    expect(screen.getByText('Spreadsheet Component')).toBeDefined();
+  })
+})
