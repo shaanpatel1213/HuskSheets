@@ -1,4 +1,5 @@
 import "../css/Spreadsheet.css";
+
 type Ref = { row: number; col: number };
 
 type CellData = string;
@@ -231,7 +232,7 @@ const sumFunction = (args: any[], data: TableData): number => {
     } else if (typeof arg === "string" && arg.match(/^\$?[A-Z]+\d*$/)) {
       // Handle individual cell reference
       const cellValue = resolveCellReference(arg, data);
-      sum += parseFloat(cellValue) || 0;
+      sum += parseFloat(cellValue.toString()) || 0;
     } else {
       // Handle direct numeric value
       const resolvedValue = parseFloat(arg) || 0;
@@ -408,9 +409,9 @@ const copyFunction = (args: string[], data: TableData): string => {
 
   const sourceValue = resolveCellReference(sourceRef, data);
   const targetCoords = parseCellReference(targetRef);
-  data[targetCoords.row][targetCoords.col] = sourceValue;
+  data[targetCoords.row][targetCoords.col] = sourceValue.toString();
 
-  return sourceValue;
+  return sourceValue.toString();
 };
 
 /**
@@ -515,20 +516,17 @@ const resolveOperand = (
   throw new Error("invalid operand type");
 };
 
-const resolveCellReference = (ref: string, data: TableData): string => {
+const resolveCellReference = (ref: string, data: TableData): string | number => {
   ref = ref.startsWith("$") ? ref.substring(1) : ref;
   const match = ref.match(/^([A-Z]+)(\d+)$/);
   if (!match) return ref;
-
   const colLetters = match[1];
   const rowIndex = parseInt(match[2], 10) - 1;
-
   let colIndex = 0;
   for (let i = 0; i < colLetters.length; i++) {
     colIndex = colIndex * 26 + (colLetters.charCodeAt(i) - 65 + 1);
   }
   colIndex -= 1;
-
   if (
     rowIndex < 0 ||
     rowIndex >= data.length ||
@@ -537,8 +535,14 @@ const resolveCellReference = (ref: string, data: TableData): string => {
   ) {
     return "ERROR";
   }
+  let returnvalue = data[rowIndex][colIndex]
+  if (!isNaN(Number(returnvalue))) {
+    return Number(returnvalue);
+  }else{
+    return returnvalue.toString();
+  }
 
-  return data[rowIndex][colIndex];
+
 };
 
 const evaluateOperands = (
