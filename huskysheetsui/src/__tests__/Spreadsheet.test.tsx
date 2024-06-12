@@ -9,20 +9,20 @@ import { evaluateOperands, evaluateExpression, parseAndEvaluateExpression, Table
 
 
 describe('Spreadsheet Component', () => {
-  test('renders initial 10 rows and 10 columns', () => {
+  test('renders initial 100 rows and 25 columns', () => {
     render(<Spreadsheet sheet={{
       id: null,
       name: "",
       publisher: "",
     }} isSubscriber={false} />);
 
-    // Check that there are 10 rows
+    // Check that there are 100 rows
     const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(11); // 10 rows + 1 header row
+    expect(rows).toHaveLength(101); // 100 rows + 1 header row
 
-    // Check that there are 10 columns
+    // Check that there are 25 columns
     const cols = screen.getAllByRole('columnheader');
-    expect(cols).toHaveLength(11); // 10 cols + 1 header col
+    expect(cols).toHaveLength(26); // 26 cols + 1 header col
   });
 
   test('allows user to type into a cell', () => {
@@ -48,7 +48,7 @@ describe('Spreadsheet Component', () => {
     fireEvent.click(addButton);
 
     const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(12); // 11 rows + 1 header row
+    expect(rows).toHaveLength(102); // 101 rows + 1 header row
   });
 
   test('removes a row when "Remove Row" button is clicked', () => {
@@ -62,7 +62,7 @@ describe('Spreadsheet Component', () => {
     fireEvent.click(removeButton);
 
     const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(10); // 9 rows + 1 header row
+    expect(rows).toHaveLength(100); // 99 rows + 1 header row
   });
 
   test('adds a column when "Add Column" button is clicked', () => {
@@ -76,7 +76,7 @@ describe('Spreadsheet Component', () => {
     fireEvent.click(addButton);
 
     const cols = screen.getAllByRole('columnheader');
-    expect(cols).toHaveLength(12); // 11 + 1
+    expect(cols).toHaveLength(27); // 26 columns + 1 header column
   });
 
   test('removes a column when "Remove Column" button is clicked', () => {
@@ -90,7 +90,7 @@ describe('Spreadsheet Component', () => {
     fireEvent.click(removeButton);
 
     const cols = screen.getAllByRole('columnheader');
-    expect(cols).toHaveLength(10); // 11 - 1
+    expect(cols).toHaveLength(25); // 24 columns + 1 header column
   });
 
   test('can edit cell values', () => {
