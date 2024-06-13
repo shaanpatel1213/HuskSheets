@@ -10,6 +10,7 @@ import {
 } from '../componentHelpers/homePageHelpers';
 import '../css/HomePage.css';
 import events from "node:events";
+import {updatePublished} from "../Utilities/utils";
 
 
 // Ownership: @author : Shaanpatel1213 
@@ -33,34 +34,24 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const ReadFileContent = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     let dataTable = new Array<Array<string>>()
+    let fileContent = "";
     if (file) {
       const reader = new FileReader();
-      let fileContent = "";
 
       reader.onload = (e) => {
        fileContent = e.target?.result as string;
       };
 
       reader.readAsText(file)
-      const jsonObject = JSON.parse(fileContent)
-      if(jsonObject instanceof Array<Array<string>>){
-        dataTable = jsonObject;
-      }
+      //const jsonObject = JSON.parse(fileContent)
+      // if(jsonObject instanceof Array<Array<string>>){
+      //   dataTable = jsonObject;
+      // }
     }
-
-    // need to figure how I can give this dataTable to handleCreateSheet
-      handleCreateSheet(
-          userName,
-          newSheetName,
-          setNewSheetName,
-          sheetCounter,
-          setSheetCounter,
-          setError,
-          () => fetchSheets(userName, setSheets, setError)
-      )
+    return fileContent
   };
 
   return (
@@ -104,7 +95,19 @@ const HomePage: React.FC = () => {
                   type="file"
                   ref={fileInputRef}
                   style={{display: 'none'}}
-                  onChange={handleFileChange}
+                  onChange={(e)=> {
+                    const data = ReadFileContent(e)
+                    const returns = handleCreateSheet(
+                        userName,
+                        newSheetName,
+                        setNewSheetName,
+                        sheetCounter,
+                        setSheetCounter,
+                        setError,
+                        () => fetchSheets(userName, setSheets, setError)
+                    )
+                    updatePublished(userName, newSheetName, data)
+                  }}
               />
             </div>
             <div className="sheet-list">
