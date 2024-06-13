@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import {
   checkPublisher,
@@ -9,6 +9,7 @@ import {
   handleRegister
 } from '../componentHelpers/homePageHelpers';
 import '../css/HomePage.css';
+import events from "node:events";
 
 
 // Ownership: @author : Shaanpatel1213 
@@ -20,10 +21,47 @@ const HomePage: React.FC = () => {
   const [sheetCounter, setSheetCounter] = useState(1);
   const [error, setError] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     checkPublisher(userName, setIsRegistered, () => fetchSheets(userName, setSheets, setError), (userNames) => fetchOtherSheets(userNames, setOtherSheets), setError);
   }, []);
+
+  const handleButtonClick = () => {
+    if(fileInputRef.current){
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    let dataTable = new Array<Array<string>>()
+    if (file) {
+      const reader = new FileReader();
+      let fileContent = "";
+
+      reader.onload = (e) => {
+       fileContent = e.target?.result as string;
+      };
+
+      reader.readAsText(file)
+      const jsonObject = JSON.parse(fileContent)
+      if(jsonObject instanceof Array<Array<string>>){
+        dataTable = jsonObject;
+      }
+    }
+
+    // need to figure how I can give this dataTable to handleCreateSheet
+      handleCreateSheet(
+          userName,
+          newSheetName,
+          setNewSheetName,
+          sheetCounter,
+          setSheetCounter,
+          setError,
+          () => fetchSheets(userName, setSheets, setError)
+      )
+  };
 
   return (
     <div className="homepage-container">
@@ -59,6 +97,15 @@ const HomePage: React.FC = () => {
               >
                 Create Sheet
               </button>
+              <button onClick={handleButtonClick}>
+                Upload Sheet
+              </button>
+              <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{display: 'none'}}
+                  onChange={handleFileChange}
+              />
             </div>
             <div className="sheet-list">
               {sheets.map((sheet) => (
