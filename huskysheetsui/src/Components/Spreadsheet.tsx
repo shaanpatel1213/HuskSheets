@@ -108,6 +108,16 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
       setLiteralString(newData);
     }
   };
+  const handleDownload = () => {
+    const jsonData = JSON.stringify(literalString, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.download = 'page-data.json';
+    link.href = URL.createObjectURL(blob);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   useEffect(() => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);
@@ -154,6 +164,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
         <button onClick={removeRow}>Remove Row</button>
         <button onClick={addColumn}>Add Column</button>
         <button onClick={removeColumn}>Remove Column</button>
+        <button onClick={handleDownload}>Download Sheet</button>
         <button onClick={() => saveUpdates(isSubscriber, sheet, updates, sheetId, setSheetId)}>Save</button>
       </div>
       <div className="table-outer-container">
