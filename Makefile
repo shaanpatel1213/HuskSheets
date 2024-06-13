@@ -14,7 +14,7 @@ DOCKER_COMPOSE = docker-compose
 .PHONY: all install-client build-client start-client test-client install-server start-server test-server clean-client clean-server docker-up docker-down docker-build docker-clean
 
 # Default target: build the project
-all: install-client,build-client,test-client, docker-build, docker-up, install-server, test-server, start-server, start-server, start-client
+all: build-client
 
 # Install dependencies for the client
 install-client:
@@ -24,36 +24,44 @@ install-client:
 build-client:
 	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) build
 
+# Start the client development server
+start-client:
+	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) start
+
 # Run client tests
 test-client:
 	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) test --watchAll=false
 
-
-# Docker targets
-docker-build:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
-	
-docker-up:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
-
-
+# Clean the client build
+clean-client:
+	rm -rf $(CLIENT_DIR)/build
 
 # Install dependencies for the server
 install-server:
 	cd $(SERVER_DIR) && $(NPM) install
 
-# Run server tests
-test-server:
-	cd $(SERVER_DIR) && $(NPM) test
-
 # Start the server
 start-server:
 	cd $(SERVER_DIR) && $(NPM) start
 
+# Run server tests
+test-server:
+	cd $(SERVER_DIR) && $(NPM) test
 
-# Start the client development server
-start-client:
-	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) start
+# Clean the server build
+clean-server:
+	cd $(SERVER_DIR) && $(NPM) run clean
 
+# Docker targets
+docker-up:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
 
+docker-down:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
 
+docker-build:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+
+docker-clean:
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all
+	$(DOCKER) system prune -f
