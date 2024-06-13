@@ -4,8 +4,8 @@ import {
   updatePublished,
   updateSubscription
 } from '../Utilities/utils';
-import { parseAndEvaluateExpression } from '../Utilities/CellFunctionalities';
-import { TableData } from '../Utilities/CellFunctionalities';
+import { parseAndEvaluateExpression } from '../Utilities';
+import { TableData } from '../Utilities';
 
 /**
  * Fetches updates from the server for the current sheet.

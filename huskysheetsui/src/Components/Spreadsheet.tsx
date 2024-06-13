@@ -10,7 +10,7 @@ import {
   colToIndex,
   evaluateAllCells
 } from '../componentHelpers/spreadsheetHelpers';
-import { type TableData } from '../Utilities/CellFunctionalities';
+import { type TableData } from '../Utilities';
 
 interface SpreadsheetProps {
   sheet: Sheet;
