@@ -2,7 +2,7 @@
 
 # Define variables
 CLIENT_DIR = huskysheetsui
-SERVER_DIR = backend
+SERVER_DIR = server
 DOCKER_COMPOSE_FILE = $(SERVER_DIR)/docker-compose.yml
 
 # Define commands
@@ -13,8 +13,8 @@ DOCKER_COMPOSE = docker-compose
 
 .PHONY: all install-client build-client start-client test-client install-server start-server test-server clean-client clean-server docker-up docker-down docker-build docker-clean
 
-# Default target: build the project
-all: build-client
+# Default target: build the project test-client docker-up test-server test-client start-server start-client
+all: install-server install-client 
 
 # Install dependencies for the client
 install-client:
