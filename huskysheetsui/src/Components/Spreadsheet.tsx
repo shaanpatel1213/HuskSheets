@@ -7,7 +7,8 @@ import {
   evaluateCell,
   parseUpdate,
   getColumnLetter,
-  evaluateAllCells
+  evaluateAllCells,
+  DependencyGraph
 } from '../componentHelpers/spreadsheetHelpers';
 import { type TableData } from '../Utilities/CellFunctionalities';
 
@@ -29,7 +30,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   const initialRows = 25;
   const initialCols = 25;
 
-  // Initialize the data with 100 rows and 25 columns
+  // Initialize the data with 25 rows and 25 columns
   const initialData: TableData = Array.from({ length: initialRows }, () => Array(initialCols).fill(''));
 
   const [visualData, setVisualData] = useState<TableData>(initialData);
@@ -40,12 +41,13 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   const [sheetId, setSheetId] = useState<number | null>(sheet.id);
   const [editingCell, setEditingCell] = useState<{ row: number, col: number } | null>(null);
 
-  const upDateAllCells = (data: TableData) => {
-    const newData = evaluateAllCells(data);
+  const dependencyGraph = useRef(new DependencyGraph());
+
+  const updateAllCells = (data: TableData) => {
+    const newData = evaluateAllCells(data, dependencyGraph.current);
     setVisualData(newData);
   };
 
-  // Ownership : Shaanpatel1213
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
     const newData = literalString.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
@@ -53,19 +55,26 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     setLiteralString(newData);
   };
 
-  // Ownership : Shaanpatel1213
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
-    CalculateCell(rowIndex, colIndex, value);
+    calculateCell(rowIndex, colIndex, value, literalString, setLiteralString, setVisualData, dependencyGraph.current);
     addUpdates(rowIndex, colIndex, value, updates, getColumnLetter);
     setEditingCell(null);
   };
 
-  // Ownership : Shaanpatel1213
-  const CalculateCell = (rowIndex: number, colIndex: number, value: string) => {
-    const newData = visualData.map((row, rIdx) =>
-      row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? evaluateCell(value, literalString) : cell))
+  const calculateCell = (
+    rowIndex: number, colIndex: number, value: string, 
+    data: TableData, setLiteralString: (data: TableData) => void, setVisualData: (data: TableData) => void, dependencyGraph: DependencyGraph
+  ) => {
+    const newData = data.map((row, rIdx) =>
+      row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
-    setVisualData(newData);
+  
+    setLiteralString(newData);
+  
+    // Rebuild the dependency graph and re-evaluate all cells
+    dependencyGraph = new DependencyGraph();
+    const evaluatedData = evaluateAllCells(newData, dependencyGraph);
+    setVisualData(evaluatedData);
   };
 
   const handleFocus = (rowIndex: number, colIndex: number) => {
@@ -76,7 +85,6 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     setVisualData(newData);
   };
 
-  // Ownership : Shaanpatel1213
   const addRow = () => {
     const newRow: RowData = new Array(visualData[0].length).fill('');
     const newData = [...visualData, newRow];
@@ -84,14 +92,12 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     setLiteralString(newData);
   };
 
-  // Ownership : Shaanpatel1213
   const addColumn = () => {
     const newData = visualData.map(row => [...row, '']);
     setVisualData(newData);
     setLiteralString(newData);
   };
 
-  // Ownership : Shaanpatel1213
   const removeRow = () => {
     if (visualData.length > 1) {
       const newData = visualData.slice(0, -1);
@@ -100,7 +106,6 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
   };
 
-  // Ownership : Shaanpatel1213
   const removeColumn = () => {
     if (visualData[0].length > 1) {
       const newData = visualData.map(row => row.slice(0, -1));
@@ -111,10 +116,9 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   useEffect(() => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);
-    upDateAllCells(initialData);
+    updateAllCells(initialData);
   }, []);
 
-  // Ownership : Shaanpatel1213
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
     const horizontalScrollbar = horizontalScrollbarRef.current;
@@ -125,20 +129,17 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
       }
     };
 
-    // Ownership : Shaanpatel1213
     const syncTableScroll = () => {
       if (horizontalScrollbar && tableContainer) {
         tableContainer.scrollLeft = horizontalScrollbar.scrollLeft;
       }
     };
 
-    // Ownership : Shaanpatel1213
     if (tableContainer && horizontalScrollbar) {
       tableContainer.addEventListener('scroll', syncScroll);
       horizontalScrollbar.addEventListener('scroll', syncTableScroll);
     }
 
-    // Ownership : Shaanpatel1213
     return () => {
       if (tableContainer && horizontalScrollbar) {
         tableContainer.removeEventListener('scroll', syncScroll);
