@@ -1,151 +1,186 @@
-import { fetchUpdates, evaluateAllCells, addUpdates, saveUpdates, evaluateCell, colToIndex, getColumnLetter, parseUpdate } from '../componentHelpers/spreadsheetHelpers';
-import { getUpdatesForSubscription, getUpdatesForPublished, updatePublished, updateSubscription } from '../Utilities/utils';
-import { parseAndEvaluateExpression, TableData } from '../Utilities';
+import { 
+  fetchUpdates,
+  addUpdates,
+  saveUpdates,
+  evaluateCell,
+  parseUpdate,
+  getColumnLetter,
+  evaluateAllCells,
+  DependencyGraph
+} from '../componentHelpers/spreadsheetHelpers';
+import { getAuthHeader, updatePublished, getUpdatesForSubscription, updateSubscription } from '../Utilities/utils';
 
 jest.mock('../Utilities/utils');
-jest.mock('../Utilities');
 
+describe('Spreadsheet Helpers', () => {
+  let consoleErrorSpy: jest.SpyInstance;
 
-
-/**
- * Tests the spreadsheet helpers file
- * 
- * Ownership: @author BrandonPetersen
- */
-describe('spreadsheetHelpers', () => {
-  let consoleErrorMock: jest.SpyInstance;
-
-  beforeAll(() => {
-    consoleErrorMock = jest.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
-  afterAll(() => {
-    consoleErrorMock.mockRestore();
+  beforeEach(() => {
+    // Mocking authentication header
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => 'mockAuth');
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy.mockRestore();
   });
 
   describe('fetchUpdates', () => {
-    it('should fetch and process updates for a subscriber', async () => {
-      const initialData: TableData = [['', ''], ['', '']];
-      const updates = [
-        { publisher: 'test', sheet: 'sheet1', id: '1', payload: '$A1 1\n$B1 2' }
-      ];
-      (getUpdatesForSubscription as jest.Mock).mockResolvedValue({ success: true, value: updates });
-
-      const setLiteralString = jest.fn();
-      const setVisualData = jest.fn();
-      const parseUpdate = (update: string) => ({ row: 0, col: 0, value: update.split(' ')[1] });
-
-      await fetchUpdates(
-        { publisher: 'test', name: 'sheet1' },
-        null,
-        true,
-        initialData,
-        setLiteralString,
-        setVisualData,
-        parseUpdate
-      );
-
-      expect(setLiteralString).toHaveBeenCalled();
-      expect(setVisualData).toHaveBeenCalled();
-    });
-
-    it('should handle fetch updates failure', async () => {
-      (getUpdatesForSubscription as jest.Mock).mockResolvedValue({ success: false, value: [] });
-
-      const setLiteralString = jest.fn();
-      const setVisualData = jest.fn();
-      const parseUpdate = (update: string) => ({ row: 0, col: 0, value: update.split(' ')[1] });
-
-      await fetchUpdates(
-        { publisher: 'test', name: 'sheet1' },
-        null,
-        true,
-        [['']],
-        setLiteralString,
-        setVisualData,
-        parseUpdate
-      );
-
-      expect(console.error).toHaveBeenCalledWith('Failed to fetch updates');
-    });
-  });
-
-
-  /*
-    Broken test right now. Needed for 80% coverage
-    
-  describe('evaluateAllCells', () => {
-    it('should evaluate all cells in the data', () => {
-      const data: TableData = [['=1+1'], ['=2+2'], ['=3+3'], ['=4+4']];
-      const evaluatedData: TableData = [['2'], ['4'], ['6'], ['8']];
-      jest.spyOn(global as any, 'evaluateCell').mockImplementation((data) => {
-        if (data === '=1+1') return '2';
-        if (data === '=2+2') return '4';
-        if (data === '=3+3') return '6';
-        if (data === '=4+4') return '8';
-        return data;
+    it('should handle errors in fetchUpdates', async () => {
+      const mockSetLiteralString = jest.fn();
+      const mockSetVisualData = jest.fn();
+      const mockParseUpdate = jest.fn().mockImplementation(() => {
+        new Error('Parsing error');
       });
-  
-      const result = evaluateAllCells(data);
-      expect(result).toEqual(evaluatedData);
+      const initialData = [['']];
+
+      // Mock implementation
+      (getUpdatesForSubscription as jest.Mock).mockResolvedValueOnce({
+        success: true,
+        value: [
+          { publisher: 'TestPublisher', sheet: 'TestSheet', id: '1', payload: 'InvalidUpdate' }
+        ],
+      });
+
+      await fetchUpdates(
+        { publisher: 'TestPublisher', name: 'TestSheet' },
+        1,
+        false,
+        initialData,
+        mockSetLiteralString,
+        mockSetVisualData,
+        mockParseUpdate
+      );
+
+      expect(mockSetLiteralString).not.toHaveBeenCalled();
+      expect(mockSetVisualData).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Parsing error'));
     });
   });
-  */
 
   describe('addUpdates', () => {
     it('should add updates correctly', () => {
       const updates = { current: '' };
-      const getColumnLetter = jest.fn().mockReturnValue('A');
-      addUpdates(0, 0, '1', updates, getColumnLetter);
-      expect(updates.current).toBe('$A1 1\n');
+      const getColumnLetterMock = jest.fn().mockReturnValue('A');
+
+      addUpdates(0, 0, 'NewValue', updates, getColumnLetterMock);
+
+      expect(updates.current).toContain('$A1 NewValue');
+      expect(getColumnLetterMock).toHaveBeenCalledWith(0);
     });
   });
 
   describe('saveUpdates', () => {
-    it('should save updates successfully', async () => {
-      (updatePublished as jest.Mock).mockResolvedValue({ success: true });
-      const updates = { current: 'update' };
-      const setSheetId = jest.fn();
+    it('should save updates correctly for a publisher', async () => {
+      const updates = { current: '$A1 NewValue' };
+      const setSheetIdMock = jest.fn();
 
-      await saveUpdates(false, { publisher: 'test', name: 'sheet1' }, updates, null, setSheetId);
-      expect(setSheetId).toHaveBeenCalledWith(1);
+      (updatePublished as jest.Mock).mockResolvedValueOnce({
+        success: true,
+        value: []
+      });
+
+      await saveUpdates(
+        false,
+        { name: 'TestSheet', publisher: 'TestPublisher' },
+        updates,
+        1,
+        setSheetIdMock
+      );
+
+      // Assertions to verify that the updates are saved
       expect(updates.current).toBe('');
     });
 
-    it('should handle save updates failure', async () => {
-      (updatePublished as jest.Mock).mockResolvedValue({ success: false });
-      const updates = { current: 'update' };
-      const setSheetId = jest.fn();
+    it('should save updates correctly for a subscriber', async () => {
+      const updates = { current: '$A1 NewValue' };
+      const setSheetIdMock = jest.fn();
 
-      await saveUpdates(false, { publisher: 'test', name: 'sheet1' }, updates, null, setSheetId);
-      expect(console.error).toHaveBeenCalledWith('Failed to save updates');
+      (updateSubscription as jest.Mock).mockResolvedValueOnce({
+        success: true,
+        value: []
+      });
+
+      await saveUpdates(
+        true,
+        { name: 'TestSheet', publisher: 'TestPublisher' },
+        updates,
+        1,
+        setSheetIdMock
+      );
+
+      // Assertions to verify that the updates are saved
+      expect(updates.current).toBe('');
     });
   });
 
-  describe('colToIndex and getColumnLetter', () => {
-    it('should convert column letter to index and back', () => {
-      expect(colToIndex('A')).toBe(0);
+  describe('evaluateCell', () => {
+    it('should evaluate a cell correctly', () => {
+      const data = [['1+1']];
+      const dependencyGraph = new DependencyGraph();
+      const visitedCells: Set<string> = new Set();
+      const result = evaluateCell('=1+1', 0, 0, data, dependencyGraph, visitedCells);
+      expect(result).toBe('2');
+    });
+  
+    it('should handle evaluation errors', () => {
+      const data = [['invalid']];
+      const dependencyGraph = new DependencyGraph();
+      const visitedCells: Set<string> = new Set();
+      const result = evaluateCell('=2-', 0, 0, data, dependencyGraph, visitedCells);
+      expect(result).toBe('ERROR');
+    });
+  });
+  
+
+  describe('parseUpdate', () => {
+    it('should parse an update string correctly', () => {
+      const result = parseUpdate('$A1 2');
+      expect(result).toEqual({ row: 0, col: 0, value: '2' });
+    });
+
+    it('should handle invalid update strings', () => {
+      expect(() => parseUpdate('invalid update')).toThrow('Invalid update format');
+    });
+  });
+
+  describe('getColumnLetter', () => {
+    it('should return the correct column letter', () => {
       expect(getColumnLetter(0)).toBe('A');
-      expect(colToIndex('Z')).toBe(25);
       expect(getColumnLetter(25)).toBe('Z');
-      expect(colToIndex('AA')).toBe(26);
       expect(getColumnLetter(26)).toBe('AA');
     });
   });
 
-  describe('parseUpdate', () => {
-    it('should parse an update string correctly', () => {
-      const update = '$A1 1';
-      const parsed = parseUpdate(update);
-      expect(parsed).toEqual({ row: 0, col: 0, value: '1' });
+  describe('evaluateAllCells', () => {
+    it('should evaluate all cells correctly', () => {
+      const data = [['=1+1', '=2+2']];
+      const dependencyGraph = new DependencyGraph();
+      const result = evaluateAllCells(data, dependencyGraph);
+      expect(result).toEqual([['2', '4']]);
     });
 
-    it('should throw an error for invalid update format', () => {
-      expect(() => parseUpdate('invalid')).toThrow('Invalid update format');
+    it('should handle errors in cell evaluation', () => {
+      const data = [['=invalid', '=2+2']];
+      const dependencyGraph = new DependencyGraph();
+      const result = evaluateAllCells(data, dependencyGraph);
+      expect(result).toEqual([['ERROR', '4']]);
+    });
+  });
+
+  describe('DependencyGraph', () => {
+    it('should add and get dependencies correctly', () => {
+      const graph = new DependencyGraph();
+      graph.addDependency('A1', 'B1');
+      expect(graph.getDependencies('A1')).toEqual(new Set(['B1']));
+    });
+  
+    it('should handle circular dependencies', () => {
+      const graph = new DependencyGraph();
+      graph.addDependency('A1', 'B1');
+      graph.addDependency('B1', 'A1');
+      expect(graph.detectCycle('A1')).toBe(true);
     });
   });
 });

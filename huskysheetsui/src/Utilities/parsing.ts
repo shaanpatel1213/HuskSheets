@@ -21,7 +21,7 @@ export const parseAndEvaluateExpression = (
     const result = evaluateExpression(parsedExpression, data);
     return !isNaN(Number(result)) ? result.toString() : result.toString();
   } catch (error) {
-    console.error("Error in parseAndEvaluateExpression:", error);
+    console.log("Error in parseAndEvaluateExpression:", error);
     return "ERROR";
   }
 };
