@@ -109,7 +109,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
   };
   const handleDownload = () => {
-    const jsonData = JSON.stringify(literalString, null, 2);
+    const jsonData = concatenateStrings(literalString)
     const blob = new Blob([jsonData], { type: 'application/json' });
     const link = document.createElement('a');
     link.download = 'page-data.json';
@@ -118,6 +118,22 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     link.click();
     document.body.removeChild(link);
   };
+  function concatenateStrings(array: string[][]): string {
+    let result = "";
+
+    for (let row = 0; row < array.length; row++) {
+      for (let col = 0; col < array[row].length; col++) {
+        const cellValue = array[row][col];
+        const cellReference = `$${String.fromCharCode(65 + col)}${row + 1}`;
+        if (cellValue != ""){
+          result +=  cellReference + " " + cellValue + " ";
+          //result +=  cellReference + " \\"+ "\"" + cellValue + "\\" + "\" ";
+        }
+      }
+    }
+
+    return "\"" + result + "\"";
+  }
 
   useEffect(() => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);

@@ -28,6 +28,20 @@ const HomePage: React.FC = () => {
     checkPublisher(userName, setIsRegistered, () => fetchSheets(userName, setSheets, setError), (userNames) => fetchOtherSheets(userNames, setOtherSheets), setError);
   }, []);
 
+  function concatenateStrings(array: string[][]): string {
+    let result = '';
+
+    for (let row = 0; row < array.length; row++) {
+      for (let col = 0; col < array[row].length; col++) {
+        const cellValue = array[row][col];
+        const cellReference = `$${String.fromCharCode(65 + col)}${row + 1}`;
+        result += `${cellReference} \\ "${cellValue}" `;
+      }
+    }
+
+    return result.trim();
+  }
+
   const handleButtonClick = () => {
     if(fileInputRef.current){
       fileInputRef.current.click();
@@ -40,16 +54,11 @@ const HomePage: React.FC = () => {
     let fileContent = "";
     if (file) {
       const reader = new FileReader();
-
       reader.onload = (e) => {
        fileContent = e.target?.result as string;
       };
-
       reader.readAsText(file)
-      //const jsonObject = JSON.parse(fileContent)
-      // if(jsonObject instanceof Array<Array<string>>){
-      //   dataTable = jsonObject;
-      // }
+
     }
     return fileContent
   };
@@ -99,7 +108,7 @@ const HomePage: React.FC = () => {
                     const data = ReadFileContent(e)
                     const returns = handleCreateSheet(
                         userName,
-                        newSheetName,
+                        "IMPORTED :" + newSheetName,
                         setNewSheetName,
                         sheetCounter,
                         setSheetCounter,
