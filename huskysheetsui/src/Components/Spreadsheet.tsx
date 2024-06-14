@@ -112,7 +112,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     const jsonData = concatenateStrings(literalString)
     const blob = new Blob([jsonData], { type: 'application/json' });
     const link = document.createElement('a');
-    link.download = 'page-data.json';
+    link.download = 'downloadsheet.txt';
     link.href = URL.createObjectURL(blob);
     document.body.appendChild(link);
     link.click();
@@ -126,7 +126,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
         const cellValue = array[row][col];
         const cellReference = `$${String.fromCharCode(65 + col)}${row + 1}`;
         if (cellValue != ""){
-          result +=  cellReference + " " + cellValue + " ";
+          result +=  cellReference + " " + cellValue + "\\" + "n";
           //result +=  cellReference + " \\"+ "\"" + cellValue + "\\" + "\" ";
         }
       }
