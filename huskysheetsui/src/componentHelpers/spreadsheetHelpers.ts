@@ -66,7 +66,7 @@ export const fetchUpdates = async (
 ) => {
   const result = isSubscriber
     ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0')
-    : await getUpdatesForPublished(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
+    : await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
   
   if (result && result.success) {
     const newData = initialData.map(row => row.slice());
@@ -152,9 +152,25 @@ const evaluateCell = (
       evaluatedFormula = evaluatedFormula.replace(dep, depValue);
     });
 
-    return parseAndEvaluateExpression(evaluatedFormula, data);
-  }
-  return cell || '';
+        
+    // Check if the formula contains a function and pass accordingly
+
+    const isFunction = formula.match(/^\s*[\w\$]+\s*\(.*\)\s*$/);
+
+    if (isFunction) {
+
+      return parseAndEvaluateExpression(formula, data);
+
+    } else {
+
+      return parseAndEvaluateExpression(evaluatedFormula, data);
+
+    }
+
+    }
+
+return cell || '';
+
 };
 
 

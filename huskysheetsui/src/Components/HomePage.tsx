@@ -12,7 +12,7 @@ import '../css/HomePage.css';
 
 // Ownership: @author : Shaanpatel1213 
 const HomePage: React.FC = () => {
-  const userName = localStorage.getItem('userName') || '';
+  const userName = sessionStorage.getItem('userName') || '';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);
   const [otherSheets, setOtherSheets] = useState<{ publisher: string; sheets: { id: string; name: string }[] }[]>([]);
   const [newSheetName, setNewSheetName] = useState('');
@@ -26,8 +26,8 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('userName'); // Clear user data from local storage
-    localStorage.removeItem('password'); // Clear user data from local storage
+    sessionStorage.removeItem('userName'); // Clear user data from local storage
+    sessionStorage.removeItem('password'); // Clear user data from local storage
     history.push('/'); // Redirect to login page
   };
 

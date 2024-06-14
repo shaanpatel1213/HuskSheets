@@ -14,13 +14,15 @@ html, body {
 }
 
 .controls {
-  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between; /* Add this line */
   padding: 10px;
   background-color: #f9f9f9;
   border-bottom: 1px solid #ddd;
 }
 
-.controls button {
+.left-controls button,
+.right-controls button {
   margin-right: 5px;
   padding: 8px 12px;
   border: none;
@@ -29,7 +31,8 @@ html, body {
   cursor: pointer;
 }
 
-.controls button:hover {
+.left-controls button:hover,
+.right-controls button:hover {
   background-color: #0056b3;
 }
 

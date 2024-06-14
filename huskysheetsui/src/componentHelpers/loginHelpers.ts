@@ -24,8 +24,8 @@ export const handleSubmit = async (
   // Encode credentials and set it to localStorage
   const auth = btoa(`${userName}:${password}`);
   if (auth === btoa('team18:qdKoHqmiP@6x`_1Q') || auth === btoa('user222:password222') || auth === btoa('user1:password1')) {
-    localStorage.setItem('auth', auth);
-    localStorage.setItem('userName', userName);
+    sessionStorage.setItem('auth', auth);
+    sessionStorage.setItem('userName', userName);
     history.push('/home');
   } else {
     setError('Incorrect username or password');

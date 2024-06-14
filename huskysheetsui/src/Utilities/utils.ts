@@ -1,8 +1,8 @@
 // src/Utils/utils.ts
 import axios, { AxiosError } from 'axios';
 
-const API_URL = 'http://localhost:3010/api/shubTest';
-// const API_URL = 'https://husksheets.fly.dev/api/v1';
+// const API_URL = 'http://localhost:3010/api/shubTest';
+const API_URL = 'https://husksheets.fly.dev/api/v1';
 
 
 const username1 = 'team18';
@@ -28,8 +28,8 @@ const auth3 = btoa(`${username3}:${password3}`);
  * Ownership: @author BrandonPetersen
  */
 const getAuthHeader = () => {
-  console.log('Encoded auth string:', localStorage.getItem('auth')); // Log the encoded auth string
-  var auth = localStorage.getItem('auth');
+  console.log('Encoded auth string:', sessionStorage.getItem('auth')); // Log the encoded auth string
+  var auth = sessionStorage.getItem('auth');
   return {
     headers: {
       Authorization: `Basic ${auth}`

@@ -114,8 +114,12 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
   };
 
-  useEffect(() => {
+  const fetchSheetUpdates = () => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);
+  };
+
+  useEffect(() => {
+    fetchSheetUpdates();
     updateAllCells(initialData);
   }, []);
 
@@ -151,11 +155,16 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   return (
     <div className="spreadsheet-container">
       <div className="controls">
-        <button onClick={addRow}>Add Row</button>
-        <button onClick={removeRow}>Remove Row</button>
-        <button onClick={addColumn}>Add Column</button>
-        <button onClick={removeColumn}>Remove Column</button>
-        <button onClick={() => saveUpdates(isSubscriber, sheet, updates, sheetId, setSheetId)}>Save</button>
+        <div className="left-controls">
+          <button onClick={() => saveUpdates(isSubscriber, sheet, updates, sheetId, setSheetId)}>Save</button>
+          <button onClick={fetchSheetUpdates}>Update</button>
+        </div>
+        <div className="right-controls">
+          <button onClick={addRow}>Add Row</button>
+          <button onClick={removeRow}>Remove Row</button>
+          <button onClick={addColumn}>Add Column</button>
+          <button onClick={removeColumn}>Remove Column</button>
+        </div>
       </div>
       <div className="table-outer-container">
         <div className="table-container" ref={tableContainerRef}>
