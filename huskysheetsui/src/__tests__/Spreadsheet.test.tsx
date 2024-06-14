@@ -5,13 +5,25 @@ import '@testing-library/jest-dom/extend-expect';
 import { Spreadsheet } from '../Components/Spreadsheet';
 import { evaluateOperands, evaluateExpression, parseAndEvaluateExpression, TableData } from "../Utilities";
 
-
-describe('Spreadsheet Component', () => {
-  const initialRows = 25;
-  const initialCols = 25;
+/**
+ * Tests to tests React Components for a spreadsheet
+ * Tests include:
+ *  rendering of rows and columns
+ *  users can type in a cell
+ *  Allowing for the addition of rows and columns
+ *  Allowing for the removal of rows and columns
+ *  Can edit cell values
+ *  Prints ERROR with invalid value
+ *  Calculates cell functionality
+ *
+ * @author Shaanpatel1213
+ * */
+describe('Spreadsheet Component Tests', () => {
+  const initialRows = 25
+  const initialCols = 25
 
   test('renders initial 100 rows and 25 columns', () => {
-    render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
+    render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} /> );
     
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(initialRows + 1); // 100 rows + 1 header row
@@ -21,7 +33,7 @@ describe('Spreadsheet Component', () => {
   });
 
   test('allows user to type into a cell', () => {
-    render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
+    render(<Spreadsheet sheet={{ id: null, name: "", publisher: ""}} isSubscriber={false} />);
     
     const firstCell = screen.getAllByRole('textbox')[0];
     fireEvent.change(firstCell, { target: { value: 'test' } });
@@ -79,8 +91,6 @@ describe('Spreadsheet Component', () => {
     expect(firstCell).toHaveValue('test');
   });
 
-
-
   test('returns ERROR for invalid cell reference in formula', () => {
     render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
     
@@ -99,7 +109,10 @@ describe('Spreadsheet Component', () => {
     waitFor(() => expect(firstCell).toHaveValue('4'));
   });
 });
-
+/**
+ * Checks to see if the evaluateOperands function works correctly
+ * @author Shaanpatel1213
+ * */
 describe('evaluateOperands function', () => {
   test('should return 1 for equal numbers using = operator', () => {
     expect(evaluateOperands(5, 5, '=')).toBe(1);
@@ -241,17 +254,7 @@ describe('parseAndEvaluateExpression function', () => {
     expect(parseAndEvaluateExpression('DEBUG(1)', data)).toBe('1');
   });
 });
-// test('renders header', () => {
-//   render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
-//   const headerElement = screen.getByText(/Spreadsheet Header/i);
-//   expect(headerElement).toBeInTheDocument();
-// });
-//
-// test('renders initial empty cell', () => {
-//   render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
-//   const cellElement = screen.getByTestId('cell-0-0');
-//   expect(cellElement).toBeInTheDocument();
-// });
+
 
 
    

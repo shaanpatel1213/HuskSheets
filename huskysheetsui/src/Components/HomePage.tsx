@@ -10,7 +10,6 @@ import {
 } from '../componentHelpers/homePageHelpers';
 import '../css/HomePage.css';
 
-// Ownership: @author : Shaanpatel1213 
 const HomePage: React.FC = () => {
   const userName = sessionStorage.getItem('userName') || '';
   const [sheets, setSheets] = useState<{ id: string; name: string }[]>([]);

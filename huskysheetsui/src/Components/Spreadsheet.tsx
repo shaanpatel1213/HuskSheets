@@ -46,14 +46,16 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     const newData = evaluateAllCells(data, dependencyGraph.current);
     setVisualData(newData);
   };
-
+  /**
+   * Handles visual changes when a user tyoe in a cell it visually updates
+   * @author Shaanpatel1213
+   * */
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
     const newData = literalString.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
     setLiteralString(newData);
-  };
-
+  }
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
     calculateCell(rowIndex, colIndex, value, literalString, setLiteralString, setVisualData, dependencyGraph.current);
     addUpdates(rowIndex, colIndex, value, updates, getColumnLetter);
@@ -83,20 +85,29 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     );
     setVisualData(newData);
   };
-
+/**
+ * Adds a row to the sheet and updates corresponding values
+ * @author Shaanpatel1213
+ * */
   const addRow = () => {
     const newRow: RowData = new Array(visualData[0].length).fill('');
     const newData = [...visualData, newRow];
     setVisualData(newData);
     setLiteralString(newData);
   };
-
+/**
+ * Adds a column to the sheet and updates corresponding values
+ * @author Shaanpatel1213
+ * */
   const addColumn = () => {
     const newData = visualData.map(row => [...row, '']);
     setVisualData(newData);
     setLiteralString(newData);
   };
-
+/**
+ * Removes a row to the sheet and updates corresponding values
+ * @author Shaanpatel1213
+ * */
   const removeRow = () => {
     if (visualData.length > 1) {
       const newData = visualData.slice(0, -1);
@@ -104,7 +115,10 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
       setLiteralString(newData);
     }
   };
-
+/**
+ * Removes a column to the sheet and updates corresponding values
+ * @author Shaanpatel1213
+ * */
   const removeColumn = () => {
     if (visualData[0].length > 1) {
       const newData = visualData.map(row => row.slice(0, -1));
@@ -122,6 +136,11 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     updateAllCells(initialData);
   }, []);
 
+  /**
+   * useEffect is used here to sync the scrolling of the page with the table in both the
+   * vertical and horizontal directions.
+   * @author Shaanpatel1213
+   */
   useEffect(() => {
     const tableContainer = tableContainerRef.current;
     const horizontalScrollbar = horizontalScrollbarRef.current;
@@ -131,18 +150,15 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
         horizontalScrollbar.scrollLeft = tableContainer.scrollLeft;
       }
     };
-
     const syncTableScroll = () => {
       if (horizontalScrollbar && tableContainer) {
         tableContainer.scrollLeft = horizontalScrollbar.scrollLeft;
       }
     };
-
     if (tableContainer && horizontalScrollbar) {
       tableContainer.addEventListener('scroll', syncScroll);
       horizontalScrollbar.addEventListener('scroll', syncTableScroll);
     }
-
     return () => {
       if (tableContainer && horizontalScrollbar) {
         tableContainer.removeEventListener('scroll', syncScroll);

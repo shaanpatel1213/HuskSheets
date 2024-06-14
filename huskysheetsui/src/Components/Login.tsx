@@ -3,6 +3,18 @@ import { useHistory } from 'react-router-dom';
 import { handleSubmit } from '../componentHelpers/loginHelpers';
 import '../css/login.css';
 
+/**
+ * Login Component
+ *
+ * A React functional component that provides a login form for users.
+ * It captures username and password inputs and submits them for authentication.
+ *
+ * Dependencies:
+ * - React
+ * - react-router-dom
+ *
+ * @author ShaanPatel1213
+ */
 const Login = () => {
   const history = useHistory();
   const [userName, setUserName] = useState('');
@@ -14,7 +26,7 @@ const Login = () => {
     handleSubmit(userName, password, setError, history);
   };
 
-  // Ownership: @author : Shaanpatel1213
+
   return (
     <div className="login-container">
       <h2>Login</h2>
