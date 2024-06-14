@@ -1,11 +1,10 @@
 import { handleSubmit } from '../componentHelpers/loginHelpers';
 import { createMemoryHistory } from 'history';
 
-
 /**
  * Tests the login helpers file
  * 
- * Ownership: @author BrandonPetersen
+ * Ownership: @auth BrandonPetersen
  */
 describe('handleSubmit', () => {
   let setError: jest.Mock;
@@ -16,8 +15,8 @@ describe('handleSubmit', () => {
     history = createMemoryHistory();
     history.push = jest.fn(); // Mock the push function
 
-    // Mock localStorage
-    const localStorageMock = (function() {
+    // Mock sessionStorage
+    const sessionStorageMock = (function() {
       let store: Record<string, string> = {};
       return {
         getItem(key: string) {
@@ -34,23 +33,23 @@ describe('handleSubmit', () => {
         }
       };
     })();
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock
+    Object.defineProperty(window, 'sessionStorage', {
+      value: sessionStorageMock
     });
 
-    // Spy on localStorage methods
-    jest.spyOn(localStorage, 'setItem');
+    // Spy on sessionStorage methods
+    jest.spyOn(sessionStorage, 'setItem');
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should set auth and userName in localStorage and redirect if credentials are correct', async () => {
+  test('should set auth and userName in sessionStorage and redirect if credentials are correct', async () => {
     await handleSubmit('team18', 'qdKoHqmiP@6x`_1Q', setError, history);
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('auth', btoa('team18:qdKoHqmiP@6x`_1Q'));
-    expect(localStorage.setItem).toHaveBeenCalledWith('userName', 'team18');
+    expect(sessionStorage.setItem).toHaveBeenCalledWith('auth', btoa('team18:qdKoHqmiP@6x`_1Q'));
+    expect(sessionStorage.setItem).toHaveBeenCalledWith('userName', 'team18');
     expect(history.push).toHaveBeenCalledWith('/home');
   });
 
@@ -58,7 +57,7 @@ describe('handleSubmit', () => {
     await handleSubmit('wrongUser', 'wrongPass', setError, history);
 
     expect(setError).toHaveBeenCalledWith('Incorrect username or password');
-    expect(localStorage.setItem).not.toHaveBeenCalled();
+    expect(sessionStorage.setItem).not.toHaveBeenCalled();
     expect(history.push).not.toHaveBeenCalled();
   });
 });
