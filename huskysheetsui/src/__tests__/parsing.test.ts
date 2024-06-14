@@ -217,99 +217,99 @@ describe('evaluateExpression function', () => {
         const parsedExpression = { x: 2, y: 1, operator: '-' };
         expect(evaluateExpression(parsedExpression, data)).toBe(1);
     });
+});
 
-    describe('evaluateFunction function', () => {
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate SUM function', () => {
-            const parsedExpression = { func: 'SUM', args: ['1', '2', '3'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe(6);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate MIN function', () => {
-            const parsedExpression = { func: 'MIN', args: ['3', '1', '2'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe(1);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate MAX function', () => {
-            const parsedExpression = { func: 'MAX', args: ['3', '1', '2'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe(3);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate AVG function', () => {
-            const parsedExpression = { func: 'AVG', args: ['3', '1', '2'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe(2);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate CONCAT function', () => {
-            const parsedExpression = { func: 'CONCAT', args: ['hello', ' ', 'world'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe('hello world');
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate IF function', () => {
-            const parsedExpression = { func: 'IF', args: ['1', 'true', 'false'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe('true');
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate nested IF function', () => {
-            const parsedExpression = { func: 'IF', args: ['0', 'true', 'IF(1,true,false)'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe('true');
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate DEBUG function', () => {
-            const parsedExpression = { func: 'DEBUG', args: ['1'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe('1');
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate COPY function', () => {
-            const parsedExpression = { func: 'COPY', args: ['$A1', '"$B1"'] };
-            expect(evaluateFunction(parsedExpression, data)).toBe('1');
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should throw error for unsupported function', () => {
-            const parsedExpression = { func: 'FAKE', args: ['1', '1'] };
-            expect(() => {
-                evaluateFunction(parsedExpression, data);
-            }).toThrow('Function not supported');
-        });
+describe('evaluateFunction function', () => {
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate SUM function', () => {
+        const parsedExpression = { func: 'SUM', args: ['1', '2', '3'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe(6);
     });
-    
-    describe('evaluateRange function', () => {
-        const data1: TableData = [
-            ['5', '2', '3'],
-            ['4', '5', '6'],
-            ['7', '8', '9']
-        ];
 
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate range', () => {
-            expect(evaluateRange('A1:C1', data1)).toBe(10);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should correctly evaluate range with multiple rows', () => {
-            expect(evaluateRange('A1:C2', data1)).toBe(25);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should return 0 for an empty range', () => {
-            const emptyData: TableData = [['']];
-            expect(evaluateRange('A1:A1', emptyData)).toBe(0);
-        });
-    
-        /** Ownership: @author EmilyFink474 */
-        test('should throw error for invalid range format', () => {
-            expect(() => {
-                evaluateRange('A1', data1);
-            }).toThrow('Invalid range format');
-        });
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate MIN function', () => {
+        const parsedExpression = { func: 'MIN', args: ['3', '1', '2'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe(1);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate MAX function', () => {
+        const parsedExpression = { func: 'MAX', args: ['3', '1', '2'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe(3);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate AVG function', () => {
+        const parsedExpression = { func: 'AVG', args: ['3', '1', '2'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe(2);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate CONCAT function', () => {
+        const parsedExpression = { func: 'CONCAT', args: ['hello', ' ', 'world'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe('hello world');
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate IF function', () => {
+        const parsedExpression = { func: 'IF', args: ['1', 'true', 'false'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe('true');
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate nested IF function', () => {
+        const parsedExpression = { func: 'IF', args: ['0', 'true', 'IF(1,true,false)'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe('true');
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate DEBUG function', () => {
+        const parsedExpression = { func: 'DEBUG', args: ['1'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe('1');
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate COPY function', () => {
+        const parsedExpression = { func: 'COPY', args: ['$A1', '"$B1"'] };
+        expect(evaluateFunction(parsedExpression, data)).toBe('1');
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should throw error for unsupported function', () => {
+        const parsedExpression = { func: 'FAKE', args: ['1', '1'] };
+        expect(() => {
+            evaluateFunction(parsedExpression, data);
+        }).toThrow('Function not supported');
+    });
+});
+
+describe('evaluateRange function', () => {
+    const data1: TableData = [
+        ['5', '2', '3'],
+        ['4', '5', '6'],
+        ['7', '8', '9']
+    ];
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate range', () => {
+        expect(evaluateRange('A1:C1', data1)).toBe(10);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should correctly evaluate range with multiple rows', () => {
+        expect(evaluateRange('A1:C2', data1)).toBe(25);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should return 0 for an empty range', () => {
+        const emptyData: TableData = [['']];
+        expect(evaluateRange('A1:A1', emptyData)).toBe(0);
+    });
+
+    /** Ownership: @author EmilyFink474 */
+    test('should throw error for invalid range format', () => {
+        expect(() => {
+            evaluateRange('A1', data1);
+        }).toThrow('Invalid range format');
     });
 });
