@@ -4,7 +4,7 @@ import cors from 'cors';
 import spreadsheetsRouter from './routes';
 
 const app = express();
-const port = 3002;
+const port = 3010;
 
 app.use(cors());
 app.use(express.json());

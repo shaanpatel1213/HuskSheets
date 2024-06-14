@@ -9,11 +9,14 @@ export const findPublisherByUsername = async (username: string) => {
 };
 
 export const getSheetsByPublisher = async (publisher: Publisher) => {
-  return await AppDataSource.manager.find(Spreadsheet, {
+  const sheets = await AppDataSource.manager.find(Spreadsheet, {
     where: { publisher },
   });
+  return sheets.map(sheet => ({
+    id: sheet.id,
+    sheet: sheet.name,
+  }));
 };
-
 export const createSheet = async (publisher: Publisher, sheetName: string) => {
   const spreadsheet = new Spreadsheet();
   spreadsheet.publisher = publisher;

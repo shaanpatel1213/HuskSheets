@@ -1,8 +1,8 @@
 // src/Utils/utils.ts
 import axios, { AxiosError } from 'axios';
 
-// const API_URL = 'http://localhost:3002/api/shubTest';
-const API_URL = 'https://husksheets.fly.dev/api/v1';
+const API_URL = 'http://localhost:3010/api/shubTest';
+// const API_URL = 'https://husksheets.fly.dev/api/v1';
 
 
 const username = 'team18';
