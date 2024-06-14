@@ -4,6 +4,12 @@ import { User } from '../entity/User';
 import { AppDataSource } from '../data-source';
 import { Buffer } from 'buffer';
 
+/**
+ * Middleware to verify authentication header and validate username and password using the database.
+ *
+ * @file auth.ts
+ * @author syadav7173
+ */
 
 declare global {
     namespace Express {
@@ -16,9 +22,16 @@ declare global {
     }
   }
 
-//verifies authentication header and verifies validity of username and password using database.
-
-
+/**
+ * Verifies authentication header and validates the username and password using the database.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
   const auth = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
   

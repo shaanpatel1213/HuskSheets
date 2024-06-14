@@ -1,6 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
 import * as updateService from '../services/updateService';
 
+/**
+ * Controller for handling update-related endpoints.
+ *
+ * @file updateController.ts
+ * 
+ * @author syadav7173
+ */
+
+/**
+ * Get updates for subscription.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const getUpdatesForSubscription = async (req: Request, res: Response, next: NextFunction) => {
   const { publisher, sheet, id } = req.body;
   try {
@@ -11,6 +29,17 @@ export const getUpdatesForSubscription = async (req: Request, res: Response, nex
   }
 };
 
+
+/**
+ * Get updates for published sheets.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const getUpdatesForPublished = async (req: Request, res: Response, next: NextFunction) => {
   const { user_name } = req.user!;
   const { publisher, sheet, id } = req.body;
@@ -29,6 +58,16 @@ export const getUpdatesForPublished = async (req: Request, res: Response, next: 
   }
 };
 
+/**
+ * Update published sheets.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const updatePublished = async (req: Request, res: Response, next: NextFunction) => {
   const { user_name } = req.user!;
   const { publisher, sheet, payload } = req.body;
@@ -47,6 +86,16 @@ export const updatePublished = async (req: Request, res: Response, next: NextFun
   }
 };
 
+/**
+ * Update subscription sheets.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const updateSubscription = async (req: Request, res: Response, next: NextFunction) => {
   const { publisher, sheet, payload } = req.body;
   try {

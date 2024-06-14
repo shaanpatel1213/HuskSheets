@@ -2,7 +2,13 @@ import { AppDataSource } from '../data-source';
 import { User } from '../entity/User';
 import { Buffer } from 'buffer';
 
-//adds 3 seeded users to database and encodes them in base64
+/**
+ * Adds 3cseeded users to the database with base64 encoded passwords.
+ *
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const seedUsers = async () => {
   const users = [
     { user_name: 'user1', password: 'password1' },
@@ -18,5 +24,3 @@ export const seedUsers = async () => {
     await AppDataSource.manager.save(newUser);
   }
 };
-
-

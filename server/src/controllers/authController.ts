@@ -1,7 +1,21 @@
 import { Request, Response } from "express";
 import { findPublisherByUsername, createPublisher, getAllPublishers as getAllPublishersService } from "../services/publisherService";
 
-//register a publisher
+/**
+ * Controller for handling authentication-related endpoints.
+ *
+ * @file authController.ts
+ * @author syadav7173
+ */
+
+/**
+ * Register a publisher.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @returns {Promise<void>}
+ * @author syadav7173
+ */
 export const registerPublisher = async (req: Request, res: Response) => {
   const { user_name, password } = req.user!;
 
@@ -13,7 +27,15 @@ export const registerPublisher = async (req: Request, res: Response) => {
   res.status(200).json({ success: true, message: user_name, value: [] });
 };
 
-//get all publishers
+/**
+ * Get all publishers.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const getAllPublishers = async (req: Request, res: Response) => {
   const publishers = await getAllPublishersService();
   const result = publishers.map((publisher) => ({

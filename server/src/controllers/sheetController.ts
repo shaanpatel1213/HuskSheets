@@ -2,7 +2,24 @@ import { Request, Response, NextFunction } from 'express';
 import * as sheetService from '../services/sheetService';
 import { Publisher } from '../entity/Publisher';
 
-//create a new sheet for the authenticated user
+/**
+ * Controller for handling sheet-related endpoints.
+ *
+ * @file sheetController.ts
+ * 
+ * @author syadav7173
+ */
+
+/**
+ * Create a new sheet for the authenticated user.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const createNewSheet = async (req: Request, res: Response, next: NextFunction) => {
   const { user_name } = req.user!;
   const { publisher, sheet } = req.body;
@@ -25,7 +42,16 @@ export const createNewSheet = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-//get sheets for a publisher
+/**
+ * Get sheets for a publisher.
+ *
+ * @param {Request} req - The HTTP request object.
+ * @param {Response} res - The HTTP response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>}
+ * 
+ * @author syadav7173
+ */
 export const getSheets = async (req: Request, res: Response, next: NextFunction) => {
   const { publisher } = req.body;
   try {

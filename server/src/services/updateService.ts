@@ -4,6 +4,27 @@ import { Spreadsheet } from "../entity/Spreadsheet";
 import { Update } from "../entity/Update";
 import { Cell } from "../entity/Cell";
 
+
+/**
+ * This file contains services for managing updates within the Husksheet application.
+ * The services include operations for getting updates for subscriptions and published sheets,
+ * as well as updating published and subscription sheets.
+ *
+ * @file updateService.ts
+ * @author syadav7173
+ */
+
+/**
+ * Returns the updates for the given published sheet occurring after the given id.
+ *
+ * @param {string} publisher - The name of the publisher.
+ * @param {string} sheet - The name of the sheet.
+ * @param {string} id - The ID to get updates for.
+ * @returns {Promise<Array>} A promise that resolves to an array of updates.
+ * @throws {Error} If the publisher or sheet is not found.
+ * 
+ * @author syadav7173
+ */
 export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,

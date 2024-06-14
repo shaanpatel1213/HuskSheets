@@ -146,7 +146,6 @@ export const evaluateExpression = (
     const { startRef, endRef } = parsedExpression;
     const resolvedEndRef = parseAndEvaluateExpression(endRef, data);
     const range = `${startRef}:${resolvedEndRef}`;
-    console.log("evaulating rages tee hee");
     return evaluateRange(range, data);
   }
 

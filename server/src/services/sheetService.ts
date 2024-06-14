@@ -1,13 +1,39 @@
+
 import { AppDataSource } from "../data-source";
 import { Publisher } from "../entity/Publisher";
 import { Spreadsheet } from "../entity/Spreadsheet";
 import { Cell } from "../entity/Cell";
 import { Update } from "../entity/Update";
+/**
+ * This file contains services for managing sheets in the Husksheet application.
+ * The services include operations for creating sheets, finding publishers and sheets,
+ * deleting sheets, and retrieving sheets by publisher.
+ *
+ * @file sheetService.ts
+ */
 
+
+
+/**
+ * Finds a publisher by their username.
+ *
+ * @param {string} username - The username of the publisher to find.
+ * @returns {Promise<Publisher | null>} The found publisher.
+ * 
+ * @author syadav7173
+ */
 export const findPublisherByUsername = async (username: string) => {
   return await AppDataSource.manager.findOneBy(Publisher, { username });
 };
 
+/**
+ * Retrieves all sheets associated with a given publisher.
+ *
+ * @param {Publisher} publisher - The publisher whose sheets are to be retrieved.
+ * @returns {Promise<{ idRef: number, sheet: string }[]>} A list of sheet objects with idRef and sheet name.
+ * 
+ * @author syadav7173
+ */
 export const getSheetsByPublisher = async (publisher: Publisher) => {
   const sheets = await AppDataSource.manager.find(Spreadsheet, {
     where: { publisher },
@@ -17,6 +43,16 @@ export const getSheetsByPublisher = async (publisher: Publisher) => {
     sheet: sheet.name,
   }));
 };
+
+/**
+ * Creates a new sheet for a given publisher.
+ *
+ * @param {Publisher} publisher - The publisher for whom the sheet is to be created.
+ * @param {string} sheetName - The name of the sheet to be created.
+ * @returns {Promise<Spreadsheet>} The created spreadsheet object.
+ * 
+ * @author syadav7173
+ */
 export const createSheet = async (publisher: Publisher, sheetName: string) => {
   const spreadsheet = new Spreadsheet();
   spreadsheet.publisher = publisher;
@@ -25,11 +61,21 @@ export const createSheet = async (publisher: Publisher, sheetName: string) => {
   return spreadsheet;
 };
 
+/**
+ * Finds a sheet by its name and publisher.
+ *
+ * @param {string} sheetName - The name of the sheet to find.
+ * @param {Publisher} publisher - The publisher of the sheet.
+ * @returns {Promise<Spreadsheet | null>} The found sheet or null if not found.
+ * 
+ * @author syadav7173
+ */
 export const findSheetByNameAndPublisher = async (sheetName: string, publisher: Publisher) => {
   return await AppDataSource.manager.findOne(Spreadsheet, {
     where: { name: sheetName, publisher },
   });
 };
+
 
 export const deleteSheet = async (spreadsheet: Spreadsheet) => {
   const queryRunner = AppDataSource.createQueryRunner();

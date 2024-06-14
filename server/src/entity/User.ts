@@ -1,6 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-//entity representing an authorized user
+/**
+ * Entity representing an authorized user.
+ *
+ * @file user.ts
+ * @author syadav7173
+ */
 
 @Entity()
 export class User {
