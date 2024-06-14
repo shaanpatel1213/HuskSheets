@@ -113,47 +113,6 @@ describe('HomePage', () => {
       // Assert that history.push was called with the login path
       expect(history.push).toHaveBeenCalledWith('/');
     });
-
-// test('renders otherSheets correctly', () => {
-//   const otherSheets = [
-//     {
-//       publisher: "Publisher1",
-//       sheets: [
-//         { id: "1", name: "Sheet1" },
-//         { id: "2", name: "Sheet2" }
-//       ]
-//     },
-//     {
-//       publisher: "Publisher2",
-//       sheets: [
-//         { id: "3", name: "Sheet3" },
-//         { id: "4", name: "Sheet4" }
-//       ]
-//     }
-//   ];
-//
-//   const { getByText } = render(
-//     <MemoryRouter>
-//       <HomePage />
-//     </MemoryRouter>
-//   );
-//
-//   // Check that the publishers and sheets are rendered
-//   otherSheets.forEach(publisherSheets => {
-//     //expect(getByText(publisherSheets.publisher)).toBeInTheDocument();
-//     publisherSheets.sheets.forEach(sheet => {
-//       expect(getByText(sheet.name)).toBeInTheDocument();
-//     });
-//   });
-//
-//   // Check that the links are correctly formed
-//   otherSheets.forEach(publisherSheets => {
-//     publisherSheets.sheets.forEach(sheet => {
-//       const link = getByText(sheet.name).closest('a');
-//       expect(link).toHaveAttribute('href', `/spreadsheet/${publisherSheets.publisher}/${sheet.name}`);
-//     });
-//   });
-// });
 })
 
 describe('Errors', () => {
