@@ -67,3 +67,4 @@ kill-ports:
 	@echo "Killing processes on ports $(FRONTEND_PORT) and $(BACKEND_PORT)..."
 	lsof -t -i tcp:$(FRONTEND_PORT) | xargs kill -9 || true
 	lsof -t -i tcp:$(BACKEND_PORT) | xargs kill -9 || true
+

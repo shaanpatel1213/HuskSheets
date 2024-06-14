@@ -14,7 +14,7 @@ const Login = () => {
     handleSubmit(userName, password, setError, history);
   };
 
-  // Ownership: Shaanpatel1213
+  // Ownership: @author : Shaanpatel1213
   return (
     <div className="login-container">
       <h2>Login</h2>
