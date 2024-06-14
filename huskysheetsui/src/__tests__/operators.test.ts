@@ -1,4 +1,4 @@
-// src/tests/operators.test.tsx
+// src/__test__/operators.test.tsx
 import { TableData } from '../Utilities/types';
 import { evaluateOperands } from '../Utilities';
 
