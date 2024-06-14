@@ -4,14 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { HomePage } from '../Components/HomePage';
 import { createSheet, getSheets, deleteSheet, getPublishers, register } from '../Utilities/utils';
-import {
-    checkPublisher,
-    fetchSheets,
-    fetchOtherSheets,
-    handleCreateSheet,
-    handleDeleteSheet,
-    handleRegister
-  } from '../componentHelpers/homePageHelpers';
 import '@testing-library/jest-dom';
 
 jest.setTimeout(10000);
@@ -24,15 +16,14 @@ const mockGetPublishers = getPublishers as jest.Mock;
 const mockRegister = register as jest.Mock;
 
 const mockSheets = [ { id: 'sheet1', name: 'Sheet 1' },  { id: 'sheet2', name: 'Sheet 2' }, ];
-const mockUserName = 'team18';
 const mockPublisher = [{"publisher": "team3"}, {"publisher": "team18"}]
 
-// written by: Emily Fink
 describe('HomePage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     })
 
+    /** @author EmilyFink474 */
     test('check Home Page renders correctly', async () => {
         mockRegister.mockResolvedValue({ success: true });
         mockGetPublishers.mockResolvedValue({ success: true, value: mockPublisher });
@@ -51,8 +42,8 @@ describe('HomePage', () => {
         fireEvent.click(registerButton);
         await waitFor(() => {
             expect(mockRegister).toBeCalledTimes(1);
-            expect(mockGetSheet).toBeCalledTimes(1); // changed to 1 from 3
-            expect(mockGetSheet).toBeCalledWith(''); // changed to '' from mockUsername
+            expect(mockGetSheet).toBeCalledTimes(1); 
+            expect(mockGetSheet).toBeCalledWith(''); 
             expect(mockGetPublishers).toBeCalledTimes(1);
         });
         expect(screen.queryByText('Sheet 1'));
@@ -66,7 +57,7 @@ describe('HomePage', () => {
         fireEvent.click(createButton);
         await waitFor(() => {
             expect(mockCreateSheet).toBeCalledTimes(1);
-            expect(mockGetSheet).toBeCalledTimes(2); // changed to 2 from 4
+            expect(mockGetSheet).toBeCalledTimes(2); 
         })
 
         // write a name to be assigned to a new sheet
@@ -95,12 +86,12 @@ describe('HomePage', () => {
     })
 })
 
-// Ownership: Emily Fink
 describe('Errors', () => {
     beforeEach(() => {
         jest.resetAllMocks();
     })
 
+    /** @author EmilyFink474 */
     test('checks register error', async () => {
         render(<MemoryRouter><HomePage /></MemoryRouter>);
 
@@ -115,6 +106,7 @@ describe('Errors', () => {
         })
     })
 
+    /** @author EmilyFink474 */
     test('checks get sheets error', async () => {
         mockRegister.mockResolvedValue({ success: true });
 
@@ -130,6 +122,7 @@ describe('Errors', () => {
         });
     })
 
+    /** @author EmilyFink474 */
     test('checks get publisher error', async () => {
         mockRegister.mockResolvedValue({ success: true });
         mockGetSheet.mockResolvedValue({ success: true, value: mockSheets });
@@ -145,6 +138,7 @@ describe('Errors', () => {
         });
     })
 
+    /** @author EmilyFink474 */
     test('checks create sheet and delete sheet error', async () => {
         mockRegister.mockResolvedValue({ success: true });
         mockGetSheet.mockResolvedValue({ success: true, value: mockSheets });
