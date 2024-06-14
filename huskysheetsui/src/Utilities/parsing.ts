@@ -15,9 +15,9 @@ export const parseAndEvaluateExpression = (
   data: TableData
 ): string => {
   try {
-    console.log("Parsing expression:", expression);
+    // console.log("Parsing expression:", expression);
     const parsedExpression = parseExpression(expression);
-    console.log("Evaluating parsed expression:", parsedExpression);
+    // console.log("Evaluating parsed expression:", parsedExpression);
     const result = evaluateExpression(parsedExpression, data);
     return !isNaN(Number(result)) ? result.toString() : result.toString();
   } catch (error) {
@@ -32,7 +32,7 @@ export const parseAndEvaluateExpression = (
  * @returns {Object} The parsed expression object.
  */
 const parseExpression = (expression: string) => {
-  console.log("Parsing expression:", expression);
+  // console.log("Parsing expression:", expression);
 
   if (!isNaN(Number(expression.trim()))) {
     return { value: Number(expression.trim()) };
@@ -50,7 +50,7 @@ const parseExpression = (expression: string) => {
     const args = nestedFuncMatch[2]
       .split(/,(?![^\(]*\))/)
       .map((arg) => arg.trim());
-    console.log("Parsed function", func, "with args:", args);
+    // console.log("Parsed function", func, "with args:", args);
     return { func, args };
   }
 
@@ -69,7 +69,7 @@ const parseExpression = (expression: string) => {
   if (rangeWithFuncMatch) {
     const startRef = rangeWithFuncMatch[1];
     const endRef = rangeWithFuncMatch[2];
-    console.log("Parsing range with nested function:", startRef, endRef);
+    // console.log("Parsing range with nested function:", startRef, endRef);
     return { startRef, endRef, isRangeWithFunc: true };
   }
 
@@ -78,7 +78,7 @@ const parseExpression = (expression: string) => {
   if (rangeMatch) {
     const startRef = rangeMatch[1];
     const endRef = rangeMatch[2];
-    console.log("Parsed range", startRef, endRef);
+    // console.log("Parsed range", startRef, endRef);
     return { startRef, endRef };
   }  
 
@@ -86,7 +86,7 @@ const parseExpression = (expression: string) => {
   const multipleCellRefsMatch = expression.match(/^\s*\((\$?[A-Z]+\d+\s*,\s*)+\$?[A-Z]+\d+\)\s*$/);
   if (multipleCellRefsMatch) {
     const cellRefs = expression.slice(1, -1).split(',').map((ref) => ref.trim());
-    console.log("Parsed multiple cell references:", cellRefs);
+    // console.log("Parsed multiple cell references:", cellRefs);
     return { cellRefs };
   }
 
@@ -146,6 +146,7 @@ export const evaluateExpression = (
     const { startRef, endRef } = parsedExpression;
     const resolvedEndRef = parseAndEvaluateExpression(endRef, data);
     const range = `${startRef}:${resolvedEndRef}`;
+    console.log("evaulating rages tee hee");
     return evaluateRange(range, data);
   }
 
@@ -207,4 +208,6 @@ export {
   parseExpression,
   parseOperatorMatch,
   parseOperand,
+  evaluateFunction,
+  evaluateRange
 };

@@ -110,7 +110,7 @@ export const ifFunction = (args: string[], data: TableData): string => {
   return condition ? args[1] : args[2];
 };
 
-const evaluateCondition = (condition: string, data: TableData): boolean => {
+export const evaluateCondition = (condition: string, data: TableData): boolean => {
   const parsedExpression = parseExpression(condition);
   const result = evaluateExpression(parsedExpression, data);
   return parseFloat(result.toString()) !== 0;

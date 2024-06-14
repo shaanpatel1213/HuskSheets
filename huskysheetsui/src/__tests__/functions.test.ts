@@ -7,7 +7,7 @@ import {
     concatFunction,
     ifFunction,
     debugFunction,
-    // evaluateCondition,
+    evaluateCondition,
     copyFunction
 } from '../Utilities/functions';
 
@@ -165,5 +165,24 @@ describe('copyFunction function', () => {
         expect(() => {
             copyFunction(['2'], data);
         }).toThrow('COPY function requires 2 arguments');
+    });
+
+
+    describe('evaluateCondition function', () => {
+        const data1: TableData = [
+            ['1', '2', '3'],
+            ['4', '5', '6'],
+            ['7', '8', '9']
+        ];
+        test('should correctly evaluate simple numeric comparison', () => {
+            expect(evaluateCondition('2 < 3', data1)).toBe(true);
+            expect(evaluateCondition('2 > 3', data1)).toBe(false);
+        });
+    
+    
+        test('should correctly evaluate conditions using cell references', () => {
+            expect(evaluateCondition('$A1 < $B2', data1)).toBe(true);  // 1 < 5
+            expect(evaluateCondition('$A1 > $B2', data1)).toBe(false); // 1 > 5
+        });
     });
 });
