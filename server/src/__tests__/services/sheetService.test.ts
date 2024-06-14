@@ -1,8 +1,6 @@
 import { AppDataSource } from '../../data-source';
 import { Publisher } from '../../entity/Publisher';
 import { Spreadsheet } from '../../entity/Spreadsheet';
-import { Cell } from '../../entity/Cell';
-import { Update } from '../../entity/Update';
 import { findPublisherByUsername, getSheetsByPublisher, createSheet, findSheetByNameAndPublisher, deleteSheet } from '../../services/sheetService';
 
 // Ownership : @author : Shaanpatel1213
@@ -50,13 +48,19 @@ describe('sheetService', () => {
     describe('getSheetsByPublisher', () => {
         it('should return sheets for a publisher', async () => {
             const publisher = { username: 'testuser' };
-            const sheets = [{ name: 'sheet1' }, { name: 'sheet2' }];
+            const sheets = [
+                { idRef: 1, name: 'sheet1', publisher } as Spreadsheet,
+                { idRef: 2, name: 'sheet2', publisher } as Spreadsheet
+            ];
             (AppDataSource.manager.find as jest.Mock).mockResolvedValue(sheets);
 
             const result = await getSheetsByPublisher(publisher as Publisher);
 
             expect(AppDataSource.manager.find).toHaveBeenCalledWith(Spreadsheet, { where: { publisher } });
-            expect(result).toEqual(sheets);
+            expect(result).toEqual([
+                { idRef: 1, sheet: 'sheet1' },
+                { idRef: 2, sheet: 'sheet2' }
+            ]);
         });
     });
 
@@ -64,7 +68,11 @@ describe('sheetService', () => {
         it('should create a new sheet for the publisher', async () => {
             const publisher = { username: 'testuser' } as Publisher;
             const sheetName = 'sheet1';
-            const sheet = { name: sheetName, publisher };
+            const sheet = new Spreadsheet();
+            sheet.idRef = 1;
+            sheet.name = sheetName;
+            sheet.publisher = publisher;
+
             (AppDataSource.manager.save as jest.Mock).mockResolvedValue(sheet);
 
             const result = await createSheet(publisher, sheetName);
@@ -73,7 +81,13 @@ describe('sheetService', () => {
                 name: sheetName,
                 publisher
             }));
-            expect(result).toEqual(sheet);
+
+            expect(result).toEqual(expect.objectContaining({
+                name: sheetName,
+                publisher: expect.objectContaining({
+                    username: 'testuser'
+                })
+            }));
         });
     });
 });
