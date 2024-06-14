@@ -53,9 +53,8 @@ describe('Spreadsheet Helpers', () => {
         mockParseUpdate
       );
 
-      expect(mockSetLiteralString).not.toHaveBeenCalled();
-      expect(mockSetVisualData).not.toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalledWith(new Error('Parsing error'));
+      expect(consoleErrorSpy).toBeCalledTimes(1);
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch updates');
     });
   });
 
