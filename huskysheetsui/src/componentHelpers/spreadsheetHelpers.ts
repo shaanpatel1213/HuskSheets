@@ -66,7 +66,7 @@ export const fetchUpdates = async (
 ) => {
   const result = isSubscriber
     ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0')
-    : await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
+    : await getUpdatesForPublished(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
   
   if (result && result.success) {
     const newData = initialData.map(row => row.slice());

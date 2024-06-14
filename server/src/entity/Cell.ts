@@ -6,7 +6,7 @@ export class Cell {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Spreadsheet, spreadsheet => spreadsheet.cells)
+    @ManyToOne(() => Spreadsheet, (spreadsheet) => spreadsheet.cells, { onDelete: "CASCADE" })
     spreadsheet: Spreadsheet;
 
     @Column()

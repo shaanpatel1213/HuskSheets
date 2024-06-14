@@ -6,7 +6,7 @@ import { Update } from "./Update";
 @Entity()
 export class Spreadsheet {
     @PrimaryGeneratedColumn()
-    id: number;
+    idRef: number; // Primary key
 
     @Column()
     name: string;

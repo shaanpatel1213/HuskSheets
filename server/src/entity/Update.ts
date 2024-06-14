@@ -6,7 +6,7 @@ export class Update {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Spreadsheet, spreadsheet => spreadsheet.updates)
+    @ManyToOne(() => Spreadsheet, spreadsheet => spreadsheet.updates, { onDelete: "CASCADE" })
     spreadsheet: Spreadsheet;
 
     @Column("text")

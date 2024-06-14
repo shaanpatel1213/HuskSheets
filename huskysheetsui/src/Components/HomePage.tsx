@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   checkPublisher,
   fetchSheets,
@@ -10,7 +10,6 @@ import {
 } from '../componentHelpers/homePageHelpers';
 import '../css/HomePage.css';
 
-
 // Ownership: @author : Shaanpatel1213 
 const HomePage: React.FC = () => {
   const userName = localStorage.getItem('userName') || '';
@@ -20,15 +19,23 @@ const HomePage: React.FC = () => {
   const [sheetCounter, setSheetCounter] = useState(1);
   const [error, setError] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
+  const history = useHistory(); // useHistory hook
 
   useEffect(() => {
     checkPublisher(userName, setIsRegistered, () => fetchSheets(userName, setSheets, setError), (userNames) => fetchOtherSheets(userNames, setOtherSheets), setError);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('userName'); // Clear user data from local storage
+    localStorage.removeItem('password'); // Clear user data from local storage
+    history.push('/'); // Redirect to login page
+  };
+
   return (
     <div className="homepage-container">
       <div className="navbar">
         <h1>HomePage</h1>
+        <button onClick={handleLogout} className="logout-button">Logout</button> {/* Add Logout button */}
       </div>
       <div className="main-content">
         {error && <p className="error">{error}</p>}

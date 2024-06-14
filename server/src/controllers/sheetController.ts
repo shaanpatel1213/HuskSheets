@@ -18,8 +18,8 @@ export const createNewSheet = async (req: Request, res: Response, next: NextFunc
     if (!user) {
       return res.status(400).json({ success: false, message: "Publisher not found", value: [] });
     }
-    await sheetService.createSheet(user, sheet);
-    res.status(200).json({ success: true, message: null, value: [] });
+    const newSheet = await sheetService.createSheet(user, sheet);
+    res.status(200).json({ success: true, message: null, value: newSheet });
   } catch (error) {
     next(error);
   }

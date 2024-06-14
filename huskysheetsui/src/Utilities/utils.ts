@@ -5,13 +5,21 @@ const API_URL = 'http://localhost:3010/api/shubTest';
 // const API_URL = 'https://husksheets.fly.dev/api/v1';
 
 
-const username = 'team18';
-const password = 'qdKoHqmiP@6x`_1Q';
+const username1 = 'team18';
+const password1 = 'qdKoHqmiP@6x`_1Q';
+
+const username2 = 'user222';
+const password2 = 'password222';
+
+const username3 = 'user1';
+const password3 = 'password1';
 
 // const username = 'user1';
 // const password = 'password1';
 
-const auth = btoa(`${username}:${password}`);
+const auth1 = btoa(`${username1}:${password1}`);
+const auth2 = btoa(`${username2}:${password2}`);
+const auth3 = btoa(`${username3}:${password3}`);
 
 /**
  * Generates the authentication header for API requests.
@@ -20,7 +28,8 @@ const auth = btoa(`${username}:${password}`);
  * Ownership: @author BrandonPetersen
  */
 const getAuthHeader = () => {
-  console.log('Encoded auth string:', auth); // Log the encoded auth string
+  console.log('Encoded auth string:', localStorage.getItem('auth')); // Log the encoded auth string
+  var auth = localStorage.getItem('auth');
   return {
     headers: {
       Authorization: `Basic ${auth}`

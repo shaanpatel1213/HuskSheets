@@ -4,14 +4,66 @@ import { Spreadsheet } from "../entity/Spreadsheet";
 import { Update } from "../entity/Update";
 import { Cell } from "../entity/Cell";
 
-/**
- * Parses and updates cells in a given spreadsheet with the provided payload.
- * @param {Spreadsheet} spreadsheet - The spreadsheet to update.
- * @param {string} payload - The payload containing cell updates.
- * @returns {Promise<void>}
- *
- * Ownership: @author BrandonPetersen
- */
+export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string) => {
+  const user = await AppDataSource.manager.findOneBy(Publisher, {
+    username: publisher,
+  });
+  if (!user) {
+    throw new Error("Publisher not found");
+  }
+
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, {
+    name: sheet,
+    publisher: user,
+  });
+  if (!spreadsheet) {
+    throw new Error("Sheet not found");
+  }
+
+  const updates = await AppDataSource.manager
+    .createQueryBuilder(Update, "update")
+    .where("update.spreadsheet = :spreadsheet", { spreadsheet: spreadsheet.idRef })
+    .andWhere("update.id > :id", { id })
+    .getMany();
+
+  return updates.map((update) => ({
+    publisher: user.username,
+    sheet: spreadsheet.name,
+    id: update.id.toString(),
+    payload: update.payload,
+  }));
+};
+
+export const getUpdatesForPublished = async (publisher: string, sheet: string, id: string) => {
+  const user = await AppDataSource.manager.findOneBy(Publisher, {
+    username: publisher,
+  });
+  if (!user) {
+    throw new Error("Publisher not found");
+  }
+
+  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, {
+    name: sheet,
+    publisher: user,
+  });
+  if (!spreadsheet) {
+    throw new Error("Sheet not found");
+  }
+
+  const updates = await AppDataSource.manager
+    .createQueryBuilder(Update, "update")
+    .where("update.spreadsheet = :spreadsheet", { spreadsheet: spreadsheet.idRef })
+    .andWhere("update.id > :id", { id })
+    .getMany();
+
+  return updates.map((update) => ({
+    publisher: user.username,
+    sheet: spreadsheet.name,
+    id: update.id.toString(),
+    payload: update.payload,
+  }));
+};
+
 const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) => {
   const updates = payload.split("\n");
   for (const update of updates) {
@@ -48,93 +100,6 @@ const parseAndUpdateCells = async (spreadsheet: Spreadsheet, payload: string) =>
   }
 };
 
-/**
- * Retrieves updates for a subscription to a spreadsheet.
- * @param {string} publisher - The publisher's username.
- * @param {string} sheet - The name of the sheet.
- * @param {string} id - The last known update ID.
- * @returns {Promise<Object[]>} - The list of updates.
- *
- * Ownership: @author BrandonPetersen
- */
-export const getUpdatesForSubscription = async (publisher: string, sheet: string, id: string) => {
-  const user = await AppDataSource.manager.findOneBy(Publisher, {
-    username: publisher,
-  });
-  if (!user) {
-    throw new Error("Publisher not found");
-  }
-
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, {
-    name: sheet,
-    publisher: user,
-  });
-  if (!spreadsheet) {
-    throw new Error("Sheet not found");
-  }
-
-  const updates = await AppDataSource.manager
-    .createQueryBuilder(Update, "update")
-    .where("update.spreadsheet = :spreadsheet", { spreadsheet: spreadsheet.id })
-    .andWhere("update.id > :id", { id })
-    .getMany();
-
-  return updates.map((update) => ({
-    publisher: user.username,
-    sheet: spreadsheet.name,
-    id: update.id.toString(),
-    payload: update.payload,
-  }));
-};
-
-/**
- * Retrieves updates for a published spreadsheet.
- * @param {string} publisher - The publisher's username.
- * @param {string} sheet - The name of the sheet.
- * @param {string} id - The last known update ID.
- * @returns {Promise<Object[]>} - The list of updates.
- *
- * Ownership: @author BrandonPetersen
- */
-export const getUpdatesForPublished = async (publisher: string, sheet: string, id: string) => {
-  const user = await AppDataSource.manager.findOneBy(Publisher, {
-    username: publisher,
-  });
-  if (!user) {
-    throw new Error("Publisher not found");
-  }
-
-  const spreadsheet = await AppDataSource.manager.findOneBy(Spreadsheet, {
-    name: sheet,
-    publisher: user,
-  });
-  if (!spreadsheet) {
-    throw new Error("Sheet not found");
-  }
-
-  const updates = await AppDataSource.manager
-    .createQueryBuilder(Update, "update")
-    .where("update.spreadsheet = :spreadsheet", { spreadsheet: spreadsheet.id })
-    .andWhere("update.id > :id", { id })
-    .getMany();
-
-  return updates.map((update) => ({
-    publisher: user.username,
-    sheet: spreadsheet.name,
-    id: update.id.toString(),
-    payload: update.payload,
-  }));
-};
-
-/**
- * Updates a published spreadsheet with new cell data.
- * @param {string} publisher - The publisher's username.
- * @param {string} sheet - The name of the sheet.
- * @param {string} payload - The payload containing cell updates.
- * @returns {Promise<void>}
- *
- * Ownership: @author BrandonPetersen
- */
 export const updatePublished = async (publisher: string, sheet: string, payload: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,
@@ -159,15 +124,6 @@ export const updatePublished = async (publisher: string, sheet: string, payload:
   await AppDataSource.manager.save(updateRecord);
 };
 
-/**
- * Updates a subscription to a spreadsheet with new cell data.
- * @param {string} publisher - The publisher's username.
- * @param {string} sheet - The name of the sheet.
- * @param {string} payload - The payload containing cell updates.
- * @returns {Promise<void>}
- *
- * Ownership: @author BrandonPetersen
- */
 export const updateSubscription = async (publisher: string, sheet: string, payload: string) => {
   const user = await AppDataSource.manager.findOneBy(Publisher, {
     username: publisher,

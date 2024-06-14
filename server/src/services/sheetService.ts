@@ -13,7 +13,7 @@ export const getSheetsByPublisher = async (publisher: Publisher) => {
     where: { publisher },
   });
   return sheets.map(sheet => ({
-    id: sheet.id,
+    idRef: sheet.idRef,
     sheet: sheet.name,
   }));
 };
@@ -32,29 +32,35 @@ export const findSheetByNameAndPublisher = async (sheetName: string, publisher: 
 };
 
 export const deleteSheet = async (spreadsheet: Spreadsheet) => {
-  // Delete cells associated with the spreadsheet
-  await AppDataSource.manager
-    .createQueryBuilder()
-    .delete()
-    .from(Cell)
-    .where("spreadsheetId = :spreadsheetId", { spreadsheetId: spreadsheet.id })
-    .execute();
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
 
-  // Delete updates associated with the spreadsheet
-  await AppDataSource.manager
-    .createQueryBuilder()
-    .delete()
-    .from(Update)
-    .where("spreadsheetId = :spreadsheetId", { spreadsheetId: spreadsheet.id })
-    .execute();
+  try {
+    // Correctly reference the foreign key column names
+    await queryRunner.manager
+      .createQueryBuilder()
+      .delete()
+      .from(Cell)
+      .where("spreadsheetIdRef = :idRef", { idRef: spreadsheet.idRef })
+      .execute();
 
-  // Explicitly remove the spreadsheet
-  await AppDataSource.manager.remove(spreadsheet);
+    await queryRunner.manager
+      .createQueryBuilder()
+      .delete()
+      .from(Update)
+      .where("spreadsheetIdRef = :idRef", { idRef: spreadsheet.idRef })
+      .execute();
 
-  // Ensure spreadsheet is deleted
-  const checkSpreadsheet = await AppDataSource.manager.findOne(Spreadsheet, {
-    where: { id: spreadsheet.id },
-  });
+    await queryRunner.manager.remove(Spreadsheet, spreadsheet);
 
-  return !checkSpreadsheet;
+    await queryRunner.commitTransaction();
+    return true;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    console.error("Error deleting spreadsheet:", error);
+    return false;
+  } finally {
+    await queryRunner.release();
+  }
 };
