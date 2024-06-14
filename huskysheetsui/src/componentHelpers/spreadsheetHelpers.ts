@@ -274,4 +274,4 @@ export const getColumnLetter = (colIndex: number): string => {
 };
 
 
-export {evaluateCell, evaluateAllCells};
+export {evaluateCell, evaluateAllCells, colToIndex};

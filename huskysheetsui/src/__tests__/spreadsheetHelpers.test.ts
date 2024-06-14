@@ -126,28 +126,6 @@ describe('spreadsheetHelpers', () => {
     });
   });
 
-
-  /*
-  Broken test right now. Needed for 80% coverage
-
-  describe('evaluateCell', () => {
-    it('should evaluate a cell value', () => {
-      const data: TableData = [['=1+1'], ['=2+2'], ['=3+3'], ['=4+4']];
-      jest.spyOn(global as any, 'parseAndEvaluateExpression').mockImplementation((cell, data) => {
-        if (formula === '1+1') return '2';
-        if (formula === '2+2') return '4';
-        if (formula === '3+3') return '6';
-        if (formula === '4+4') return '8';
-        return formula;
-
-      });
-  
-      const result = evaluateCell('=1+1', data);
-      expect(result).toBe('2');
-    });
-  });
-  */
-
   describe('colToIndex and getColumnLetter', () => {
     it('should convert column letter to index and back', () => {
       expect(colToIndex('A')).toBe(0);

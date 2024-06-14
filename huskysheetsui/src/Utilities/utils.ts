@@ -284,3 +284,6 @@ export const updateSubscription = async (publisher: string, sheet: string, paylo
     return null;
   }
 };
+
+
+export{getAuthHeader}
