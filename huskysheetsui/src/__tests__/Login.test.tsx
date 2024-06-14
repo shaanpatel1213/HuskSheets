@@ -9,7 +9,7 @@ const mockWrongUsername = 'groovydude';
 const mockWrongPassword = '1234';
 
 describe('Login', () => {
-    /** @author EmilyFink474 */
+    /** Ownership: @author EmilyFink474 */
     test('check login renders correctly', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
@@ -27,7 +27,7 @@ describe('Login', () => {
         fireEvent.click(loginButton);
     })
 
-    /** @author EmilyFink474 */
+    /** Ownership: @author EmilyFink474 */
     test('check login renders error correctly when missing username', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
 
@@ -44,7 +44,7 @@ describe('Login', () => {
         })
     })
 
-    /** @author EmilyFink474 */
+    /** Ownership: @author EmilyFink474 */
     test('check login renders error correctly when missing password', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
 
@@ -61,7 +61,7 @@ describe('Login', () => {
         })
     })
 
-    /** @author EmilyFink474 */
+    /** Ownership: @author EmilyFink474 */
     test('check login renders error correctly with wrong username', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
@@ -82,7 +82,7 @@ describe('Login', () => {
         })
     })
 
-    /** @author EmilyFink474 */
+    /** Ownership: @author EmilyFink474 */
     test('check login renders error correctly with wrong password', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
