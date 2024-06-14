@@ -3,7 +3,9 @@ import { Publisher } from '../../entity/Publisher';
 import { Spreadsheet } from '../../entity/Spreadsheet';
 import { findPublisherByUsername, getSheetsByPublisher, createSheet, findSheetByNameAndPublisher, deleteSheet } from '../../services/sheetService';
 
-// Ownership : @author : Shaanpatel1213
+/**
+ * @author Shaanpatel1213
+ * */
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {

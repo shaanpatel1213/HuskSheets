@@ -4,7 +4,9 @@ import { AppDataSource } from '../../data-source';
 import auth from '../../middleware/auth';
 import { Buffer } from 'buffer';
 
-// Ownership : Shaanpatel1213
+/**
+ * @author Shaanpatel1213
+ * */
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {
