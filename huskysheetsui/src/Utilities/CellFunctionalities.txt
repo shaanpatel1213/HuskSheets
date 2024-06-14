@@ -12,26 +12,19 @@ type TableData = CellData[][];
  * @param {string} expression - The expression to parse and evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {string} The evaluated result as a string.
- *
- * Ownership: syadav7173
  */
 export const parseAndEvaluateExpression = (
   expression: string,
   data: TableData
 ): string => {
   try {
-    console.log("we are parsing", expression);
-    let parsedExpression = parseExpression(expression);
-    console.log("evaluateing", parsedExpression);
-    let result = evaluateExpression(parsedExpression, data);
-    // Check if the result is a number or a basic value and return directly
-    if (!isNaN(Number(result))) {
-      console.log("result is ", result);
-      return result.toString();
-    }
-    return result.toString();
+    console.log("Parsing expression:", expression);
+    const parsedExpression = parseExpression(expression);
+    console.log("Evaluating parsed expression:", parsedExpression);
+    const result = evaluateExpression(parsedExpression, data);
+    return !isNaN(Number(result)) ? result.toString() : result.toString();
   } catch (error) {
-    console.error(error);
+    console.error("Error in parseAndEvaluateExpression:", error);
     return "ERROR";
   }
 };
@@ -40,11 +33,9 @@ export const parseAndEvaluateExpression = (
  * Parses an expression into its components.
  * @param {string} expression - The expression to parse.
  * @returns {Object} The parsed expression object.
- *
- * Ownership: syadav7173
  */
 const parseExpression = (expression: string) => {
-  console.log("parsing expression", expression);
+  console.log("Parsing expression:", expression);
 
   if (!isNaN(Number(expression.trim()))) {
     return { value: Number(expression.trim()) };
@@ -62,7 +53,7 @@ const parseExpression = (expression: string) => {
     const args = nestedFuncMatch[2]
       .split(/,(?![^\(]*\))/)
       .map((arg) => arg.trim());
-    console.log("parsed function", func, "with args:", args);
+    console.log("Parsed function", func, "with args:", args);
     return { func, args };
   }
 
@@ -71,21 +62,7 @@ const parseExpression = (expression: string) => {
     /^\s*(\(.+\)|\$?[A-Z]+\d*|[-+]?\d*\.?\d+)\s*([=<>|&:/*+-])\s*(\(.+\)|\$?[A-Z]+\d*|[-+]?\d*\.?\d+)\s*$/
   );
   if (logicalOpMatch) {
-    const x = parseOperand(logicalOpMatch[1]);
-    const operator = logicalOpMatch[2];
-    const y = parseOperand(logicalOpMatch[3]);
-    return { x, y, operator };
-  }
-
-  // Handle arithmetic operators with nested expressions
-  const arithmeticOpMatch = expression.match(
-    /^\s*(\(.+\)|\$?[A-Z]+\d*|[-+]?\d*\.?\d+)\s*([=<>|&:/*+-])\s*(\(.+\)|\$?[A-Z]+\d*|[-+]?\d*\.?\d+)\s*$/
-  );
-  if (arithmeticOpMatch) {
-    const x = parseOperand(arithmeticOpMatch[1]);
-    const operator = arithmeticOpMatch[2];
-    const y = parseOperand(arithmeticOpMatch[3]);
-    return { x, y, operator };
+    return parseOperatorMatch(logicalOpMatch);
   }
 
   // Match range with nested function
@@ -95,7 +72,7 @@ const parseExpression = (expression: string) => {
   if (rangeWithFuncMatch) {
     const startRef = rangeWithFuncMatch[1];
     const endRef = rangeWithFuncMatch[2];
-    console.log("parsing range with nested function:", startRef, endRef);
+    console.log("Parsing range with nested function:", startRef, endRef);
     return { startRef, endRef, isRangeWithFunc: true };
   }
 
@@ -104,7 +81,7 @@ const parseExpression = (expression: string) => {
   if (rangeMatch) {
     const startRef = rangeMatch[1];
     const endRef = rangeMatch[2];
-    console.log("parsed range", startRef, endRef);
+    console.log("Parsed range", startRef, endRef);
     return { startRef, endRef };
   }  
 
@@ -112,22 +89,29 @@ const parseExpression = (expression: string) => {
   const multipleCellRefsMatch = expression.match(/^\s*\((\$?[A-Z]+\d+\s*,\s*)+\$?[A-Z]+\d+\)\s*$/);
   if (multipleCellRefsMatch) {
     const cellRefs = expression.slice(1, -1).split(',').map((ref) => ref.trim());
-    console.log("parsed multiple cell references:", cellRefs);
+    console.log("Parsed multiple cell references:", cellRefs);
     return { cellRefs };
   }
 
-  throw new Error("invalid expression format");
+  throw new Error("Invalid expression format");
 };
 
-
-
+/**
+ * Parses an operator match.
+ * @param {RegExpMatchArray} match - The matched operator expression.
+ * @returns {Object} The parsed operator expression object.
+ */
+const parseOperatorMatch = (match: RegExpMatchArray) => {
+  const x = parseOperand(match[1]);
+  const operator = match[2];
+  const y = parseOperand(match[3]);
+  return { x, y, operator };
+};
 
 /**
  * Parses an operand from a string.
  * @param {string} operand - The operand to parse.
  * @returns {number | string | Ref} The parsed operand.
- *
- * Ownership: syadav7173
  */
 const parseOperand = (operand: string): number | string | Ref => {
   if (operand.startsWith("(") && operand.endsWith(")")) {
@@ -143,14 +127,11 @@ const parseOperand = (operand: string): number | string | Ref => {
   }
 };
 
-
 /**
  * Evaluates a parsed expression based on the provided table data.
  * @param {any} parsedExpression - The parsed expression object.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number | string} The evaluated result.
- *
- * Ownership: syadav7173
  */
 const evaluateExpression = (
   parsedExpression: any,
@@ -161,44 +142,56 @@ const evaluateExpression = (
   }
 
   if (parsedExpression.func) {
-    const { func, args } = parsedExpression;
-    const resolvedArgs = args.map((arg: string) => {
-      if (arg.includes("(")) {
-        return parseAndEvaluateExpression(arg, data);
-      }
-      return arg;
-    });
+    return evaluateFunction(parsedExpression, data);
+  }
 
-    switch (func) {
-      case "SUM":
-        return sumFunction(resolvedArgs, data);
-      case "MIN":
-        return minFunction(resolvedArgs, data);
-      case "MAX":
-        return maxFunction(resolvedArgs, data);
-      case "AVG":
-        return avgFunction(resolvedArgs, data);
-      case "CONCAT":
-        return concatFunction(resolvedArgs, data);
-      case "IF":
-        return ifFunction(resolvedArgs, data);
-      case "DEBUG":
-        return debugFunction(resolvedArgs, data);
-      case "COPY":
-        return copyFunction(resolvedArgs, data);
-      default:
-        throw new Error("function not supported");
-    }
-  } else if (parsedExpression.isRangeWithFunc) {
+  if (parsedExpression.isRangeWithFunc) {
     const { startRef, endRef } = parsedExpression;
     const resolvedEndRef = parseAndEvaluateExpression(endRef, data);
     const range = `${startRef}:${resolvedEndRef}`;
     return evaluateRange(range, data);
-  } else {
-    const { x, y, operator } = parsedExpression;
-    let evaluatedX = resolveOperand(x, data);
-    let evaluatedY = resolveOperand(y, data);
-    return evaluateOperands(evaluatedX, evaluatedY, operator);
+  }
+
+  const { x, y, operator } = parsedExpression;
+  const evaluatedX = resolveOperand(x, data);
+  const evaluatedY = resolveOperand(y, data);
+  return evaluateOperands(evaluatedX, evaluatedY, operator);
+};
+
+/**
+ * Evaluates a function based on the provided table data.
+ * @param {any} parsedExpression - The parsed expression object.
+ * @param {TableData} data - The table data for evaluation.
+ * @returns {number | string} The evaluated result.
+ */
+const evaluateFunction = (
+  parsedExpression: any,
+  data: TableData
+): number | string => {
+  const { func, args } = parsedExpression;
+  const resolvedArgs = args.map((arg: string) =>
+    arg.includes("(") ? parseAndEvaluateExpression(arg, data) : arg
+  );
+
+  switch (func) {
+    case "SUM":
+      return sumFunction(resolvedArgs, data);
+    case "MIN":
+      return minFunction(resolvedArgs, data);
+    case "MAX":
+      return maxFunction(resolvedArgs, data);
+    case "AVG":
+      return avgFunction(resolvedArgs, data);
+    case "CONCAT":
+      return concatFunction(resolvedArgs, data);
+    case "IF":
+      return ifFunction(resolvedArgs, data);
+    case "DEBUG":
+      return debugFunction(resolvedArgs, data);
+    case "COPY":
+      return copyFunction(resolvedArgs, data);
+    default:
+      throw new Error("Function not supported");
   }
 };
 
@@ -207,16 +200,10 @@ const evaluateExpression = (
  * @param {string} range - The range expression.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The sum of the values in the range.
- *
- * Ownership: syadav7173
  */
 const evaluateRange = (range: string, data: TableData): number => {
   const values = getRangeFromReference(range, data);
-  let sum = 0;
-  values.forEach((value) => {
-    sum += parseFloat(value) || 0;
-  });
-  return sum;
+  return values.reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
 };
 
 /**
@@ -224,31 +211,26 @@ const evaluateRange = (range: string, data: TableData): number => {
  * @param {any[]} args - The arguments to sum.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The sum of the arguments.
- *
- * Ownership: syadav7173
  */
 const sumFunction = (args: any[], data: TableData): number => {
-  console.log("summing with args", args);
+  console.log("Summing with args:", args);
   let sum = 0;
 
   args.forEach((arg: any) => {
-    if (typeof arg === "string" && arg.match(/^\$?([A-Z]+\d+)\s*:\s*\$?([A-Z]+\d+)$/)) {
-      // Handle range
+    if (typeof arg === "string" && arg.match(/^\$?[A-Z]+\d*$/)) {
+      const cellValue = resolveCellReference(arg, data);
+      sum += parseFloat(cellValue.toString()) || 0;
+    } else if (typeof arg === "string" && arg.match(/^\$?[A-Z]+\d+:\$?[A-Z]+\d+$/)) {
       const range = getRangeFromReference(arg, data);
       range.forEach((value) => {
         sum += parseFloat(value) || 0;
       });
-    } else if (typeof arg === "string" && arg.match(/^\$?[A-Z]+\d*$/)) {
-      // Handle individual cell reference
-      const cellValue = resolveCellReference(arg, data);
-      sum += parseFloat(cellValue.toString()) || 0;
     } else {
-      const resolvedValue = parseFloat(arg) || 0;
-      sum += resolvedValue;
+      sum += parseFloat(arg) || 0;
     }
   });
 
-  console.log("sum result:", sum);
+  console.log("Sum result:", sum);
   return sum;
 };
 
@@ -257,8 +239,6 @@ const sumFunction = (args: any[], data: TableData): number => {
  * @param {string[]} args - The arguments to evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The minimum value.
- *
- * Ownership: syadav7173
  */
 const minFunction = (args: string[], data: TableData): number => {
   let min = Infinity;
@@ -286,8 +266,6 @@ const minFunction = (args: string[], data: TableData): number => {
  * @param {string[]} args - The arguments to evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The maximum value.
- *
- * Ownership: syadav7173
  */
 const maxFunction = (args: string[], data: TableData): number => {
   let max = -Infinity;
@@ -315,8 +293,6 @@ const maxFunction = (args: string[], data: TableData): number => {
  * @param {string[]} args - The arguments to evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The average value.
- *
- * Ownership: syadav7173
  */
 const avgFunction = (args: string[], data: TableData): number => {
   let sum = 0;
@@ -347,8 +323,6 @@ const avgFunction = (args: string[], data: TableData): number => {
  * @param {string[]} args - The arguments to concatenate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {string} The concatenated result.
- *
- * Ownership: syadav7173
  */
 const concatFunction = (args: string[], data: TableData): string => {
   return args
@@ -362,16 +336,18 @@ const concatFunction = (args: string[], data: TableData): string => {
     .join("");
 };
 
+/**
+ * Evaluates an IF condition based on the provided table data.
+ * @param {string[]} args - The arguments for the IF function.
+ * @param {TableData} data - The table data for evaluation.
+ * @returns {string} The result of the IF function.
+ */
 const ifFunction = (args: string[], data: TableData): string => {
   if (args.length !== 3) {
     throw new Error("IF function requires 3 arguments");
   }
   const condition = evaluateCondition(args[0], data);
-  if (condition) {
-    return args[1];
-  } else {
-    return args[2];
-  }
+  return condition ? args[1] : args[2];
 };
 
 /**
@@ -379,13 +355,9 @@ const ifFunction = (args: string[], data: TableData): string => {
  * @param {string} condition - The condition to evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {boolean} The result of the condition evaluation.
- *
- * Ownership: syadav7173
  */
 const evaluateCondition = (condition: string, data: TableData): boolean => {
-  // Evaluate the condition expression
   const parsedExpression = parseExpression(condition);
-  console.log("reparsing", parsedExpression);
   const result = evaluateExpression(parsedExpression, data);
   return parseFloat(result.toString()) !== 0;
 };
@@ -395,15 +367,13 @@ const evaluateCondition = (condition: string, data: TableData): boolean => {
  * @param {string[]} args - The arguments for the DEBUG function.
  * @param {TableData} data - The table data for evaluation.
  * @returns {string} The result of the DEBUG function.
- *
- * Ownership: syadav7173
  */
 const debugFunction = (args: string[], data: TableData): string => {
   if (args.length !== 1) {
     throw new Error("DEBUG function requires 1 argument");
   }
   const result = resolveOperand(args[0], data).toString();
-  console.log(result); //for specification
+  console.log(result); // For specification
   return result;
 };
 
@@ -412,8 +382,6 @@ const debugFunction = (args: string[], data: TableData): string => {
  * @param {string[]} args - The arguments for the COPY function.
  * @param {TableData} data - The table data for evaluation.
  * @returns {string} The copied value.
- *
- * Ownership: syadav7173
  */
 const copyFunction = (args: string[], data: TableData): string => {
   if (args.length !== 2) {
@@ -434,13 +402,10 @@ const copyFunction = (args: string[], data: TableData): string => {
  * Parses a cell reference into row and column indices.
  * @param {string} ref - The cell reference to parse.
  * @returns {Ref} The parsed row and column indices.
- *
- * Ownership: syadav7173
  */
 const parseCellReference = (ref: string): Ref => {
   ref = ref.startsWith("$") ? ref.substring(1) : ref;
   const match = ref.match(/^([A-Z]+)(\d+)$/);
-  console.log(ref);
   if (!match) throw new Error("Invalid cell reference");
 
   const colLetters = match[1];
@@ -460,23 +425,19 @@ const parseCellReference = (ref: string): Ref => {
  * @param {string} ref - The range reference.
  * @param {TableData} data - The table data.
  * @returns {string[]} The values in the range.
- *
- * Ownership: syadav7173
  */
 const getRangeFromReference = (ref: string, data: TableData): string[] => {
-  console.log("getting range from reference:", ref); // Debugging output
+  console.log("Getting range from reference:", ref);
   const match = ref.match(/^(\$?[A-Z]+)(\d+):(\$?[A-Z]+)(\d+)$/);
-  if (!match) throw new Error("invalid range format");
+  if (!match) throw new Error("Invalid range format");
 
   const [, colStart, rowStart, colEnd, rowEnd] = match;
-  console.log("starting point", colStart);
   const startCol = colToIndex(colStart);
   const endCol = colToIndex(colEnd);
   const startRow = parseInt(rowStart, 10) - 1;
   const endRow = parseInt(rowEnd, 10) - 1;
 
-  console.log(`parsed range: Start: (${startCol}, ${startRow}), End: (${endCol}, ${endRow})`); // Debugging output
-  console.log("starting point post processing", startCol);
+  console.log(`Parsed range: Start: (${startCol}, ${startRow}), End: (${endCol}, ${endRow})`);
 
   const values = [];
   for (let row = startRow; row <= endRow; row++) {
@@ -484,17 +445,13 @@ const getRangeFromReference = (ref: string, data: TableData): string[] => {
       values.push(data[row][col]);
     }
   }
-  console.log("values in range:", values);
   return values;
 };
-
 
 /**
  * Converts a column reference to an index.
  * @param {string} col - The column reference.
  * @returns {number} The column index.
- *
- * Ownership: syadav7173
  */
 const colToIndex = (col: string): number => {
   col = col.replace("$", "");
@@ -510,8 +467,6 @@ const colToIndex = (col: string): number => {
  * @param {number | string | Ref} operand - The operand to resolve.
  * @param {TableData} data - The table data.
  * @returns {number | string} The resolved operand value.
- *
- * Ownership: syadav7173
  */
 const resolveOperand = (
   operand: number | string | Ref,
@@ -529,9 +484,15 @@ const resolveOperand = (
   if (isRef(operand)) {
     return data[operand.row][operand.col];
   }
-  throw new Error("invalid operand type");
+  throw new Error("Invalid operand type");
 };
 
+/**
+ * Resolves a cell reference to a value based on the provided table data.
+ * @param {string} ref - The cell reference to resolve.
+ * @param {TableData} data - The table data.
+ * @returns {string | number} The resolved cell value.
+ */
 const resolveCellReference = (ref: string, data: TableData): string | number => {
   ref = ref.startsWith("$") ? ref.substring(1) : ref;
   const match = ref.match(/^([A-Z]+)(\d+)$/);
@@ -551,71 +512,59 @@ const resolveCellReference = (ref: string, data: TableData): string | number => 
   ) {
     return "ERROR";
   }
-  let returnvalue = data[rowIndex][colIndex]
-  if (!isNaN(Number(returnvalue))) {
-    return Number(returnvalue);
-  }else{
-    return returnvalue.toString();
-  }
-
-
+  let returnValue = data[rowIndex][colIndex];
+  return !isNaN(Number(returnValue)) ? Number(returnValue) : returnValue.toString();
 };
 
+/**
+ * Evaluates operands with the specified operator.
+ * @param {number | string} x - The first operand.
+ * @param {number | string} y - The second operand.
+ * @param {string} operator - The operator to apply.
+ * @returns {number | string} The evaluated result.
+ */
 const evaluateOperands = (
   x: number | string,
   y: number | string,
   operator: string
 ): number | string => {
-  if (operator === "=") {
-    return x === y ? 1 : 0;
+  switch (operator) {
+    case "=":
+      return x === y ? 1 : 0;
+    case "<>":
+      return x !== y ? 1 : 0;
+    case "&":
+      return x !== 0 && y !== 0 ? 1 : 0;
+    case "|":
+      return x === 1 || y === 1 ? 1 : 0;
+    case "+":
+      return (x as number) + (y as number);
+    case "-":
+      return (x as number) - (y as number);
+    case "*":
+      return (x as number) * (y as number);
+    case "/":
+      if ((y as number) === 0) throw new Error("Division by zero");
+      return (x as number) / (y as number);
+    case "<":
+      if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
+      return (x as number) < (y as number) ? 1 : 0;
+    case ">":
+      if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
+      return (x as number) > (y as number) ? 1 : 0;
+    case "<=":
+      if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
+      return (x as number) <= (y as number) ? 1 : 0;
+    case ">=":
+      if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
+      return (x as number) >= (y as number) ? 1 : 0;
+    default:
+      throw new Error("Unsupported operator");
   }
-  if (operator === "<>") {
-    return x !== y ? 1 : 0;
-  }
-  if (operator === "&") {
-    return x !== 0 && y !== 0 ? 1 : 0;
-  }
-  if (operator === "|") {
-    return x === 1 || y === 1 ? 1 : 0;
-  }
-  if (operator === "+") {
-    return (x as number) + (y as number);
-  }
-  if (operator === "-") {
-    return (x as number) - (y as number);
-  }
-  if (operator === "*") {
-    return (x as number) * (y as number);
-  }
-  if (operator === "/") {
-    if ((y as number) === 0) throw new Error("Division by zero");
-    return (x as number) / (y as number);
-  }
-  if (operator === "<") {
-    if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
-    return (x as number) < (y as number) ? 1 : 0;
-  }
-  if (operator === ">") {
-    if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
-    return (x as number) > (y as number) ? 1 : 0;
-  }
-  if (operator === "<=") {
-    if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
-    return (x as number) <= (y as number) ? 1 : 0;
-  }
-  if (operator === ">=") {
-    if (typeof x !== 'number' || typeof y !== 'number') throw new Error("Invalid operand type for comparison");
-    return (x as number) >= (y as number) ? 1 : 0;
-  }
-  throw new Error("Unsupported operator");
 };
 
-
-
 function isRef(value: any): value is Ref {
-  return (
-    value && typeof value.row === "number" && typeof value.col === "number"
-  );
+  return value && typeof value.row === "number" && typeof value.col === "number";
 }
 
 export { evaluateOperands, evaluateExpression, type TableData };

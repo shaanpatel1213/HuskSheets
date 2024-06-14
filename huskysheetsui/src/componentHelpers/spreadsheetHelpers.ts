@@ -4,7 +4,8 @@ import {
   updatePublished,
   updateSubscription
 } from '../Utilities/utils';
-import { parseAndEvaluateExpression, TableData } from '../Utilities/CellFunctionalities';
+import { parseAndEvaluateExpression } from '../Utilities';
+import { TableData } from '../Utilities';
 
 type DependencyGraphType = Map<string, Set<string>>;
 
@@ -40,7 +41,6 @@ export { DependencyGraph };
 
 
 const getCellKey = (row: number, col: number): string => `${row}:${col}`;
-
 
 /**
  * Fetches updates from the server for the current sheet.

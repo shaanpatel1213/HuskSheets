@@ -1,9 +1,9 @@
 import { fetchUpdates, evaluateAllCells, addUpdates, saveUpdates, evaluateCell, colToIndex, getColumnLetter, parseUpdate } from '../componentHelpers/spreadsheetHelpers';
 import { getUpdatesForSubscription, getUpdatesForPublished, updatePublished, updateSubscription } from '../Utilities/utils';
-import { parseAndEvaluateExpression, TableData } from '../Utilities/CellFunctionalities';
+import { parseAndEvaluateExpression, TableData } from '../Utilities';
 
 jest.mock('../Utilities/utils');
-jest.mock('../Utilities/CellFunctionalities');
+jest.mock('../Utilities');
 
 
 

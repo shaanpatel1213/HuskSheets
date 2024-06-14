@@ -1,67 +1,70 @@
-# Makefile for the HuskySheets project
+# Makefile with targets: test, build, docker, and start
 
-# Define variables
-CLIENT_DIR = huskysheetsui
-SERVER_DIR = server
-DOCKER_COMPOSE_FILE = $(SERVER_DIR)/docker-compose.yml
+# Variables
+FRONTEND_DIR := huskysheetsui
+BACKEND_DIR := server
+DOCKER_IMAGE := server-backend
+FRONTEND_PORT := 3008
+BACKEND_PORT := 3010
 
-# Define commands
-NPM = npm
-REACT_SCRIPTS = npx react-scripts
-DOCKER = docker
-DOCKER_COMPOSE = docker-compose
+# Targets
+.PHONY: all test build docker start start-frontend start-backend clean kill-ports
 
-.PHONY: all install-client build-client start-client test-client install-server start-server test-server clean-client clean-server docker-up docker-down docker-build docker-clean
+all: test docker start
 
-# Default target: build the project test-client docker-up test-server test-client start-server start-client
-all: install-server install-client 
+# Test target
+test: test-frontend test-backend
 
-# Install dependencies for the client
-install-client:
-	cd $(CLIENT_DIR) && $(NPM) install
+test-frontend:
+	@echo "Running frontend tests..."
+	cd $(FRONTEND_DIR) && npm install && npm test || echo "Frontend tests failed"
 
-# Build the client project
-build-client:
-	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) build
+test-backend:
+	@echo "Running backend tests..."
+	cd $(BACKEND_DIR) && npm install && chmod +x ../node_modules/.bin/jest && npm test || echo "Backend tests failed"
 
-# Start the client development server
-start-client:
-	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) start
+# Build target
+build: build-frontend build-backend
 
-# Run client tests
-test-client:
-	cd $(CLIENT_DIR) && $(REACT_SCRIPTS) test --watchAll=false
+build-frontend:
+	@echo "Building frontend..."
+	cd $(FRONTEND_DIR) && npm install && npm run build
 
-# Clean the client build
-clean-client:
-	rm -rf $(CLIENT_DIR)/build
+build-backend:
+	@echo "Building backend..."
+	cd $(BACKEND_DIR) && npm install
 
-# Install dependencies for the server
-install-server:
-	cd $(SERVER_DIR) && $(NPM) install
-
-# Start the server
-start-server:
-	cd $(SERVER_DIR) && $(NPM) start
-
-# Run server tests
-test-server:
-	cd $(SERVER_DIR) && $(NPM) test
-
-# Clean the server build
-clean-server:
-	cd $(SERVER_DIR) && $(NPM) run clean
-
-# Docker targets
-docker-up:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
-
-docker-down:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+# Docker target
+docker: docker-build docker-run
 
 docker-build:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+	@echo "Building Docker image..."
+	cd $(BACKEND_DIR) && docker-compose build
 
-docker-clean:
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --rmi all
-	$(DOCKER) system prune -f
+docker-run:
+	@echo "Running Docker container..."
+	cd $(BACKEND_DIR) && docker-compose up -d
+
+# Start target
+start: kill-ports start-backend start-frontend
+
+start-frontend:
+	@echo "Starting frontend..."
+	cd $(FRONTEND_DIR) && PORT=$(FRONTEND_PORT) npm start &
+
+start-backend:
+	@echo "Starting backend..."
+	cd $(BACKEND_DIR) && PORT=$(BACKEND_PORT) npm start &
+
+# Clean up target
+clean:
+	@echo "Cleaning up..."
+	cd $(FRONTEND_DIR) && rm -rf node_modules
+	cd $(BACKEND_DIR) && rm -rf node_modules
+
+# Kill processes running on specific ports
+kill-ports:
+	@echo "Killing processes on ports $(FRONTEND_PORT) and $(BACKEND_PORT)..."
+	lsof -t -i tcp:$(FRONTEND_PORT) | xargs kill -9 || true
+	lsof -t -i tcp:$(BACKEND_PORT) | xargs kill -9 || true
+

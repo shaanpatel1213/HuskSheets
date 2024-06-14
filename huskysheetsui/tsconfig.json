@@ -18,14 +18,22 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": [
+      "node",
+      "jest",
+      "superagent",
+      "supertest"
+    ]
   },
   "include": [
     "src"
   ],
+  "exclude": [
+    "node_modules"
+  ],
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
+    "testEnvironment": "node"
   }
-
 }
