@@ -285,28 +285,24 @@ describe('evaluateFunction function', () => {
 
 describe('evaluateRange function', () => {
     const data1: TableData = [
-        ['5', '2', '3'],
+        ['1', '2', '3'],
         ['4', '5', '6'],
         ['7', '8', '9']
     ];
 
-    /** Ownership: @author EmilyFink474 */
     test('should correctly evaluate range', () => {
-        expect(evaluateRange('A1:C1', data1)).toBe(10);
+        expect(evaluateRange('A1:C1', data1)).toBe(6);
     });
 
-    /** Ownership: @author EmilyFink474 */
     test('should correctly evaluate range with multiple rows', () => {
-        expect(evaluateRange('A1:C2', data1)).toBe(25);
+        expect(evaluateRange('A1:C2', data1)).toBe(21);
     });
 
-    /** Ownership: @author EmilyFink474 */
     test('should return 0 for an empty range', () => {
         const emptyData: TableData = [['']];
         expect(evaluateRange('A1:A1', emptyData)).toBe(0);
     });
 
-    /** Ownership: @author EmilyFink474 */
     test('should throw error for invalid range format', () => {
         expect(() => {
             evaluateRange('A1', data1);
