@@ -1,4 +1,4 @@
-// src/tests/parsing.test.tsx
+// src/__test__/parsing.test.tsx
 import { TableData } from '../Utilities/types';
 import {
     parseAndEvaluateExpression,
