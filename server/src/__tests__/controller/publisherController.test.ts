@@ -5,6 +5,7 @@ import { Publisher } from '../../entity/Publisher';
 
 jest.mock('../../services/updateService');
 
+/** Ownership: @author syadav7173 */
 describe('Publisher Controller', () => {
   describe('getPublishers', () => {
     it('should return a list of publishers', async () => {

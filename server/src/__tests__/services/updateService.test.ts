@@ -8,7 +8,6 @@ import {
     updateSubscription
 } from '../../services/updateService';
 
-
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {
@@ -23,12 +22,10 @@ jest.mock('../../data-source', () => ({
     }
 }));
 
-
-
 /**
  * Tests the update service methods
  * 
- * Ownership: @author BrandonPetersen
+ * @author syadav7173
  */
 describe('updateService', () => {
     describe('getUpdatesForSubscription', () => {
@@ -36,8 +33,15 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const id = '123';
-            const user = { username: publisher } as Publisher;
-            const spreadsheet = { id: 1, name: sheet, publisher: user } as Spreadsheet;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
+            const spreadsheet: Spreadsheet = {
+                idRef: 1,
+                name: sheet,
+                publisher: user,
+                subscribers: [],
+                cells: [],
+                updates: []
+            };
             const updates = [{ id: 124, payload: 'update1' }];
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
@@ -67,7 +71,7 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const id = '123';
-            const user = { username: publisher } as Publisher;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(null);
@@ -81,8 +85,15 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const id = '123';
-            const user = { username: publisher } as Publisher;
-            const spreadsheet = { id: 1, name: sheet, publisher: user } as Spreadsheet;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
+            const spreadsheet: Spreadsheet = {
+                idRef: 1,
+                name: sheet,
+                publisher: user,
+                subscribers: [],
+                cells: [],
+                updates: []
+            };
             const updates = [{ id: 124, payload: 'update1' }];
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
@@ -112,7 +123,7 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const id = '123';
-            const user = { username: publisher } as Publisher;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(null);
@@ -126,8 +137,15 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const payload = 'A1 value\nB2 value2';
-            const user = { username: publisher } as Publisher;
-            const spreadsheet = { id: 1, name: sheet, publisher: user } as Spreadsheet;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
+            const spreadsheet: Spreadsheet = {
+                idRef: 1,
+                name: sheet,
+                publisher: user,
+                subscribers: [],
+                cells: [],
+                updates: []
+            };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(spreadsheet);
@@ -154,7 +172,7 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const payload = 'A1 value\nB2 value2';
-            const user = { username: publisher } as Publisher;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(null);
@@ -168,8 +186,15 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const payload = 'A1 value\nB2 value2';
-            const user = { username: publisher } as Publisher;
-            const spreadsheet = { id: 1, name: sheet, publisher: user } as Spreadsheet;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
+            const spreadsheet: Spreadsheet = {
+                idRef: 1,
+                name: sheet,
+                publisher: user,
+                subscribers: [],
+                cells: [],
+                updates: []
+            };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(spreadsheet);
@@ -196,7 +221,7 @@ describe('updateService', () => {
             const publisher = 'testuser';
             const sheet = 'sheet1';
             const payload = 'A1 value\nB2 value2';
-            const user = { username: publisher } as Publisher;
+            const user: Publisher = { id: 1, username: publisher, password: 'password', spreadsheets: [] };
 
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(user);
             (AppDataSource.manager.findOneBy as jest.Mock).mockResolvedValueOnce(null);

@@ -6,6 +6,7 @@ import { Spreadsheet } from '../../entity/Spreadsheet';
 
 jest.mock('../../services/sheetService');
 
+/** Ownership: @author syadav7173 */
 describe('sheetController', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
@@ -23,19 +24,20 @@ describe('sheetController', () => {
     next = jest.fn();
   });
 
+/** Ownership: @author syadav7173 */
   describe('createNewSheet', () => {
     it('should create a new sheet for the authenticated user', async () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet' };
 
       (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue({ username: 'test_user' });
-      (sheetService.createSheet as jest.Mock).mockResolvedValue({ name: 'test_sheet' });
+      (sheetService.createSheet as jest.Mock).mockResolvedValue({ idRef: 1, name: 'test_sheet' });
 
       await sheetController.createNewSheet(req as Request, res as Response, next);
 
       expect(sheetService.findPublisherByUsername).toHaveBeenCalledWith('test_user');
       expect(sheetService.createSheet).toHaveBeenCalledWith({ username: 'test_user' }, 'test_sheet');
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: [] });
+      expect(res.json).toHaveBeenCalledWith({ success: true, message: null, value: { idRef: 1, name: 'test_sheet' } });
     });
 
     it('should return 401 if the publisher is not the authenticated user', async () => {
@@ -74,11 +76,12 @@ describe('sheetController', () => {
     });
   });
 
+/** Ownership: @author syadav7173 */
   describe('getSheets', () => {
     it('should get sheets for a publisher', async () => {
       req.body = { publisher: 'test_user' };
 
-      const sheets = [{ name: 'test_sheet' }];
+      const sheets = [{ idRef: 1, name: 'test_sheet' }];
       (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue({ username: 'test_user' });
       (sheetService.getSheetsByPublisher as jest.Mock).mockResolvedValue(sheets);
 
@@ -113,12 +116,13 @@ describe('sheetController', () => {
     });
   });
 
+/** Ownership: @author syadav7173 */
   describe('deleteSheet', () => {
     it('should delete a sheet for the authenticated user', async () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet' };
 
       const publisher = { username: 'test_user' } as Publisher;
-      const spreadsheet = { name: 'test_sheet' } as Spreadsheet;
+      const spreadsheet = { idRef: 1, name: 'test_sheet' } as Spreadsheet;
 
       (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(publisher);
       (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(spreadsheet);
@@ -162,7 +166,7 @@ describe('sheetController', () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet' };
 
       const publisher = { username: 'test_user' } as Publisher;
-      const spreadsheet = { name: 'test_sheet' } as Spreadsheet;
+      const spreadsheet = { idRef: 1, name: 'test_sheet' } as Spreadsheet;
 
       (sheetService.findPublisherByUsername as jest.Mock).mockResolvedValue(publisher);
       (sheetService.findSheetByNameAndPublisher as jest.Mock).mockResolvedValue(spreadsheet);

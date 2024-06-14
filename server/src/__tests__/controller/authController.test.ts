@@ -3,6 +3,7 @@ import * as publisherService from '../../services/publisherService';
 import { Request, Response } from 'express';
 import { Publisher } from '../../entity/Publisher';
 
+/** Ownership: @author syadav7173 */
 describe('Auth Controller', () => {
   describe('registerPublisher', () => {
     it('should register a new publisher', async () => {
@@ -34,7 +35,8 @@ describe('Auth Controller', () => {
       expect(res.json).toHaveBeenCalledWith({ success: true, message: 'test_user', value: [] });
     });
   });
-
+  
+/** Ownership: @author syadav7173 */
   describe('getAllPublishers', () => {
     it('should get all publishers', async () => {
       const req = {} as Request;
