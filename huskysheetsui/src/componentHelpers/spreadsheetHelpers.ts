@@ -53,7 +53,7 @@ const getCellKey = (row: number, col: number): string => `${row}:${col}`;
  * @param {Function} parseUpdate - Function to parse update strings.
  * @returns {Promise<void>}
  *
- * Ownership: BrandonPetersen
+ * Ownership: @author EmilyFink474
  */
 export const fetchUpdates = async (
   sheet: { publisher: string, name: string },
@@ -67,21 +67,25 @@ export const fetchUpdates = async (
   const result = isSubscriber
     ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0')
     : await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
-  
+
   if (result && result.success) {
     const newData = initialData.map(row => row.slice());
-    
+
     result.value.forEach((update: { publisher: string; sheet: string; id: string; payload: string }) => {
       update.payload.split('\n').forEach(line => {
         if (line.trim()) {
-          const { row, col, value } = parseUpdate(line);
-          while (newData.length <= row) {
-            newData.push(new Array(initialData[0].length).fill(''));
+          if (line.match(/\$([A-Z]+)(\d+)\s(.+)/)) {
+            const { row, col, value } = parseUpdate(line);
+            while (newData.length <= row) {
+              newData.push(new Array(initialData[0].length).fill(''));
+            }
+            while (newData[row].length <= col) {
+              newData[row].push('');
+            }
+            newData[row][col] = value;
+          } else {
+            console.error('Failed to fetch updates');
           }
-          while (newData[row].length <= col) {
-            newData[row].push('');
-          }
-          newData[row][col] = value;
         }
       });
     });
@@ -152,7 +156,7 @@ const evaluateCell = (
       evaluatedFormula = evaluatedFormula.replace(dep, depValue);
     });
 
-        
+
     // Check if the formula contains a function and pass accordingly
 
     const isFunction = formula.match(/^\s*[\w\$]+\s*\(.*\)\s*$/);
@@ -167,9 +171,9 @@ const evaluateCell = (
 
     }
 
-    }
+  }
 
-return cell || '';
+  return cell || '';
 
 };
 
@@ -216,7 +220,7 @@ export const saveUpdates = async (
   const result = isSubscriber
     ? await updateSubscription(sheet.publisher, sheet.name, allUpdates)
     : await updatePublished(sheet.publisher, sheet.name, allUpdates);
-  
+
   if (result && result.success) {
     setSheetId(sheetId === null ? 1 : sheetId + 1);
     updates.current = "";
@@ -274,4 +278,4 @@ export const getColumnLetter = (colIndex: number): string => {
 };
 
 
-export {evaluateCell, evaluateAllCells, colToIndex};
+export { evaluateCell, evaluateAllCells, colToIndex };
