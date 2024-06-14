@@ -29,8 +29,8 @@ jest.mock('../Components/Spreadsheet', () => ({
   },
 }));
 
-// Ownership: Emily Fink
 describe('App Component', () => {
+  /** @author EmilyFink474 */
   test('renders all the paths correctly', () => {
     // renders at the Login path
     render(<MemoryRouter><App /></MemoryRouter>);

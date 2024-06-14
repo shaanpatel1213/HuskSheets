@@ -1,8 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { Login } from '../Components/Login'; // Adjust the path as needed
-import { handleSubmit } from '../componentHelpers/loginHelpers';
+import { Login } from '../Components/Login'; 
 
 const mockUsername = 'team18';
 const mockPassword = 'qdKoHqmiP@6x`_1Q';
@@ -10,6 +9,7 @@ const mockWrongUsername = 'groovydude';
 const mockWrongPassword = '1234';
 
 describe('Login', () => {
+    /** @author EmilyFink474 */
     test('check login renders correctly', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
@@ -27,6 +27,7 @@ describe('Login', () => {
         fireEvent.click(loginButton);
     })
 
+    /** @author EmilyFink474 */
     test('check login renders error correctly when missing username', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
 
@@ -43,6 +44,7 @@ describe('Login', () => {
         })
     })
 
+    /** @author EmilyFink474 */
     test('check login renders error correctly when missing password', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
 
@@ -59,6 +61,7 @@ describe('Login', () => {
         })
     })
 
+    /** @author EmilyFink474 */
     test('check login renders error correctly with wrong username', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
@@ -79,6 +82,7 @@ describe('Login', () => {
         })
     })
 
+    /** @author EmilyFink474 */
     test('check login renders error correctly with wrong password', async () => {
         render(<MemoryRouter><Login /></MemoryRouter>);
         expect(screen.queryAllByText('Login')).toBeDefined();
