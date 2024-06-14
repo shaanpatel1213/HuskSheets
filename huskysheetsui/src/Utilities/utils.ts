@@ -78,7 +78,7 @@ export const register = async (): Promise<Result | null> => {
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Register error:', error.response?.data || error.message);
+      console.error('Register error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -101,7 +101,7 @@ export const getPublishers = async (): Promise<Result | null> => {
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Get publishers error:', error.response?.data || error.message);
+      console.error('Get publishers error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -128,7 +128,7 @@ export const createSheet = async (publisher: string, sheet: string): Promise<Res
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Create sheet error:', error.response?.data || error.message);
+      console.error('Create sheet error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -151,7 +151,7 @@ export const getSheets = async (publisher: string): Promise<Result | null> => {
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Get sheets error:', error.response?.data || error.message);
+      console.error('Get sheets error:',  error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -177,7 +177,7 @@ export const deleteSheet = async (publisher: string, sheet: string): Promise<Res
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Delete sheet error:', error.response?.data || error.message);
+      console.error('Delete sheet error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -202,7 +202,7 @@ export const getUpdatesForSubscription = async (publisher: string, sheet: string
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Get updates for subscription error:', error.response?.data || error.message);
+      console.error('Get updates for subscription error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -227,7 +227,7 @@ export const getUpdatesForPublished = async (publisher: string, sheet: string, i
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Get updates for published error:', error.response?.data || error.message);
+      console.error('Get updates for published error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -252,7 +252,7 @@ export const updatePublished = async (publisher: string, sheet: string, payload:
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Update published sheet error:', error.response?.data || error.message);
+      console.error('Update published sheet error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
@@ -277,7 +277,7 @@ export const updateSubscription = async (publisher: string, sheet: string, paylo
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error('Update subscription error:', error.response?.data || error.message);
+      console.error('Update subscription error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
