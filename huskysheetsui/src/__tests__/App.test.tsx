@@ -1,9 +1,9 @@
-// src/__test__/App.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
 import { MemoryRouter } from 'react-router-dom';
 
+/** @author EmilyFink474 */
 jest.mock('../Components/Login', () => ({
   Login: () => {
     const history = require('react-router-dom').useHistory();
@@ -13,6 +13,8 @@ jest.mock('../Components/Login', () => ({
       </div>);
   },
 }));
+
+/** @author EmilyFink474 */
 jest.mock('../Components/HomePage', () => ({
   HomePage: () => {
     const history = require('react-router-dom').useHistory();
@@ -22,6 +24,8 @@ jest.mock('../Components/HomePage', () => ({
     </div>);
   },
 }));
+
+/** @author EmilyFink474 */
 jest.mock('../Components/Spreadsheet', () => ({
   Spreadsheet: () => {
     const history = require('react-router-dom').useHistory();
@@ -29,8 +33,8 @@ jest.mock('../Components/Spreadsheet', () => ({
   },
 }));
 
+/** @author EmilyFink474 */
 describe('App Component', () => {
-  /** @author EmilyFink474 */
   test('renders all the paths correctly', () => {
     // renders at the Login path
     render(<MemoryRouter><App /></MemoryRouter>);

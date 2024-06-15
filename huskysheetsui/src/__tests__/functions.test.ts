@@ -18,6 +18,7 @@ const data: TableData = [
     ['7', '8', '9']
 ];
 
+/** @author EmilyFink474 */
 describe('sumFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply sum function when given single cells', () => {
@@ -35,6 +36,7 @@ describe('sumFunction function', () => {
     });
 });
 
+/** @author EmilyFink474 */
 describe('minFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply min function when given single cells', () => {
@@ -55,6 +57,7 @@ describe('minFunction function', () => {
     });
 });
 
+/** @author EmilyFink474 */
 describe('maxFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply max function when given single cells', () => {
@@ -74,6 +77,7 @@ describe('maxFunction function', () => {
     });
 });
 
+/** @author EmilyFink474 */
 describe('avgFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply avg function when given single cells', () => {
@@ -90,20 +94,14 @@ describe('avgFunction function', () => {
     test('should correctly apply avg function when given numbers', () => {
         expect(avgFunction(['2', '3', '1'], data)).toBe(2);
     });
-    // add when result is NaN
 });
 
+/** @author EmilyFink474 */
 describe('concatFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply concat function when given single cells', () => {
         expect(concatFunction(['$A1', '$B2', '$B1'], data)).toBe('152');
     });
-
-    // should we be able to concat ranges?
-    // test('should correctly apply concat function when given range of cells', () => {
-    //     expect(concatFunction(['$B1:$B3'], data)).toBe('258');
-    //     expect(concatFunction(['$B1:$B3', '$C3'], data)).toBe('2589');
-    // });
 
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply concat function when given values', () => {
@@ -113,12 +111,12 @@ describe('concatFunction function', () => {
     });
 });
 
+/** @author EmilyFink474 */
 describe('ifFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply if function when given single cells', () => {
         expect(ifFunction(['$A1<$B2', 'true', 'false'], data)).toBe('true');
         expect(ifFunction(['$A1>$B2', 'true', 'false'], data)).toBe('false');
-        //expect(ifFunction(['$A1<$B2', '$B2', '$B1'], data)).toBe('2'); should it return the value of $B2
     });
 
     /** Ownership: @author EmilyFink474 */
@@ -135,6 +133,7 @@ describe('ifFunction function', () => {
     });
 });
 
+/** @author EmilyFink474 */
 describe('debugFunction function', () => {
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply debug function when given single cells', () => {
