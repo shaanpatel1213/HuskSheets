@@ -12,6 +12,13 @@ type DependencyGraphType = Map<string, Set<string>>;
 class DependencyGraph {
   private graph: DependencyGraphType = new Map();
 
+  /**
+   * Adds a dependency for a cell.
+   * @param {string} cell - The cell identifier.
+   * @param {string} dependency - The dependency identifier.
+   * 
+   * @author BrandonPetersen
+   */
   addDependency(cell: string, dependency: string) {
     if (!this.graph.has(cell)) {
       this.graph.set(cell, new Set());
@@ -19,10 +26,25 @@ class DependencyGraph {
     this.graph.get(cell)!.add(dependency);
   }
 
+  /**
+   * Gets the dependencies of a cell.
+   * @param {string} cell - The cell identifier.
+   * @returns {Set<string>} The set of dependencies.
+   * 
+   * @author BrandonPetersen
+   */
   getDependencies(cell: string): Set<string> {
     return this.graph.get(cell) || new Set();
   }
 
+  /**
+   * Detects if there is a cycle in the dependencies starting from the given cell.
+   * @param {string} cell - The cell identifier.
+   * @param {Set<string>} visited - The set of visited cells.
+   * @returns {boolean} True if a cycle is detected, false otherwise.
+   * 
+   * @author BrandonPetersen
+   */
   detectCycle(cell: string, visited: Set<string> = new Set()): boolean {
     if (visited.has(cell)) return true;
     visited.add(cell);
@@ -38,7 +60,6 @@ class DependencyGraph {
 }
 
 export { DependencyGraph };
-
 
 const getCellKey = (row: number, col: number): string => `${row}:${col}`;
 
@@ -104,7 +125,7 @@ export const fetchUpdates = async (
  * @param {DependencyGraph} dependencyGraph - The dependency graph.
  * @returns {TableData} The evaluated table data.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 const evaluateAllCells = (data: TableData, dependencyGraph: DependencyGraph): TableData => {
   return data.map((row, rowIndex) =>
@@ -123,7 +144,7 @@ const evaluateAllCells = (data: TableData, dependencyGraph: DependencyGraph): Ta
  * @param {TableData} evaluatedData - The evaluated table data.
  * @returns {string} The evaluated cell value.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 const evaluateCell = (
   cell: string,
@@ -169,8 +190,13 @@ const evaluateCell = (
   return cell || '';
 };
 
-
-
+/**
+ * Parses a cell reference and returns the row and column indices.
+ * @param {string} reference - The cell reference.
+ * @returns {Object} The parsed cell reference with row and column indices.
+ *
+ * @author BrandonPetersen
+ */
 export const parseCellReference = (reference: string): { row: number, col: number } => {
   const match = reference.match(/([A-Z]+)(\d+)/);
   if (!match) throw new Error('Invalid cell reference');
@@ -184,12 +210,24 @@ export const parseCellReference = (reference: string): { row: number, col: numbe
  * Extracts cell references from a formula.
  * @param {string} formula - The formula to extract references from.
  * @returns {Set<string>} The set of cell references.
+ *
+ * @author BrandonPetersen
  */
 export const getDependenciesFromFormula = (formula: string): string[] => {
   const matches = formula.match(/\$?[A-Z]+\d+/g);
   return matches ? matches.map(ref => ref.replace('$', '')) : [];
 };
 
+/**
+ * Adds updates to the provided updates ref object.
+ * @param {number} rowIndex - The row index of the cell.
+ * @param {number} colIndex - The column index of the cell.
+ * @param {string} value - The value to be added.
+ * @param {React.MutableRefObject<string>} updates - The updates ref object.
+ * @param {Function} getColumnLetter - Function to get column letter from index.
+ *
+ * @author BrandonPetersen
+ */
 export const addUpdates = (
   rowIndex: number,
   colIndex: number,
@@ -202,6 +240,16 @@ export const addUpdates = (
   }
 };
 
+/**
+ * Saves the updates to the server.
+ * @param {boolean} isSubscriber - Indicates if the user is a subscriber.
+ * @param {Object} sheet - The sheet object containing publisher and name.
+ * @param {React.MutableRefObject<string>} updates - The updates ref object.
+ * @param {number | null} sheetId - The current sheet ID.
+ * @param {Function} setSheetId - Function to set the sheet ID.
+ *
+ * @author BrandonPetersen
+ */
 export const saveUpdates = async (
   isSubscriber: boolean,
   sheet: { publisher: string, name: string },
@@ -227,7 +275,7 @@ export const saveUpdates = async (
  * @param {string} col - The column letter.
  * @returns {number} The column index.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 const colToIndex = (col: string): number => {
   col = col.replace('$', '');
@@ -243,7 +291,7 @@ const colToIndex = (col: string): number => {
  * @param {string} update - The update string.
  * @returns {Object} The parsed update with row, column, and value.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 export const parseUpdate = (update: string) => {
   const match = update.match(/\$([A-Z]+)(\d+)\s(.+)/);
@@ -259,7 +307,7 @@ export const parseUpdate = (update: string) => {
  * @param {number} colIndex - The column index.
  * @returns {string} The column letter.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 export const getColumnLetter = (colIndex: number): string => {
   let letter = '';
@@ -269,6 +317,5 @@ export const getColumnLetter = (colIndex: number): string => {
   }
   return letter;
 };
-
 
 export { evaluateCell, evaluateAllCells, colToIndex };

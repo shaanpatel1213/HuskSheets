@@ -7,6 +7,11 @@ import { createMemoryHistory } from 'history';
  * Ownership: @auth BrandonPetersen
  */
 describe('handleSubmit', () => {
+  /**
+   * Tests for the handleSubmit function, ensuring it handles login correctly, sets session storage, 
+   * and redirects on success or sets an error message on failure.
+   * @owner BrandonPetersen
+   */
   let setError: jest.Mock;
   let history: ReturnType<typeof createMemoryHistory>;
 

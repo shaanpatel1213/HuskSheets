@@ -1,5 +1,3 @@
-// src/__tests__/utils.test.ts
-
 const API_URL = 'https://husksheets.fly.dev/api/v1';
 const username1 = 'team18';
 const password1 = 'qdKoHqmiP@6x`_1Q';
@@ -16,6 +14,14 @@ jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('Utils', () => {
+  /**
+   * Tests for utility functions used in the Husksheets application.
+   * This suite includes tests for authentication headers, registration, fetching publishers,
+   * creating, fetching, and deleting sheets, and getting and updating subscriptions and published sheets.
+   * @description Unit tests for the utility functions used in the Husksheets application.
+   * @file utils.test.ts
+   * @owner BrandonPetersen
+   */
   let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -62,6 +68,10 @@ describe('Utils', () => {
   };
 
   describe('getAuthHeader', () => {
+    /**
+     * Tests for the getAuthHeader function, ensuring it returns the correct authorization headers.
+     * @owner BrandonPetersen
+     */
     it('should return correct auth headers', () => {
       const result = getAuthHeader();
       expect(result).toEqual(mockHeaders);
@@ -69,6 +79,10 @@ describe('Utils', () => {
   });
 
   describe('register', () => {
+    /**
+     * Tests for the register function, ensuring it handles registration successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should register successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       mockedAxios.get.mockResolvedValueOnce({ data: responseData });
@@ -97,6 +111,10 @@ describe('Utils', () => {
   });
 
   describe('getPublishers', () => {
+    /**
+     * Tests for the getPublishers function, ensuring it fetches publishers successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should get publishers successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       mockedAxios.get.mockResolvedValueOnce({ data: responseData });
@@ -125,6 +143,10 @@ describe('Utils', () => {
   });
 
   describe('createSheet', () => {
+    /**
+     * Tests for the createSheet function, ensuring it handles sheet creation successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should create sheet successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1' };
@@ -154,6 +176,10 @@ describe('Utils', () => {
   });
 
   describe('getSheets', () => {
+    /**
+     * Tests for the getSheets function, ensuring it fetches sheets successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should get sheets successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test' };
@@ -183,6 +209,10 @@ describe('Utils', () => {
   });
 
   describe('deleteSheet', () => {
+    /**
+     * Tests for the deleteSheet function, ensuring it handles sheet deletion successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should delete sheet successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1' };
@@ -212,6 +242,10 @@ describe('Utils', () => {
   });
 
   describe('getUpdatesForSubscription', () => {
+    /**
+     * Tests for the getUpdatesForSubscription function, ensuring it fetches updates for subscriptions successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should get updates for subscription successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1', id: '1' };
@@ -241,6 +275,10 @@ describe('Utils', () => {
   });
 
   describe('getUpdatesForPublished', () => {
+    /**
+     * Tests for the getUpdatesForPublished function, ensuring it fetches updates for published sheets successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should get updates for published successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1', id: '1' };
@@ -270,6 +308,10 @@ describe('Utils', () => {
   });
 
   describe('updatePublished', () => {
+    /**
+     * Tests for the updatePublished function, ensuring it handles updates for published sheets successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should update published successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1', payload: 'update' };
@@ -299,6 +341,10 @@ describe('Utils', () => {
   });
 
   describe('updateSubscription', () => {
+    /**
+     * Tests for the updateSubscription function, ensuring it handles updates for subscriptions successfully and handles errors.
+     * @owner BrandonPetersen
+     */
     it('should update subscription successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
       const payload = { publisher: 'test', sheet: 'sheet1', payload: 'update' };

@@ -42,26 +42,54 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
 
   const dependencyGraph = useRef(new DependencyGraph());
 
+  /**
+   * Updates all cells in the spreadsheet by evaluating them.
+   * @param {TableData} data - The table data to evaluate.
+   * @author BrandonPetersen
+   */
   const updateAllCells = (data: TableData) => {
     const newData = evaluateAllCells(data, dependencyGraph.current);
     setVisualData(newData);
   };
+
   /**
-   * Handles visual changes when a user tyoe in a cell it visually updates
+   * Handles changes to a cell's value.
+   * @param {number} rowIndex - The row index of the cell.
+   * @param {number} colIndex - The column index of the cell.
+   * @param {string} value - The new value of the cell.
    * @author Shaanpatel1213
-   * */
+   */
   const handleChange = (rowIndex: number, colIndex: number, value: string) => {
     const newData = literalString.map((row, rIdx) =>
       row.map((cell, cIdx) => (rIdx === rowIndex && cIdx === colIndex ? value : cell))
     );
     setLiteralString(newData);
-  }
+  };
+
+  /**
+   * Handles the blur event on a cell, calculates its value, and updates the spreadsheet.
+   * @param {number} rowIndex - The row index of the cell.
+   * @param {number} colIndex - The column index of the cell.
+   * @param {string} value - The value of the cell.
+   * @author BrandonPetersen
+   */
   const handleBlur = (rowIndex: number, colIndex: number, value: string) => {
     calculateCell(rowIndex, colIndex, value, literalString, setLiteralString, setVisualData, dependencyGraph.current);
     addUpdates(rowIndex, colIndex, value, updates, getColumnLetter);
     setEditingCell(null);
   };
 
+  /**
+   * Calculates the value of a cell and updates the spreadsheet.
+   * @param {number} rowIndex - The row index of the cell.
+   * @param {number} colIndex - The column index of the cell.
+   * @param {string} value - The value of the cell.
+   * @param {TableData} data - The table data.
+   * @param {Function} setLiteralString - Function to set the literal string data.
+   * @param {Function} setVisualData - Function to set the visual data.
+   * @param {DependencyGraph} dependencyGraph - The dependency graph.
+   * @author BrandonPetersen
+   */
   const calculateCell = (
     rowIndex: number, colIndex: number, value: string, 
     data: TableData, setLiteralString: (data: TableData) => void, setVisualData: (data: TableData) => void, dependencyGraph: DependencyGraph
@@ -78,6 +106,12 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     setVisualData(evaluatedData);
   };
 
+  /**
+   * Handles the focus event on a cell.
+   * @param {number} rowIndex - The row index of the cell.
+   * @param {number} colIndex - The column index of the cell.
+   * @author BrandonPetersen
+   */
   const handleFocus = (rowIndex: number, colIndex: number) => {
     setEditingCell({ row: rowIndex, col: colIndex });
     const newData = visualData.map((row, rIdx) =>
@@ -85,29 +119,32 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     );
     setVisualData(newData);
   };
-/**
- * Adds a row to the sheet and updates corresponding values
- * @author Shaanpatel1213
- * */
+
+  /**
+   * Adds a row to the sheet and updates corresponding values.
+   * @author Shaanpatel1213
+   */
   const addRow = () => {
     const newRow: RowData = new Array(visualData[0].length).fill('');
     const newData = [...visualData, newRow];
     setVisualData(newData);
     setLiteralString(newData);
   };
-/**
- * Adds a column to the sheet and updates corresponding values
- * @author Shaanpatel1213
- * */
+
+  /**
+   * Adds a column to the sheet and updates corresponding values.
+   * @author Shaanpatel1213
+   */
   const addColumn = () => {
     const newData = visualData.map(row => [...row, '']);
     setVisualData(newData);
     setLiteralString(newData);
   };
-/**
- * Removes a row to the sheet and updates corresponding values
- * @author Shaanpatel1213
- * */
+
+  /**
+   * Removes a row from the sheet and updates corresponding values.
+   * @author Shaanpatel1213
+   */
   const removeRow = () => {
     if (visualData.length > 1) {
       const newData = visualData.slice(0, -1);
@@ -115,10 +152,11 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
       setLiteralString(newData);
     }
   };
-/**
- * Removes a column to the sheet and updates corresponding values
- * @author Shaanpatel1213
- * */
+
+  /**
+   * Removes a column from the sheet and updates corresponding values.
+   * @author Shaanpatel1213
+   */
   const removeColumn = () => {
     if (visualData[0].length > 1) {
       const newData = visualData.map(row => row.slice(0, -1));
@@ -127,6 +165,10 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     }
   };
 
+  /**
+   * Fetches updates for the sheet.
+   * @author BrandonPetersen
+   */
   const fetchSheetUpdates = () => {
     fetchUpdates(sheet, sheetId, isSubscriber, initialData, setLiteralString, setVisualData, parseUpdate);
   };
@@ -137,8 +179,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
   }, []);
 
   /**
-   * useEffect is used here to sync the scrolling of the page with the table in both the
-   * vertical and horizontal directions.
+   * Syncs the scrolling of the page with the table in both vertical and horizontal directions.
    * @author Shaanpatel1213
    */
   useEffect(() => {

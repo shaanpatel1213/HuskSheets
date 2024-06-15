@@ -15,6 +15,10 @@ import { getAuthHeader, updatePublished, getUpdatesForSubscription, updateSubscr
 jest.mock('../Utilities/utils');
 
 describe('Spreadsheet Helpers', () => {
+  /**
+   * Tests for various helper functions used in the spreadsheet application.
+   * @author BrandonPetersen
+   */
   let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -29,6 +33,10 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('fetchUpdates', () => {
+    /**
+     * Tests for the fetchUpdates function, ensuring it fetches updates correctly and handles errors.
+     * @author BrandonPetersen
+     */
     it('should fetch updates correctly', async () => {
       const mockSetLiteralString = jest.fn();
       const mockSetVisualData = jest.fn();
@@ -80,6 +88,10 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('addUpdates', () => {
+    /**
+     * Tests for the addUpdates function, ensuring it correctly adds updates.
+     * @author BrandonPetersen
+     */
     it('should add updates correctly', () => {
       const updates = { current: '' };
       const getColumnLetterMock = jest.fn().mockReturnValue('A');
@@ -92,6 +104,11 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('saveUpdates', () => {
+    /**
+     * Tests for the saveUpdates function, ensuring it saves updates correctly for both publishers and subscribers,
+     * and handles errors appropriately.
+     * @author BrandonPetersen
+     */
     it('should save updates correctly for a publisher', async () => {
       const updates = { current: '$A1 NewValue' };
       const setSheetIdMock = jest.fn();
@@ -176,6 +193,11 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('evaluateCell', () => {
+    /**
+     * Tests for the evaluateCell function, ensuring it correctly evaluates cells, handles circular references,
+     * and gracefully handles missing dependencies and invalid formulas.
+     * @author BrandonPetersen
+     */
     it('should evaluate a cell correctly', () => {
       const data = [['=1+1']];
       const dependencyGraph = new DependencyGraph();
@@ -189,7 +211,7 @@ describe('Spreadsheet Helpers', () => {
       const dependencyGraph = new DependencyGraph();
       const visitedCells: Set<string> = new Set();
       const result = evaluateCell('=A2', 0, 0, data, dependencyGraph, visitedCells);
-      expect(result).toBe('ERROR');
+      expect(result).toBe('ERROR: Circular reference detected');
     });
 
     it('should handle missing dependencies gracefully', () => {
@@ -210,6 +232,10 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('parseUpdate', () => {
+    /**
+     * Tests for the parseUpdate function, ensuring it correctly parses update strings and handles invalid formats.
+     * @author BrandonPetersen
+     */
     it('should parse an update string correctly', () => {
       const result = parseUpdate('$A1 2');
       expect(result).toEqual({ row: 0, col: 0, value: '2' });
@@ -221,6 +247,10 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('parseCellReference', () => {
+    /**
+     * Tests for the parseCellReference function, ensuring it correctly parses cell references and handles invalid formats.
+     * @author BrandonPetersen
+     */
     it('should parse a cell reference correctly', () => {
       const result = parseCellReference('A1');
       expect(result).toEqual({ row: 0, col: 0 });
@@ -232,6 +262,11 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('getDependenciesFromFormula', () => {
+    /**
+     * Tests for the getDependenciesFromFormula function, ensuring it correctly extracts dependencies from formulas
+     * and handles formulas without dependencies.
+     * @author BrandonPetersen
+     */
     it('should extract dependencies from a formula correctly', () => {
       const formula = '=A1+B2';
       const result = getDependenciesFromFormula(formula);
@@ -246,6 +281,10 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('getColumnLetter', () => {
+    /**
+     * Tests for the getColumnLetter function, ensuring it correctly converts column indices to letters.
+     * @author BrandonPetersen
+     */
     it('should return the correct column letter', () => {
       expect(getColumnLetter(0)).toBe('A');
       expect(getColumnLetter(25)).toBe('Z');
@@ -254,6 +293,11 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('evaluateAllCells', () => {
+    /**
+     * Tests for the evaluateAllCells function, ensuring it correctly evaluates all cells in the table data
+     * and handles errors in cell evaluation.
+     * @author BrandonPetersen
+     */
     it('should evaluate all cells correctly', () => {
       const data = [['=1+1', '=2+2']];
       const dependencyGraph = new DependencyGraph();
@@ -270,6 +314,11 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('DependencyGraph', () => {
+    /**
+     * Tests for the DependencyGraph class, ensuring it correctly adds and gets dependencies,
+     * and handles circular dependencies.
+     * @author BrandonPetersen
+     */
     it('should add and get dependencies correctly', () => {
       const graph = new DependencyGraph();
       graph.addDependency('A1', 'B1');
