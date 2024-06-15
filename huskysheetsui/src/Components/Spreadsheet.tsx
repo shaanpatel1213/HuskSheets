@@ -177,6 +177,17 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
     fetchSheetUpdates();
     updateAllCells(initialData);
   }, []);
+  const handleDownload = () => {
+    const jsonData = JSON.stringify(literalString, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.download = 'sheetdownload.txt';
+    link.href = URL.createObjectURL(blob);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   /**
    * Syncs the scrolling of the page with the table in both vertical and horizontal directions.
@@ -191,6 +202,16 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
         horizontalScrollbar.scrollLeft = tableContainer.scrollLeft;
       }
     };
+    const handleDownload = () => {
+    const jsonData = JSON.stringify(literalString, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.download = 'sheetdownload.txt';
+    link.href = URL.createObjectURL(blob);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
     const syncTableScroll = () => {
       if (horizontalScrollbar && tableContainer) {
         tableContainer.scrollLeft = horizontalScrollbar.scrollLeft;
@@ -220,6 +241,7 @@ const Spreadsheet: React.FC<SpreadsheetProps> = ({ sheet, isSubscriber }) => {
           <button onClick={removeRow}>Remove Row</button>
           <button onClick={addColumn}>Add Column</button>
           <button onClick={removeColumn}>Remove Column</button>
+          <button onClick={handleDownload}>Download Sheet</button>
         </div>
       </div>
       <div className="table-outer-container">

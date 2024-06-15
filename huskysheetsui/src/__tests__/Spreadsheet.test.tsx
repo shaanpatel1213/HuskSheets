@@ -3,7 +3,9 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { Spreadsheet } from '../Components/Spreadsheet';
+import userEvent from '@testing-library/user-event';
 import { evaluateOperands, evaluateExpression, parseAndEvaluateExpression, TableData } from "../Utilities";
+
 
 /**
  * Tests to tests React Components for a spreadsheet
@@ -81,6 +83,7 @@ describe('Spreadsheet Component Tests', () => {
     expect(cols).toHaveLength(initialCols); // 25 - 1 + 1 header
   });
 
+
   test('can edit cell values', () => {
     render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
     
@@ -100,6 +103,8 @@ describe('Spreadsheet Component Tests', () => {
 
     expect(firstCell).toHaveValue("");
   });
+
+
 
   test('calculates the cell value correctly when a formula is entered', () => {
     render(<Spreadsheet sheet={{ id: null, name: "", publisher: "" }} isSubscriber={false} />);
@@ -257,4 +262,4 @@ describe('parseAndEvaluateExpression function', () => {
 
 
 
-   
+
