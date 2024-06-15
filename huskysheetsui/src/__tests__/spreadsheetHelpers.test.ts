@@ -6,7 +6,9 @@ import {
   parseUpdate,
   getColumnLetter,
   evaluateAllCells,
-  DependencyGraph
+  DependencyGraph,
+  parseCellReference,
+  getDependenciesFromFormula
 } from '../componentHelpers/spreadsheetHelpers';
 import { getAuthHeader, updatePublished, getUpdatesForSubscription, updateSubscription } from '../Utilities/utils';
 
@@ -27,19 +29,15 @@ describe('Spreadsheet Helpers', () => {
   });
 
   describe('fetchUpdates', () => {
-    it('should handle errors in fetchUpdates', async () => {
+    it('should fetch updates correctly', async () => {
       const mockSetLiteralString = jest.fn();
       const mockSetVisualData = jest.fn();
-      const mockParseUpdate = jest.fn().mockImplementation(() => {
-        new Error('Parsing error');
-      });
       const initialData = [['']];
 
-      // Mock implementation
       (getUpdatesForSubscription as jest.Mock).mockResolvedValueOnce({
         success: true,
         value: [
-          { publisher: 'TestPublisher', sheet: 'TestSheet', id: '1', payload: 'InvalidUpdate' }
+          { publisher: 'TestPublisher', sheet: 'TestSheet', id: '1', payload: '$A1 2' }
         ],
       });
 
@@ -50,11 +48,34 @@ describe('Spreadsheet Helpers', () => {
         initialData,
         mockSetLiteralString,
         mockSetVisualData,
-        mockParseUpdate
+        parseUpdate
       );
 
-      expect(consoleErrorSpy).toBeCalledTimes(1);
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch updates');
+      expect(mockSetLiteralString).toBeCalledTimes(1);
+      expect(mockSetVisualData).toBeCalledTimes(1);
+    });
+
+    it('should handle errors in fetchUpdates', async () => {
+      const mockSetLiteralString = jest.fn();
+      const mockSetVisualData = jest.fn();
+      const initialData = [['']];
+
+      (getUpdatesForSubscription as jest.Mock).mockResolvedValueOnce({
+        success: false,
+        value: []
+      });
+
+      await fetchUpdates(
+        { publisher: 'TestPublisher', name: 'TestSheet' },
+        1,
+        false,
+        initialData,
+        mockSetLiteralString,
+        mockSetVisualData,
+        parseUpdate
+      );
+
+      expect(consoleErrorSpy).toBeCalledWith('Failed to fetch updates');
     });
   });
 
@@ -92,6 +113,26 @@ describe('Spreadsheet Helpers', () => {
       expect(updates.current).toBe('');
     });
 
+    it('should handle save updates error for a publisher', async () => {
+      const updates = { current: '$A1 NewValue' };
+      const setSheetIdMock = jest.fn();
+
+      (updatePublished as jest.Mock).mockResolvedValueOnce({
+        success: false,
+        value: []
+      });
+
+      await saveUpdates(
+        false,
+        { name: 'TestSheet', publisher: 'TestPublisher' },
+        updates,
+        1,
+        setSheetIdMock
+      );
+
+      expect(consoleErrorSpy).toBeCalledWith('Failed to save updates');
+    });
+
     it('should save updates correctly for a subscriber', async () => {
       const updates = { current: '$A1 NewValue' };
       const setSheetIdMock = jest.fn();
@@ -112,26 +153,61 @@ describe('Spreadsheet Helpers', () => {
       // Assertions to verify that the updates are saved
       expect(updates.current).toBe('');
     });
+
+    it('should handle save updates error for a subscriber', async () => {
+      const updates = { current: '$A1 NewValue' };
+      const setSheetIdMock = jest.fn();
+
+      (updateSubscription as jest.Mock).mockResolvedValueOnce({
+        success: false,
+        value: []
+      });
+
+      await saveUpdates(
+        true,
+        { name: 'TestSheet', publisher: 'TestPublisher' },
+        updates,
+        1,
+        setSheetIdMock
+      );
+
+      expect(consoleErrorSpy).toBeCalledWith('Failed to save updates');
+    });
   });
 
   describe('evaluateCell', () => {
     it('should evaluate a cell correctly', () => {
-      const data = [['1+1']];
+      const data = [['=1+1']];
       const dependencyGraph = new DependencyGraph();
       const visitedCells: Set<string> = new Set();
       const result = evaluateCell('=1+1', 0, 0, data, dependencyGraph, visitedCells);
       expect(result).toBe('2');
     });
-  
-    it('should handle evaluation errors', () => {
-      const data = [['invalid']];
+
+    it('should handle circular references', () => {
+      const data = [['=A2'], ['=A1']];
       const dependencyGraph = new DependencyGraph();
       const visitedCells: Set<string> = new Set();
-      const result = evaluateCell('=2-', 0, 0, data, dependencyGraph, visitedCells);
+      const result = evaluateCell('=A2', 0, 0, data, dependencyGraph, visitedCells);
+      expect(result).toBe('ERROR');
+    });
+
+    it('should handle missing dependencies gracefully', () => {
+      const data = [['=B1']];
+      const dependencyGraph = new DependencyGraph();
+      const visitedCells: Set<string> = new Set();
+      const result = evaluateCell('=B1', 0, 0, data, dependencyGraph, visitedCells);
+      expect(result).toBe('0');
+    });
+
+    it('should handle invalid formulas gracefully', () => {
+      const data = [['=invalid']];
+      const dependencyGraph = new DependencyGraph();
+      const visitedCells: Set<string> = new Set();
+      const result = evaluateCell('=invalid', 0, 0, data, dependencyGraph, visitedCells);
       expect(result).toBe('ERROR');
     });
   });
-  
 
   describe('parseUpdate', () => {
     it('should parse an update string correctly', () => {
@@ -141,6 +217,31 @@ describe('Spreadsheet Helpers', () => {
 
     it('should handle invalid update strings', () => {
       expect(() => parseUpdate('invalid update')).toThrow('Invalid update format');
+    });
+  });
+
+  describe('parseCellReference', () => {
+    it('should parse a cell reference correctly', () => {
+      const result = parseCellReference('A1');
+      expect(result).toEqual({ row: 0, col: 0 });
+    });
+
+    it('should handle invalid cell references', () => {
+      expect(() => parseCellReference('invalid')).toThrow('Invalid cell reference');
+    });
+  });
+
+  describe('getDependenciesFromFormula', () => {
+    it('should extract dependencies from a formula correctly', () => {
+      const formula = '=A1+B2';
+      const result = getDependenciesFromFormula(formula);
+      expect(result).toEqual(['A1', 'B2']);
+    });
+
+    it('should return an empty array for formulas without dependencies', () => {
+      const formula = '=1+2';
+      const result = getDependenciesFromFormula(formula);
+      expect(result).toEqual([]);
     });
   });
 
