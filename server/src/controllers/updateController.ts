@@ -17,6 +17,8 @@ import * as updateService from '../services/updateService';
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  * 
+ * @status {200} - Sheet created successfully.
+ * 
  * @author syadav7173
  */
 export const getUpdatesForSubscription = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +39,9 @@ export const getUpdatesForSubscription = async (req: Request, res: Response, nex
  * @param {Response} res - The HTTP response object.
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
+ * 
+ * @status {200} - Sheet created successfully.
+ * @status {401} - Unauthorized: sender is not the owner of the sheet.
  * 
  * @author syadav7173
  */
@@ -66,6 +71,9 @@ export const getUpdatesForPublished = async (req: Request, res: Response, next: 
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  * 
+ * @status {200} - Sheet created successfully.
+ * @status {401} - Unauthorized: sender is not the owner of the sheet.
+ * 
  * @author syadav7173
  */
 export const updatePublished = async (req: Request, res: Response, next: NextFunction) => {
@@ -93,6 +101,8 @@ export const updatePublished = async (req: Request, res: Response, next: NextFun
  * @param {Response} res - The HTTP response object.
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
+ * 
+ * @status {200} - Sheet created successfully.
  * 
  * @author syadav7173
  */

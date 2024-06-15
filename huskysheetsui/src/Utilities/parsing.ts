@@ -6,9 +6,15 @@ import { sumFunction, minFunction, maxFunction, avgFunction, concatFunction, ifF
 
 /**
  * Parses and evaluates an expression based on the provided table data.
+ * This function first parses the expression into its components and then evaluates it.
+ * If the expression contains references to cell values or ranges, those values are retrieved
+ * from the provided table data. The result of the evaluation is returned as a string.
+ *
  * @param {string} expression - The expression to parse and evaluate.
  * @param {TableData} data - The table data for evaluation.
  * @returns {string} The evaluated result as a string.
+ * 
+ * @author syadav7173
  */
 export const parseAndEvaluateExpression = (
   expression: string,
@@ -28,8 +34,13 @@ export const parseAndEvaluateExpression = (
 
 /**
  * Parses an expression into its components.
+ * This function handles various types of expressions including simple values,
+ * nested function calls, logical operators, ranges, and multiple cell references.
+ *
  * @param {string} expression - The expression to parse.
  * @returns {Object} The parsed expression object.
+ * 
+ * @author syadav7173
  */
 const parseExpression = (expression: string) => {
   // console.log("Parsing expression:", expression);
@@ -95,8 +106,13 @@ const parseExpression = (expression: string) => {
 
 /**
  * Parses an operator match.
+ * This function extracts the components of an operator expression, including the left operand,
+ * operator, and right operand, and returns them in an object.
+ *
  * @param {RegExpMatchArray} match - The matched operator expression.
  * @returns {Object} The parsed operator expression object.
+ * 
+ * @author syadav7173
  */
 const parseOperatorMatch = (match: RegExpMatchArray) => {
   const x = parseOperand(match[1]);
@@ -107,8 +123,12 @@ const parseOperatorMatch = (match: RegExpMatchArray) => {
 
 /**
  * Parses an operand from a string.
+ * This function handles simple numeric values, cell references, and nested expressions.
+ *
  * @param {string} operand - The operand to parse.
  * @returns {number | string | Ref} The parsed operand.
+ * 
+ * @author syadav7173
  */
 const parseOperand = (operand: string): number | string | Ref => {
   if (operand.startsWith("(") && operand.endsWith(")")) {
@@ -126,9 +146,13 @@ const parseOperand = (operand: string): number | string | Ref => {
 
 /**
  * Evaluates a parsed expression based on the provided table data.
+ * This function handles the evaluation of simple values, functions, ranges, and operator expressions.
+ *
  * @param {any} parsedExpression - The parsed expression object.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number | string} The evaluated result.
+ * 
+ * @author syadav7173
  */
 export const evaluateExpression = (
   parsedExpression: any,
@@ -157,9 +181,13 @@ export const evaluateExpression = (
 
 /**
  * Evaluates a function based on the provided table data.
+ * This function dispatches the function call to the appropriate implementation based on the function name.
+ *
  * @param {any} parsedExpression - The parsed expression object.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number | string} The evaluated result.
+ * 
+ * @author syadav7173
  */
 const evaluateFunction = (
   parsedExpression: any,
@@ -194,9 +222,13 @@ const evaluateFunction = (
 
 /**
  * Evaluates a range expression.
+ * This function retrieves the values from the specified range in the table data and sums them.
+ *
  * @param {string} range - The range expression.
  * @param {TableData} data - The table data for evaluation.
  * @returns {number} The sum of the values in the range.
+ * 
+ * @author syadav7173
  */
 const evaluateRange = (range: string, data: TableData): number => {
   const values = getRangeFromReference(range, data);

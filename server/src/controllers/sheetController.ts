@@ -18,6 +18,9 @@ import { Publisher } from '../entity/Publisher';
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  * 
+ * @status {200} - Sheet created successfully.
+ * @status {400} - Publisher not found or sheet already exists.
+ * 
  * @author syadav7173
  */
 export const createNewSheet = async (req: Request, res: Response, next: NextFunction) => {
@@ -53,6 +56,9 @@ export const createNewSheet = async (req: Request, res: Response, next: NextFunc
  * @param {Response} res - The HTTP response object.
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
+ * 
+ * @status {200} - Sheet created successfully.
+ * @status {400} - Publisher not found or sheet already exists.
  * 
  * @author syadav7173
  */

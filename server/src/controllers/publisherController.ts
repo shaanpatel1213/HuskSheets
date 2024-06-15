@@ -17,6 +17,8 @@ import * as publisherService from '../services/publisherService';
  * @param {NextFunction} next - The next middleware function.
  * @returns {Promise<void>}
  * 
+ * @status {200} - Sheet created successfully.
+ * 
  * @author syadav7173
  */
 export const getPublishers = async (req: Request, res: Response, next: NextFunction) => {
