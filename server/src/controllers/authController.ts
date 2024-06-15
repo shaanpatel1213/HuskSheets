@@ -14,6 +14,9 @@ import { findPublisherByUsername, createPublisher, getAllPublishers as getAllPub
  * @param {Request} req - The HTTP request object.
  * @param {Response} res - The HTTP response object.
  * @returns {Promise<void>}
+ * 
+ * @status {200} - Sheet created successfully.
+ * 
  * @author syadav7173
  */
 export const registerPublisher = async (req: Request, res: Response) => {
@@ -33,6 +36,8 @@ export const registerPublisher = async (req: Request, res: Response) => {
  * @param {Request} req - The HTTP request object.
  * @param {Response} res - The HTTP response object.
  * @returns {Promise<void>}
+ * 
+ * @status {200} - Sheet created successfully.
  * 
  * @author syadav7173
  */

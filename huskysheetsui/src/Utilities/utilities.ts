@@ -1,6 +1,28 @@
 import { TableData, Ref } from './types';
 import { parseAndEvaluateExpression } from './parsing';
 
+/**
+ * Resolves the value of an operand, which can be a number, a string representing a cell reference or expression, or a Ref object.
+ * @param {number | string | Ref} operand - The operand to resolve.
+ * @param {TableData} data - The table data for evaluation.
+ * @returns {number | string} The resolved value of the operand.
+ * @throws {Error} If the operand type is invalid.
+ * 
+ * @author syadav7173
+ */
+
+/**
+ * Resolves the value of an operand, which can be a number, a string representing a cell reference or expression, or a Ref object.
+ * If the operand is a number, it returns the number. If it is a string, it checks if it is an expression or a cell reference,
+ * evaluates it accordingly, and returns the result. If it is a Ref object, it returns the corresponding cell value from the table data.
+ * 
+ * @param {number | string | Ref} operand - The operand to resolve.
+ * @param {TableData} data - The table data for evaluation.
+ * @returns {number | string} The resolved value of the operand.
+ * @throws {Error} If the operand type is invalid.
+ * 
+ * @author syadav7173
+ */
 export const resolveOperand = (
   operand: number | string | Ref,
   data: TableData
@@ -20,6 +42,16 @@ export const resolveOperand = (
   throw new Error("Invalid operand type");
 };
 
+
+/**
+ * Resolves the value of a cell reference by converting the reference to its corresponding row and column indices,
+ * then retrieving the value from the table data. If the cell value is a number, it returns the number; otherwise, it returns the string.
+ * @param {string} ref - The cell reference to resolve.
+ * @param {TableData} data - The table data.
+ * @returns {string | number} The value of the cell reference.
+ * 
+ * @author syadav7173
+ */
 export const resolveCellReference = (ref: string, data: TableData): string | number => {
   ref = ref.startsWith("$") ? ref.substring(1) : ref;
   const match = ref.match(/^([A-Z]+)(\d+)$/);
@@ -43,6 +75,15 @@ export const resolveCellReference = (ref: string, data: TableData): string | num
   return !isNaN(Number(returnValue)) ? Number(returnValue) : returnValue.toString();
 };
 
+/**
+ * Parses a cell reference into a Ref object containing the zero-based row and column indices.
+ * This function converts a cell reference string into an object.
+ * @param {string} ref - The cell reference to parse.
+ * @returns {Ref} The parsed cell reference as a Ref object.
+ * @throws {Error} If the cell reference format is invalid.
+ * 
+ * @author syadav7173
+ */
 export const parseCellReference = (ref: string): Ref => {
   ref = ref.startsWith("$") ? ref.substring(1) : ref;
   const match = ref.match(/^([A-Z]+)(\d+)$/);
@@ -60,6 +101,17 @@ export const parseCellReference = (ref: string): Ref => {
   return { row: rowIndex, col: colIndex };
 };
 
+/**
+ * Gets the values from a specified range in the table data by converting the range reference
+ * to numerical row and column indices, then retrieving all cell values within the range.
+ * 
+ * @param {string} ref - The range reference.
+ * @param {TableData} data - The table data.
+ * @returns {string[]} An array of values within the specified range.
+ * @throws {Error} If the range format is invalid.
+ * 
+ * @author syadav7173
+ */
 export const getRangeFromReference = (ref: string, data: TableData): string[] => {
   console.log("Getting range from reference:", ref);
   const match = ref.match(/^(\$?[A-Z]+)(\d+):(\$?[A-Z]+)(\d+)$/);
@@ -82,6 +134,14 @@ export const getRangeFromReference = (ref: string, data: TableData): string[] =>
   return values;
 };
 
+/**
+ * Converts a column letter reference to a zero-based column index.
+ * This function handles single and multi-letter column references (e.g., "A" to 0, "AA" to 26).
+ * @param {string} col - The column letter reference.
+ * @returns {number} The zero-based column index.
+ * 
+ * @author syadav7173
+ */
 const colToIndex = (col: string): number => {
   col = col.replace("$", "");
   let index = 0;
@@ -91,6 +151,13 @@ const colToIndex = (col: string): number => {
   return index - 1;
 };
 
+/**
+ * Checks if a value is a Ref object by verifying that it contains numerical row and column properties.
+ * @param {any} value - The value to check.
+ * @returns {boolean} True if the value is a Ref object, false otherwise.
+ * 
+ * @author syadav7173
+ */
 const isRef = (value: any): value is Ref => {
   return value && typeof value.row === "number" && typeof value.col === "number";
 };

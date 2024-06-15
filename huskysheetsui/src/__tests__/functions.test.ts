@@ -99,11 +99,6 @@ describe('concatFunction function', () => {
         expect(concatFunction(['$A1', '$B2', '$B1'], data)).toBe('152');
     });
 
-    // should we be able to concat ranges?
-    // test('should correctly apply concat function when given range of cells', () => {
-    //     expect(concatFunction(['$B1:$B3'], data)).toBe('258');
-    //     expect(concatFunction(['$B1:$B3', '$C3'], data)).toBe('2589');
-    // });
 
     /** Ownership: @author EmilyFink474 */
     test('should correctly apply concat function when given values', () => {
@@ -118,7 +113,6 @@ describe('ifFunction function', () => {
     test('should correctly apply if function when given single cells', () => {
         expect(ifFunction(['$A1<$B2', 'true', 'false'], data)).toBe('true');
         expect(ifFunction(['$A1>$B2', 'true', 'false'], data)).toBe('false');
-        //expect(ifFunction(['$A1<$B2', '$B2', '$B1'], data)).toBe('2'); should it return the value of $B2
     });
 
     /** Ownership: @author EmilyFink474 */
