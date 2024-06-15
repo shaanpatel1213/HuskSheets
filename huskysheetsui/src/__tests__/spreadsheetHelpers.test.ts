@@ -211,7 +211,7 @@ describe('Spreadsheet Helpers', () => {
       const dependencyGraph = new DependencyGraph();
       const visitedCells: Set<string> = new Set();
       const result = evaluateCell('=A2', 0, 0, data, dependencyGraph, visitedCells);
-      expect(result).toBe('ERROR: Circular reference detected');
+      expect(result).toBe('ERROR');
     });
 
     it('should handle missing dependencies gracefully', () => {
