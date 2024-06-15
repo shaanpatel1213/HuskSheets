@@ -138,6 +138,8 @@ const evaluateCell = (
   if (visitedCells.has(cellKey)) return 'ERROR: Circular reference detected';
   visitedCells.add(cellKey);
 
+  if (!cell) return '';
+
   if (cell.startsWith('=')) {
     const formula = cell.slice(1).replace(/\$\s*/g, ''); // Remove $ signs
     const dependencies = getDependenciesFromFormula(formula);
@@ -152,33 +154,24 @@ const evaluateCell = (
     let evaluatedFormula = formula;
     dependencies.forEach(dep => {
       const { row, col } = parseCellReference(dep);
-      const depValue = evaluateCell(data[row][col], row, col, data, dependencyGraph, new Set(visitedCells));
+      const depValue = evaluateCell(data[row]?.[col] || '', row, col, data, dependencyGraph, new Set(visitedCells));
       evaluatedFormula = evaluatedFormula.replace(dep, depValue);
     });
 
-
-    // Check if the formula contains a function and pass accordingly
-
     const isFunction = formula.match(/^\s*[\w\$]+\s*\(.*\)\s*$/);
-
     if (isFunction) {
-
       return parseAndEvaluateExpression(formula, data);
-
     } else {
-
       return parseAndEvaluateExpression(evaluatedFormula, data);
-
     }
-
   }
 
   return cell || '';
-
 };
 
 
-const parseCellReference = (reference: string): { row: number, col: number } => {
+
+export const parseCellReference = (reference: string): { row: number, col: number } => {
   const match = reference.match(/([A-Z]+)(\d+)/);
   if (!match) throw new Error('Invalid cell reference');
   const [, colLetter, rowIndex] = match;
@@ -192,7 +185,7 @@ const parseCellReference = (reference: string): { row: number, col: number } => 
  * @param {string} formula - The formula to extract references from.
  * @returns {Set<string>} The set of cell references.
  */
-const getDependenciesFromFormula = (formula: string): string[] => {
+export const getDependenciesFromFormula = (formula: string): string[] => {
   const matches = formula.match(/\$?[A-Z]+\d+/g);
   return matches ? matches.map(ref => ref.replace('$', '')) : [];
 };
