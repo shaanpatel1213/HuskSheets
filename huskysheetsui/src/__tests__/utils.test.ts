@@ -20,7 +20,7 @@ describe('Utils', () => {
    * creating, fetching, and deleting sheets, and getting and updating subscriptions and published sheets.
    * @description Unit tests for the utility functions used in the Husksheets application.
    * @file utils.test.ts
-   * @owner BrandonPetersen
+   * @author BrandonPetersen
    */
   let consoleErrorSpy: jest.SpyInstance;
 
@@ -70,7 +70,7 @@ describe('Utils', () => {
   describe('getAuthHeader', () => {
     /**
      * Tests for the getAuthHeader function, ensuring it returns the correct authorization headers.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should return correct auth headers', () => {
       const result = getAuthHeader();
@@ -81,7 +81,7 @@ describe('Utils', () => {
   describe('register', () => {
     /**
      * Tests for the register function, ensuring it handles registration successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should register successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -113,7 +113,7 @@ describe('Utils', () => {
   describe('getPublishers', () => {
     /**
      * Tests for the getPublishers function, ensuring it fetches publishers successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should get publishers successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -145,7 +145,7 @@ describe('Utils', () => {
   describe('createSheet', () => {
     /**
      * Tests for the createSheet function, ensuring it handles sheet creation successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should create sheet successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -178,7 +178,7 @@ describe('Utils', () => {
   describe('getSheets', () => {
     /**
      * Tests for the getSheets function, ensuring it fetches sheets successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should get sheets successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -211,7 +211,7 @@ describe('Utils', () => {
   describe('deleteSheet', () => {
     /**
      * Tests for the deleteSheet function, ensuring it handles sheet deletion successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should delete sheet successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -244,7 +244,7 @@ describe('Utils', () => {
   describe('getUpdatesForSubscription', () => {
     /**
      * Tests for the getUpdatesForSubscription function, ensuring it fetches updates for subscriptions successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should get updates for subscription successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -277,7 +277,7 @@ describe('Utils', () => {
   describe('getUpdatesForPublished', () => {
     /**
      * Tests for the getUpdatesForPublished function, ensuring it fetches updates for published sheets successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should get updates for published successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -310,7 +310,7 @@ describe('Utils', () => {
   describe('updatePublished', () => {
     /**
      * Tests for the updatePublished function, ensuring it handles updates for published sheets successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should update published successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };
@@ -343,7 +343,7 @@ describe('Utils', () => {
   describe('updateSubscription', () => {
     /**
      * Tests for the updateSubscription function, ensuring it handles updates for subscriptions successfully and handles errors.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should update subscription successfully', async () => {
       const responseData = { success: true, message: null, value: [], time: 0 };

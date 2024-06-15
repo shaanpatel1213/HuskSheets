@@ -6,7 +6,7 @@ jest.mock('../Utilities/utils');
 /**
  * Tests for the homePageHelpers file
  * 
- * Ownership: @owner BrandonPetersen
+ * Ownership: @author BrandonPetersen
  */
 describe('homePageHelpers', () => {
   let setError: jest.Mock;
@@ -34,7 +34,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the checkPublisher function, ensuring it sets the registration status and fetches sheets
      * if the user is a publisher, and sets an error message if fetching publishers fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should set registration status and fetch sheets if user is a publisher', async () => {
       (getPublishers as jest.Mock).mockResolvedValue({
@@ -66,7 +66,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the fetchSheets function, ensuring it fetches and sets sheets if successful,
      * and sets an error message if fetching sheets fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should fetch and set sheets if successful', async () => {
       (getSheets as jest.Mock).mockResolvedValue({
@@ -94,7 +94,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the fetchOtherSheets function, ensuring it fetches and sets other sheets if successful,
      * and sets empty sheets if fetching other sheets fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should fetch and set other sheets if successful', async () => {
       (getSheets as jest.Mock).mockResolvedValue({
@@ -120,7 +120,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the handleCreateSheet function, ensuring it handles sheet creation, fetches sheets,
      * and resets new sheet name if successful, and sets an error message if creating sheet fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should create a sheet, fetch sheets, and reset new sheet name if successful', async () => {
       (createSheet as jest.Mock).mockResolvedValue({ success: true });
@@ -160,7 +160,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the handleDeleteSheet function, ensuring it handles sheet deletion and updates sheets if successful,
      * and sets an error message if deleting sheet fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should delete a sheet and update sheets if successful', async () => {
       const sheets = [{ id: '1', name: 'Sheet1' }];
@@ -188,7 +188,7 @@ describe('homePageHelpers', () => {
     /**
      * Tests for the handleRegister function, ensuring it handles registration, fetches sheets,
      * and sets registration status if successful, and sets an error message if registration fails.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     it('should register, fetch sheets, and set registration status if successful', async () => {
       (register as jest.Mock).mockResolvedValue({ success: true });
