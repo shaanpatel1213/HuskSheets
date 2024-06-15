@@ -42,61 +42,61 @@ export { DependencyGraph };
 
 const getCellKey = (row: number, col: number): string => `${row}:${col}`;
 
-/**
- * Fetches updates from the server for the current sheet.
- * @param {Object} sheet - The sheet object containing publisher and name.
- * @param {number | null} sheetId - The current sheet ID.
- * @param {boolean} isSubscriber - Indicates if the user is a subscriber.
- * @param {TableData} initialData - The initial table data.
- * @param {Function} setLiteralString - Function to set literal string data.
- * @param {Function} setVisualData - Function to set visual data.
- * @param {Function} parseUpdate - Function to parse update strings.
- * @returns {Promise<void>}
- *
- * Ownership: @author EmilyFink474
- */
-export const fetchUpdates = async (
-  sheet: { publisher: string, name: string },
-  sheetId: number | null,
-  isSubscriber: boolean,
-  initialData: TableData,
-  setLiteralString: (data: TableData) => void,
-  setVisualData: (data: TableData) => void,
-  parseUpdate: (update: string) => { row: number, col: number, value: string }
-) => {
-  const result = isSubscriber
-    ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0')
-    : await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0');
+/** 
+ * Fetches updates from the server for the current sheet. 
+ * @param {Object} sheet - The sheet object containing publisher and name. 
+ * @param {number | null} sheetId - The current sheet ID. 
+ * @param {boolean} isSubscriber - Indicates if the user is a subscriber. 
+ * @param {TableData} initialData - The initial table data. 
+ * @param {Function} setLiteralString - Function to set literal string data. 
+ * @param {Function} setVisualData - Function to set visual data. 
+ * @param {Function} parseUpdate - Function to parse update strings. 
+ * @returns {Promise<void>} 
+ * 
+ * Ownership: @author EmilyFink474 
+ */ 
+export const fetchUpdates = async ( 
+  sheet: { publisher: string, name: string }, 
+  sheetId: number | null, 
+  isSubscriber: boolean, 
+  initialData: TableData, 
+  setLiteralString: (data: TableData) => void, 
+  setVisualData: (data: TableData) => void, 
+  parseUpdate: (update: string) => { row: number, col: number, value: string } 
+) => { 
+  const result = isSubscriber 
+    ? await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0') 
+    : await getUpdatesForSubscription(sheet.publisher, sheet.name, sheetId ? sheetId.toString() : '0'); 
 
-  if (result && result.success) {
-    const newData = initialData.map(row => row.slice());
+  if (result && result.success) {  
+    const newData = initialData.map(row => row.slice()); 
 
-    result.value.forEach((update: { publisher: string; sheet: string; id: string; payload: string }) => {
-      update.payload.split('\n').forEach(line => {
-        if (line.trim()) {
-          if (line.match(/\$([A-Z]+)(\d+)\s(.+)/)) {
-            const { row, col, value } = parseUpdate(line);
-            while (newData.length <= row) {
-              newData.push(new Array(initialData[0].length).fill(''));
-            }
-            while (newData[row].length <= col) {
-              newData[row].push('');
-            }
-            newData[row][col] = value;
-          } else {
-            console.error('Failed to fetch updates');
-          }
-        }
-      });
-    });
-    setLiteralString(newData);
-    const dependencyGraph = new DependencyGraph();
-    const evaluatedData = evaluateAllCells(newData, dependencyGraph);
-    setVisualData(evaluatedData);
-  } else {
-    console.error('Failed to fetch updates');
-  }
-};
+    result.value.forEach((update: { publisher: string; sheet: string; id: string; payload: string }) => { 
+      update.payload.split('\n').forEach(line => { 
+        if (line.trim()) { 
+          if (line.match(/\$([A-Z]+)(\d+)\s(.+)/)) { 
+            const { row, col, value } = parseUpdate(line); 
+            while (newData.length <= row) { 
+              newData.push(new Array(initialData[0].length).fill('')); 
+            } 
+            while (newData[row].length <= col) { 
+              newData[row].push(''); 
+            } 
+            newData[row][col] = value; 
+          } else { 
+            console.error('Failed to fetch updates'); 
+          } 
+        } 
+      }); 
+    }); 
+    setLiteralString(newData); 
+    const dependencyGraph = new DependencyGraph(); 
+    const evaluatedData = evaluateAllCells(newData, dependencyGraph); 
+    setVisualData(evaluatedData); 
+  } else { 
+    console.error('Failed to fetch updates'); 
+  } 
+}; 
 
 /**
  * Evaluates all cells in the provided data.
