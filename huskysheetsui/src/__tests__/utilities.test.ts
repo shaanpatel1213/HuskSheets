@@ -16,32 +16,32 @@ const data: TableData = [
 ];
 
 describe('resolveOperand function', () => {
-    /** Ownership: @author EmilyFink474 */
-    test('correctly returns number when resolveOperand is given a number', () => {
-        expect(resolveOperand(2, data)).toBe(2);
+    /** Ownership: @author syadav7173 */
+    test('correctly return number when resolveOperand is given a number', () => {
+        expect(resolveOperand(3, data)).toBe(3);
+    });
+
+    /** Ownership: @author syadav7173 */
+    test('correctly return value of cell when resolveOperand is given a cell', () => {
+        expect(resolveOperand('$A2', data)).toBe(4);
     });
 
     /** Ownership: @author EmilyFink474 */
-    test('correctly returns value of cell when resolveOperand is given a cell', () => {
-        expect(resolveOperand('$A1', data)).toBe(1);
-    });
-
-    /** Ownership: @author EmilyFink474 */
-    test('correctly returns value of cell when resolveOperand is given a formula', () => {
+    test('correctly return value of cell when resolveOperand is given a formula', () => {
         expect(resolveOperand('=2*3', data)).toBe('6');
     });
 
-    /** Ownership: @author EmilyFink474 */
-    test('correctly returns value of cell when resolveOperand is given a reference', () => {
-        expect(resolveOperand({ row: 1, col: 2 }, data)).toBe('6');
+    /** Ownership: @author syadav7173 */
+    test('correctly return value of cell when resolveOperand is given a reference', () => {
+        expect(resolveOperand({ row: 2, col: 2 }, data)).toBe('9');
     });
 });
 
 describe('resolveCellReference function', () => {
-    /** Ownership: @author EmilyFink474 */
-    test('correctly returns value of a given cell', () => {
-        expect(resolveCellReference('$A2', data)).toBe(4);
-        expect(resolveCellReference('A2', data)).toBe(4);
+    /** Ownership: @author syadav7173 */
+    test('correctly return value of a given cell', () => {
+        expect(resolveCellReference('$A3', data)).toBe(7);
+        expect(resolveCellReference('A3', data)).toBe(7);
     });
 
     /** Ownership: @author EmilyFink474 */

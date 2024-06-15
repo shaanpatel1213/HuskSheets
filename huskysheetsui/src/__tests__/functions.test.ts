@@ -168,7 +168,7 @@ describe('copyFunction function', () => {
         }).toThrow('COPY function requires 2 arguments');
     });
 
-
+    /** Ownership: @author syadav7173 */
     describe('evaluateCondition function', () => {
         const data1: TableData = [
             ['1', '2', '3'],
@@ -182,8 +182,50 @@ describe('copyFunction function', () => {
     
     
         test('should correctly evaluate conditions using cell references', () => {
-            expect(evaluateCondition('$A1 < $B2', data1)).toBe(true);  // 1 < 5
-            expect(evaluateCondition('$A1 > $B2', data1)).toBe(false); // 1 > 5
+            expect(evaluateCondition('$A1 < $B2', data1)).toBe(true);
+            expect(evaluateCondition('$A1 > $B2', data1)).toBe(false);
         });
     });
+
+    /** Ownership: @author syadav7173 */
+    describe('additional function edge cases', () => {
+        const data2: TableData = [
+            ['1', '2', '3'],
+            ['4', '5', '6'],
+            ['7', '8', '9']
+        ];
+        /** Ownership: @author syadav7173 */
+        test('should correctly sum with negative numbers', () => {
+            expect(sumFunction([1, -2, 3], data2)).toBe(2);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly find the minimum value with negative numbers', () => {
+            expect(minFunction(['-1', '-2', '0'], data)).toBe(-2);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly apply min function with mixed types of arguments (numbers and cell references)', () => {
+            expect(minFunction(['1', '$A1', '$B2'], data)).toBe(1);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should handle cases where all cell values are equal', () => {
+            expect(maxFunction(['$A1', '$A1', '$A1'], data)).toBe(1);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly find the maximum value with negative numbers', () => {
+            expect(maxFunction(['-1', '-2', '0'], data)).toBe(0);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly apply max function with mixed types of arguments (numbers and cell references)', () => {
+            expect(maxFunction(['1', '$A1', '$B2'], data)).toBe(5);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly compute the average with mixed types of arguments (numbers and cell references)', () => {
+            expect(avgFunction(['1', '$A1', '$B2'], data)).toBe(2.3333333333333335);
+        });
+        /** Ownership: @author syadav7173 */
+        test('should correctly compute average with negative numbers', () => {
+            expect(avgFunction(['-1', '-2', '0'], data)).toBe(-1);
+        });
+    });
+    
 });
