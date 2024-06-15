@@ -25,9 +25,13 @@ jest.mock('../../data-source', () => ({
 /**
  * Tests the update service methods
  * 
- * @author syadav7173
+ * @author BrandonPetersen
  */
 describe('updateService', () => {
+    /**
+     * Tests the getUpdatesForSubscription function to ensure it returns updates for a subscription.
+     * @author BrandonPetersen
+     */
     describe('getUpdatesForSubscription', () => {
         it('should return updates for subscription', async () => {
             const publisher = 'testuser';
@@ -80,6 +84,10 @@ describe('updateService', () => {
         });
     });
 
+    /**
+     * Tests the getUpdatesForPublished function to ensure it returns updates for a published sheet.
+     * @author BrandonPetersen
+     */
     describe('getUpdatesForPublished', () => {
         it('should return updates for published sheet', async () => {
             const publisher = 'testuser';
@@ -132,6 +140,10 @@ describe('updateService', () => {
         });
     });
 
+    /**
+     * Tests the updatePublished function to ensure it updates a published sheet.
+     * @author BrandonPetersen
+     */
     describe('updatePublished', () => {
         it('should update published sheet', async () => {
             const publisher = 'testuser';
@@ -181,6 +193,10 @@ describe('updateService', () => {
         });
     });
 
+    /**
+     * Tests the updateSubscription function to ensure it updates a subscription.
+     * @author BrandonPetersen
+     */
     describe('updateSubscription', () => {
         it('should update subscription', async () => {
             const publisher = 'testuser';
