@@ -4,7 +4,8 @@ import { parseExpression, evaluateExpression } from './parsing';
 
 
 /**
- * Sums the values of the given arguments.
+ * Sums the values of the given arguments. The arguments can be cell references, ranges,
+ * or numbers. For cell references and ranges, the function retrieves the values from the provided table data.
  * @param args - The arguments to sum, which can be cell references, ranges, or numbers.
  * @param data - The table data.
  * @returns The sum of the values.
@@ -33,7 +34,9 @@ export const sumFunction = (args: any[], data: TableData): number => {
 };
 
 /**
- * Finds the minimum value among the given arguments.
+ * Finds the minimum value among the given arguments. The arguments can be cell 
+ * references, ranges, or numbers. For cell references and ranges,
+ * the function retrieves the values from the provided table data.
  * @param args - The arguments to evaluate, which can be cell references, ranges, or numbers.
  * @param data - The table data.
  * @returns The minimum value.
