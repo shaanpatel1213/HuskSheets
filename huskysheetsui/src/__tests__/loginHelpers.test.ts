@@ -10,7 +10,7 @@ describe('handleSubmit', () => {
   /**
    * Tests for the handleSubmit function, ensuring it handles login correctly, sets session storage, 
    * and redirects on success or sets an error message on failure.
-   * @owner BrandonPetersen
+   * @author BrandonPetersen
    */
   let setError: jest.Mock;
   let history: ReturnType<typeof createMemoryHistory>;

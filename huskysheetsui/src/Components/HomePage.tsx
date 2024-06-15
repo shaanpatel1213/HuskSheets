@@ -16,7 +16,7 @@ import '../css/HomePage.css';
  * 
  * @component
  * @returns {JSX.Element} The rendered component
- * @owner BrandonPetersen
+ * @author BrandonPetersen
  */
 const HomePage: React.FC = () => {
   const userName = sessionStorage.getItem('userName') || ''; // Get the userName from sessionStorage

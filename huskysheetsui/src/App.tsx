@@ -12,7 +12,7 @@ import { HomePage } from "./Components/HomePage";
 /**
  * SpreadsheetPage component that retrieves parameters from the URL and renders the Spreadsheet component.
  *
- * Ownership: BrandonPetersen
+ * @author BrandonPetersen
  */
 const SpreadsheetPage: React.FC = () => {
   const { id, name, publisher, isSubscriber } = useParams<{ publisher: string, name: string, id: string, isSubscriber: string }>();
