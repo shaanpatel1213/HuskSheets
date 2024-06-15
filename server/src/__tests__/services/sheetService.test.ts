@@ -4,8 +4,8 @@ import { Spreadsheet } from '../../entity/Spreadsheet';
 import { findPublisherByUsername, getSheetsByPublisher, createSheet, findSheetByNameAndPublisher, deleteSheet } from '../../services/sheetService';
 
 /**
- * @author Shaanpatel1213
- * */
+ * @owner Shaanpatel1213
+ */
 jest.mock('../../data-source', () => ({
     AppDataSource: {
         manager: {
@@ -19,11 +19,30 @@ jest.mock('../../data-source', () => ({
                 execute: jest.fn()
             }),
             remove: jest.fn()
-        }
+        },
+        createQueryRunner: jest.fn().mockReturnValue({
+            connect: jest.fn(),
+            startTransaction: jest.fn(),
+            commitTransaction: jest.fn(),
+            rollbackTransaction: jest.fn(),
+            release: jest.fn(),
+            manager: {
+                createQueryBuilder: jest.fn().mockReturnThis(),
+                delete: jest.fn().mockReturnThis(),
+                from: jest.fn().mockReturnThis(),
+                where: jest.fn().mockReturnThis(),
+                execute: jest.fn(),
+                remove: jest.fn()
+            }
+        })
     }
 }));
 
 describe('sheetService', () => {
+    /**
+     * Tests the findPublisherByUsername function to ensure it finds a publisher by username.
+     * @owner Shaanpatel1213
+     */
     describe('findPublisherByUsername', () => {
         it('should find a publisher by username', async () => {
             const username = 'testuser';
@@ -47,6 +66,10 @@ describe('sheetService', () => {
         });
     });
 
+    /**
+     * Tests the getSheetsByPublisher function to ensure it returns sheets for a publisher.
+     * @owner Shaanpatel1213
+     */
     describe('getSheetsByPublisher', () => {
         it('should return sheets for a publisher', async () => {
             const publisher = { username: 'testuser' };
@@ -66,6 +89,10 @@ describe('sheetService', () => {
         });
     });
 
+    /**
+     * Tests the createSheet function to ensure it creates a new sheet for the publisher.
+     * @owner Shaanpatel1213
+     */
     describe('createSheet', () => {
         it('should create a new sheet for the publisher', async () => {
             const publisher = { username: 'testuser' } as Publisher;
@@ -90,6 +117,46 @@ describe('sheetService', () => {
                     username: 'testuser'
                 })
             }));
+        });
+    });
+
+    /**
+     * Tests the deleteSheet function to ensure it deletes a sheet along with its associated cells and updates.
+     * @owner BrandonPetersen
+     */
+    describe('deleteSheet', () => {
+        it('should delete a sheet and its related entities successfully', async () => {
+            const spreadsheet = { idRef: 1, name: 'sheet1' } as Spreadsheet;
+            const queryRunnerMock = AppDataSource.createQueryRunner();
+
+            (queryRunnerMock.manager.createQueryBuilder().execute as jest.Mock).mockResolvedValue({});
+            (queryRunnerMock.manager.remove as jest.Mock).mockResolvedValue({});
+            await queryRunnerMock.connect();
+            await queryRunnerMock.startTransaction();
+
+            const result = await deleteSheet(spreadsheet);
+
+            expect(queryRunnerMock.manager.createQueryBuilder().where).toHaveBeenCalledWith("spreadsheetIdRef = :idRef", { idRef: spreadsheet.idRef });
+            expect(queryRunnerMock.manager.remove).toHaveBeenCalledWith(Spreadsheet, spreadsheet);
+            expect(queryRunnerMock.commitTransaction).toHaveBeenCalled();
+            expect(result).toBe(true);
+
+            await queryRunnerMock.release();
+        });
+
+        it('should handle errors and rollback transaction if deletion fails', async () => {
+            const spreadsheet = { idRef: 1, name: 'sheet1' } as Spreadsheet;
+            const queryRunnerMock = AppDataSource.createQueryRunner();
+
+            (queryRunnerMock.manager.createQueryBuilder().execute as jest.Mock).mockRejectedValue(new Error('Deletion error'));
+            await queryRunnerMock.connect();
+            await queryRunnerMock.startTransaction();
+
+            const result = await deleteSheet(spreadsheet);
+
+            expect(result).toBe(false);
+
+            await queryRunnerMock.release();
         });
     });
 });

@@ -76,7 +76,14 @@ export const findSheetByNameAndPublisher = async (sheetName: string, publisher: 
   });
 };
 
-
+/**
+ * Deletes a sheet along with its associated cells and updates.
+ *
+ * @param {Spreadsheet} spreadsheet - The spreadsheet to delete.
+ * @returns {Promise<boolean>} True if the deletion was successful, false otherwise.
+ * 
+ * @author BrandonPetersen
+ */
 export const deleteSheet = async (spreadsheet: Spreadsheet) => {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
