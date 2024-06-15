@@ -4,7 +4,7 @@ import { Spreadsheet } from '../../entity/Spreadsheet';
 import { findPublisherByUsername, getSheetsByPublisher, createSheet, findSheetByNameAndPublisher, deleteSheet } from '../../services/sheetService';
 
 /**
- * @owner Shaanpatel1213
+ * @author Shaanpatel1213
  */
 jest.mock('../../data-source', () => ({
     AppDataSource: {
@@ -41,7 +41,7 @@ jest.mock('../../data-source', () => ({
 describe('sheetService', () => {
     /**
      * Tests the findPublisherByUsername function to ensure it finds a publisher by username.
-     * @owner Shaanpatel1213
+     * @author Shaanpatel1213
      */
     describe('findPublisherByUsername', () => {
         it('should find a publisher by username', async () => {
@@ -68,7 +68,7 @@ describe('sheetService', () => {
 
     /**
      * Tests the getSheetsByPublisher function to ensure it returns sheets for a publisher.
-     * @owner Shaanpatel1213
+     * @author Shaanpatel1213
      */
     describe('getSheetsByPublisher', () => {
         it('should return sheets for a publisher', async () => {
@@ -91,7 +91,7 @@ describe('sheetService', () => {
 
     /**
      * Tests the createSheet function to ensure it creates a new sheet for the publisher.
-     * @owner Shaanpatel1213
+     * @author Shaanpatel1213
      */
     describe('createSheet', () => {
         it('should create a new sheet for the publisher', async () => {
@@ -122,7 +122,7 @@ describe('sheetService', () => {
 
     /**
      * Tests the deleteSheet function to ensure it deletes a sheet along with its associated cells and updates.
-     * @owner BrandonPetersen
+     * @author BrandonPetersen
      */
     describe('deleteSheet', () => {
         it('should delete a sheet and its related entities successfully', async () => {
