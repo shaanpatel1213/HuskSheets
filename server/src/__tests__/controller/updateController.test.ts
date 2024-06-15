@@ -4,6 +4,7 @@ import * as updateService from '../../services/updateService';
 
 jest.mock('../../services/updateService');
 
+/** Ownership: @author syadav7173 */
 describe('updateController', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
@@ -20,7 +21,7 @@ describe('updateController', () => {
     };
     next = jest.fn();
   });
-
+/** Ownership: @author syadav7173 */
   describe('getUpdatesForSubscription', () => {
     it('should get updates for a subscription', async () => {
       req.body = { publisher: 'test_publisher', sheet: 'test_sheet', id: 1 };
@@ -47,6 +48,7 @@ describe('updateController', () => {
     });
   });
 
+/** Ownership: @author syadav7173 */
   describe('getUpdatesForPublished', () => {
     it('should get updates for published sheets if publisher matches user_name', async () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet', id: 1 };
@@ -86,6 +88,7 @@ describe('updateController', () => {
     });
   });
 
+/** Ownership: @author syadav7173 */
   describe('updatePublished', () => {
     it('should update published sheet if publisher matches user_name', async () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet', payload: 'test_payload' };
@@ -110,6 +113,7 @@ describe('updateController', () => {
       });
     });
 
+/** Ownership: @author syadav7173 */
     it('should call next with error if service throws', async () => {
       req.body = { publisher: 'test_user', sheet: 'test_sheet', payload: 'test_payload' };
 
@@ -121,7 +125,8 @@ describe('updateController', () => {
       expect(next).toHaveBeenCalledWith(error);
     });
   });
-
+  
+/** Ownership: @author syadav7173 */
   describe('updateSubscription', () => {
     it('should update subscription', async () => {
       req.body = { publisher: 'test_publisher', sheet: 'test_sheet', payload: 'test_payload' };
