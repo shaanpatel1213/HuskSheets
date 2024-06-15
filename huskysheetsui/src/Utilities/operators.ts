@@ -6,6 +6,7 @@ import { TableData } from './types';
  * @param {number | string} y - The second operand.
  * @param {string} operator - The operator to apply.
  * @returns {number | string} The evaluated result.
+ * @author Shaanpatel1213
  */
 export const evaluateOperands = (
   x: number | string,

@@ -20,7 +20,7 @@ const SpreadsheetPage: React.FC = () => {
     <Spreadsheet sheet={{ publisher, name, id: Number(id)}} isSubscriber={isSubscriber === 'true'} />
   );
 };
-// Ownership : Shaanpatel1213
+/** @author Shaanpatel1213*/
 const App: React.FC = () => {
   return (
     <BrowserRouter>
