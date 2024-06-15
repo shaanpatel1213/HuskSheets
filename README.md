@@ -6,3 +6,38 @@ Our team members are: Brandon Petersen, Emily Fink, Shaan Patel, and Shubham Yad
 We will be developing Husksheets, a distributive collaborative spreadsheet application that allows users to store and modify data in an intuitive environment. To protect spreadsheet data and server security, users will be required to login before viewing/editing their sheets. At the most basic level, users will have access to spreadsheet functionality such as creating, opening, editing, saving, and sharing documents. Within the spreadsheet, data will be stored in ‘cells’ which are labeled rows (by numerical value 1,2,3, etc..) and columns (labeled alphabetically A,B,C,etc…). Basic arithmetic operations such as addition, subtraction, and multiplication will be able to be performed between cells containing numerical values. Users would be able to call some premade function such as IF Function allowing for a condition to be checked, SUM function to be able to sum up a series of numbers, MIN and MAX functions to find the minimum or maximum values of a series of numbers, AVG to find the average of the series of numbers, CONCAT to combine a series of numbers or string to be joint right next to each other, DEBUG, printing the literal of the string disregarding any character meaning. 
 
 Currently, in the first week of the project we are in the design stage where we are establishing our MVP, desirables, and bonus features we want our app to include.
+
+Prerequises to running our project:
+- Install Docker
+- Install Node.js
+- git clone this repository
+
+
+How to run our project:
+- Navigate to our root directory of our project
+- run "make"
+
+
+
+Login info:
+  username1 = team18
+  password1 = qdKoHqmiP@6x`_1Q
+  
+  username2 = user222
+  password2 = password222
+  
+  username3 = user1
+  password3 = password1
+
+
+
+If you want to run only the client
+- make start-frontend
+
+If you want to run only the server
+- make start-backend
+
+To change the server the client connects to modify the API url in utils.ts in the utilities folder of huskysheetsui.
+  
+
+
